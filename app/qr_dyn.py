@@ -181,3 +181,7 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
     detector = cv2.QRCodeDetector()
     payloads = []
     methods_tried = 0
+    ef try_decode(frame, method_name=""):
+        nonlocal methods_tried
+        methods_tried += 1
+        try:

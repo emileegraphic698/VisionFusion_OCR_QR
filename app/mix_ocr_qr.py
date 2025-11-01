@@ -38,7 +38,7 @@ def merge_single_image(item, qr_result):
 
 
 def merge_pdf_pages(item, qr_result):
-    """ادغام داده‌های PDF چندصفحه‌ای"""
+    """merge multi-page pdf data"""
     if not isinstance(item.get("result"), list):
         return item
 

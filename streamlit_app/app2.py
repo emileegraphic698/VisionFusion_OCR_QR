@@ -407,3 +407,45 @@ def decrease_quota(amount=1):
 # =========================================================
 # Quality Control Tracking Functions
 # =========================================================
+def get_qc_metadata(user_name, user_role):
+    """ساخت متادیتای کنترل کیفیت"""
+    now = datetime.datetime.now()
+    return {
+        "QC_Supervisor": user_name,
+        "QC_Role": user_role,
+        "QC_Date": now.strftime("%Y-%m-%d"),
+        "QC_Time": now.strftime("%H:%M:%S"),
+        "QC_Timestamp": now.strftime("%Y-%m-%d %H:%M:%S")
+    }
+
+def add_qc_metadata_to_excel(excel_path, qc_metadata):
+    """اضافه کردن متادیتای کنترل کیفیت به Excel"""
+    try:
+        df = pd.read_excel(excel_path)
+        for key in ["QC_Supervisor", "QC_Role", "QC_Date", "QC_Time", "QC_Timestamp"]:
+            if key in qc_metadata:
+                df.insert(0, key, qc_metadata[key])
+        df.to_excel(excel_path, index=False, engine='openpyxl')
+        print(f"   ✅ QC Metadata added: {qc_metadata['QC_Supervisor']} ({qc_metadata['QC_Role']})")
+        return True
+    except Exception as e:
+        print(f"   ❌ Error adding QC metadata: {e}")
+        return False
+
+def save_qc_log(session_dir, qc_metadata, exhibition_name, pipeline_type, total_files):
+    """ذخیره لاگ کنترل کیفیت در فایل JSON"""
+    try:
+        qc_log_file = session_dir / "qc_log.json"
+        qc_log = {
+            **qc_metadata,
+            "Exhibition": exhibition_name,
+            "Pipeline_Type": pipeline_type,
+            "Total_Files": total_files,
+            "Session_Dir": str(session_dir)
+        }
+        qc_log_file.write_text(json.dumps(qc_log, indent=2, ensure_ascii=False), encoding="utf-8")
+        print(f"   ✅ QC Log saved: {qc_log_file}")
+        return True
+    except Exception as e:
+        print(f"   ❌ Error saving QC log: {e}")
+        return False

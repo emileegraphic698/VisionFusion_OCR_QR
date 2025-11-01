@@ -164,7 +164,7 @@ def domain_exists(url):
         return False
 
 def are_values_same(v1, v2):
-    """بررسی یکسان بودن دو مقدار"""
+    """check if two values are identical"""
     if not v1 or not v2:
         return False
     return str(v1).strip().lower() == str(v2).strip().lower()

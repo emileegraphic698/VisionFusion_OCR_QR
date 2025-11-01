@@ -1,0 +1,119 @@
+# =========================================================
+# 🧩 Python Cache & Build Files
+# =========================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+pip-wheel-metadata/
+.env/
+.venv/
+venv/
+env/
+
+# =========================================================
+# 🧠 IDE & Editor Settings
+# =========================================================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+
+# =========================================================
+# 📦 Virtual Environment / Dependency Caches
+# =========================================================
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+*.lock
+.cache/
+__pypackages__/
+site-packages/
+
+# =========================================================
+# 📊 Data & Temporary Directories
+# =========================================================
+data/input/*
+data/output/*
+!data/.gitkeep
+uploads/
+renamed/
+_debug/
+_pdf_pages/
+temp/
+tmp/
+logs/
+*.log
+
+# =========================================================
+# 🧾 Generated Output Files
+# =========================================================
+*.json
+*.csv
+*.xlsx
+*.xls
+*.ods
+*.zip
+*.rar
+*.tar
+*.gz
+
+# =========================================================
+# 🧠 Model / OCR / AI Outputs
+# =========================================================
+gemini_output.json
+final_superqr_v6_raw.json
+final_superqr_v6_clean.json
+mix_ocr_qr.json
+web_analysis.xlsx
+merged_final_*.xlsx
+gemini_scrap_output.json
+scraped_data.json
+
+# =========================================================
+# 🧰 Config & Secrets
+# =========================================================
+.env
+.env.local
+.env.*.backup
+config.json
+settings.json
+*.key
+*.pem
+*.crt
+
+# =========================================================
+# 🚀 Streamlit Specific
+# =========================================================
+.streamlit/
+.streamlit/secrets.toml
+.streamlit/config.toml
+
+# =========================================================
+# 🧪 Test / Debug Artifacts
+# =========================================================
+test_*.py
+tests/
+notebooks/
+.ipynb_checkpoints/
+*.ipynb
+
+# =========================================================
+# 🧹 System & OS Files
+# =========================================================
+.DS_Store
+Desktop.ini
+Thumbs.db
+ehthumbs.db
+Icon?

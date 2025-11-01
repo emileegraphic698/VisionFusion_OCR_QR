@@ -60,3 +60,8 @@ OUTPUT_EXCEL = Path(os.getenv(
 ))
 TEMP_EXCEL = Path(os.getenv("TEMP_EXCEL", SESSION_DIR / "temp_output.xlsx"))
 OUTPUT_JSON = Path(os.getenv("OUTPUT_JSON", SESSION_DIR / "scraped_data.json"))
+
+
+# =========================================================
+# ⚙️ تنظیمات
+# =========================================================

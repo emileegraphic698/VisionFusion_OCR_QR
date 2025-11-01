@@ -348,3 +348,34 @@ def clean_and_optimize_dataframe(df):
 # =========================================================
 # final ordering
 # =========================================================
+def create_final_dataframe(records):
+    if not records:
+        return pd.DataFrame()
+    
+    df = pd.DataFrame(records)
+    
+    # حذف متادیتا
+    remove = ['ocr_text', 'AddressFA_translated', 'CompanyNameFA_translated',
+              'file_id', 'file_name', 'page', 'DataSource']
+    for col in remove:
+        if col in df.columns:
+            df = df.drop(columns=[col])
+    
+    df = clean_and_optimize_dataframe(df)
+    
+    priority = [
+        'CompanyNameEN', 'CompanyNameFA',
+        'Website', 'Email',
+        'Phone1', 'Phone2', 'Phone3', 'Phone4',
+        'ContactName', 'PositionEN', 'PositionFA',
+        'AddressEN', 'AddressFA',
+        'City', 'Country',
+        'Industry', 'ProductName', 'ProductCategory',
+        'Description', 'Applications', 'Brands', 'Certifications',
+        'ClientsPartners', 'History', 'Employees', 'Markets'
+    ]
+    
+    ordered = [c for c in priority if c in df.columns]
+    remaining = sorted([c for c in df.columns if c not in ordered])
+    
+    return df[ordered + remaining]

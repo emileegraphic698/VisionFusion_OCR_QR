@@ -192,3 +192,24 @@ def load_excel_records(excel_path):
 # =========================================================
 #  merge two records
 # =========================================================
+def merge_two_records(r1, r2):
+    merged = {}
+    for key in set(r1.keys()) | set(r2.keys()):
+        v1, v2 = r1.get(key), r2.get(key)
+        if not v1 and not v2:
+            continue
+        if not v1:
+            merged[key] = v2
+            continue
+        if not v2:
+            merged[key] = v1
+            continue
+        if are_values_same(v1, v2):
+            merged[key] = v1
+        else:
+            merged[key] = v1
+            counter = 2
+            while f"{key}[{counter}]" in merged:
+                counter += 1
+            merged[f"{key}[{counter}]"] = v2
+    return merged

@@ -393,3 +393,42 @@ def process_image_for_qr(image_path: Path) -> Union[List[str], None]:
         print(f"   ⚠️  No QR code detected")
     
     return result
+
+# ----------------------------------------------------------
+def process_pdf_for_qr(pdf_path: Path) -> Dict[str, Any]:
+    """پردازش PDF و تبدیل به تصویر"""
+    print(f"\n📄 Processing PDF: {pdf_path.name}")
+    temp_dir = SESSION_DIR / "_pdf_pages"
+    os.makedirs(temp_dir, exist_ok=True)
+    
+    kwargs = {}
+    if POPPLER_PATH and os.path.exists(POPPLER_PATH):
+        kwargs["poppler_path"] = POPPLER_PATH
+    
+    try:
+        images = convert_from_path(pdf_path, dpi=PDF_IMG_DPI, **kwargs)
+    except Exception as e:
+        print(f"   ❌ PDF conversion failed: {e}")
+        if "poppler" in str(e).lower():
+            print(f"   💡 Hint: Install Poppler and set POPPLER_PATH environment variable")
+        return {
+            "file_id": pdf_path.stem,
+            "file_name": pdf_path.name,
+            "error": str(e),
+            "result": []
+        }
+    
+    total_pages = len(images)
+    print(f"   📑 Total pages: {total_pages}")
+    results = []
+
+    for i, img in enumerate(images, start=1):
+        page_image_path = temp_dir / f"{pdf_path.stem}_page_{i:03d}.jpg"
+        img.save(page_image_path, "JPEG", quality=95)
+        print(f"\n   🧩 Page {i}/{total_pages}")
+
+        qr_links = process_image_for_qr(page_image_path)
+        page_result = {"page": i, "qr_link": qr_links[0] if qr_links else None}
+        results.append(page_result)
+
+    return {"file_id": pdf_path.stem, "file_name": pdf_path.name, "result": results}

@@ -375,7 +375,7 @@ def clean_duplicate_columns(df):
         
         print(f"   🔄 Merging {len(cols)} versions of '{base}'")
         
-        # ادغام تمام نسخه‌ها
+        # merge all versions
         for idx in df.index:
             values = []
             for col in cols:

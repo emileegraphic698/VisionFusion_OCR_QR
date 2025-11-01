@@ -534,3 +534,75 @@ def clean_qr_json(input_file, output_file):
 
 
 # ----------------------------------------------------------
+def main():
+    """تابع اصلی"""
+    print("=" * 60)
+    print("🚀 Starting SuperQR v6.1 Processing")
+    print("=" * 60)
+    
+    results = []
+    files = sorted([
+        f for f in Path(IMAGES_FOLDER).rglob("*")
+        if f.suffix.lower() in [".jpg", ".jpeg", ".png", ".pdf"]
+        and "_pdf_pages" not in str(f)
+        and "_debug" not in str(f)
+    ])
+    
+    if not files:
+        print(f"\n⚠️  No image/PDF files found in {IMAGES_FOLDER}")
+        print("   Supported formats: .jpg, .jpeg, .png, .pdf")
+        return
+    
+    print(f"\n📂 Found {len(files)} file(s) to process\n")
+
+    for idx, f in enumerate(files, 1):
+        print("=" * 60)
+        print(f"🔎 [{idx}/{len(files)}] Processing: {f.name}")
+        print("=" * 60)
+        start_time = time.time()
+        
+        try:
+            if f.suffix.lower() == ".pdf":
+                res = process_pdf_for_qr(f)
+            else:
+                res = process_image_file(f)
+            
+            results.append(res)
+            elapsed = time.time() - start_time
+            print(f"\n✅ Completed {f.name} in {elapsed:.1f}s")
+            
+        except Exception as e:
+            print(f"\n❌ Error processing {f.name}: {e}")
+            import traceback
+            if DEBUG_MODE:
+                traceback.print_exc()
+            results.append({
+                "file_id": f.stem,
+                "file_name": f.name,
+                "error": str(e),
+                "result": []
+            })
+    
+    # ذخیره نتایج خام
+    print("\n" + "=" * 60)
+    save_json(OUTPUT_JSON_RAW, results)
+    print(f"✅ Raw results saved → {OUTPUT_JSON_RAW}")
+    
+    # پاکسازی و اعتبارسنجی
+    clean_qr_json(OUTPUT_JSON_RAW, OUTPUT_JSON_CLEAN)
+    
+    print("\n" + "=" * 60)
+    print(f"✨ Processing completed!")
+    print(f"📊 Final output → {OUTPUT_JSON_CLEAN}")
+    print("=" * 60)
+    
+    # خلاصه نتایج
+    total_qr = sum(
+        1 for entry in results 
+        for item in entry.get("result", []) 
+        if item.get("qr_link")
+    )
+    print(f"\n📈 Summary: Found {total_qr} QR code(s) in {len(files)} file(s)")
+    
+    if DEBUG_MODE:
+        print(f"🐛 Debug images saved in: {DEBUG_DIR}")

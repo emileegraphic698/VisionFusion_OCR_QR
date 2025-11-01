@@ -119,3 +119,7 @@ def call_gemini_single_key(data: Image.Image, source_path: Path) -> Dict[str, An
         response_mime_type="application/json",
         response_schema=schema,
     )
+
+    buffer = io.BytesIO()
+    data.save(buffer, format="JPEG", quality=85)
+    image_bytes = buffer.getvalue()

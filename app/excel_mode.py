@@ -319,7 +319,7 @@ def gemini_json(prompt, schema):
     return {}
 
 def extract_with_gemini(text):
-    """استخراج اطلاعات با Gemini"""
+    """extract information using Gemini"""
     fields = "\n".join([f"- {f}" for f in FIELDS])
     prompt = PROMPT_EXTRACT.format(fields=fields, text=text[:8000])
     schema = {f: types.Schema(type=types.Type.STRING, nullable=True) for f in FIELDS}

@@ -587,7 +587,7 @@ def extract_exhibition_name(files):
     return "Unknown_Exhibition"
 
 # =========================================================
-# ✨ Batch Processing Logic
+# Batch Processing Logic
 # =========================================================
 def get_batch_size(file_type):
     """تعیین اندازه Batch بر اساس نوع فایل"""

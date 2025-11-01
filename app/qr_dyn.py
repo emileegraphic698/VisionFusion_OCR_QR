@@ -322,7 +322,7 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
     # process and extract url
     out = []
     for p in payloads:
-        # بررسی اینکه آیا vCard است
+        # check if it’s a vcard
         vcard_url = extract_url_from_vcard(p)
         if vcard_url:
             out.append(vcard_url)

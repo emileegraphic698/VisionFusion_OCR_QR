@@ -468,7 +468,7 @@ def extract_urls(entry):
     return list(dict.fromkeys(urls))
 
 def is_domain_alive(url, timeout=5):
-    """بررسی زنده بودن دامنه"""
+    """check if domain is live"""
     try:
         host = re.sub(r"^https?://(www\.)?", "", url).split("/")[0]
         socket.setdefaulttimeout(timeout)

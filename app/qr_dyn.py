@@ -171,3 +171,8 @@ def enhance_image_aggressive(img):
     enhanced = cv2.convertScaleAbs(enhanced, alpha=1.3, beta=15)
     
     return enhanced
+
+
+# ----------------------------------------------------------
+# 🔍 QR Detection - نسخه پیشرفته
+# ----------------------------------------------------------

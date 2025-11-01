@@ -45,3 +45,8 @@ CLIENT = _genai_new.Client(api_key=API_KEY)
 # =========================================================
 # Gemini Prompt
 # =========================================================
+JSON_INSTRUCTIONS = """
+You are an information extraction engine. Extract OCR text and structured fields from the scanned document.
+Return ONLY valid JSON matching the schema. Keep original Persian text exactly as-is.
+If a field has no value, return null.
+"""

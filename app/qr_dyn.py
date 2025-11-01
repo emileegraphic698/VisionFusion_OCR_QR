@@ -313,7 +313,7 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
             if DEBUG_MODE:
                 print(f"      ✗ ZXing failed: {e}")
     
-    # حذف تکراری‌ها
+    #  remove duplicates
     payloads = list(dict.fromkeys(p for p in payloads if p and isinstance(p, str)))
     
     if DEBUG_MODE:

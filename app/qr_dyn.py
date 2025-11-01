@@ -459,7 +459,7 @@ def save_json(path, data):
 
 # ----------------------------------------------------------
 def extract_urls(entry):
-    """استخراج URLها از نتایج"""
+    """extract urls from results"""
     urls = []
     for item in entry.get("result", []):
         link = item.get("qr_link")

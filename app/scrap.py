@@ -81,3 +81,16 @@ FIELDS = [
     "ProductName", "ProductCategory", "ProductDescription", "Applications",
     "Brands", "Description", "History", "Employees", "ClientsPartners", "Markets"
 ]
+
+TRANSLATABLE_FIELDS = [
+    ("CompanyNameEN", "CompanyNameFA_translated"),
+    ("AddressEN", "AddressFA_translated"),
+    ("ProductName", "ProductNameFA"),
+    ("ProductCategory", "ProductCategoryFA"),
+    ("ProductDescription", "ProductDescriptionFA"),
+    ("Applications", "ApplicationsFA"),
+    ("Description", "DescriptionFA"),
+    ("History", "HistoryFA"),
+    ("Employees", "EmployeesFA"),
+    ("ClientsPartners", "ClientsPartnersFA"),
+]

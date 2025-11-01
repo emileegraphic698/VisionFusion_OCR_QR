@@ -565,5 +565,5 @@ def add_exhibition_and_source(excel_path, exhibition_name):
 
 
 # =========================================================
-# 🔍 تشخیص نوع Pipeline و نام نمایشگاه
+# detect pipeline type and exhibition name
 # =========================================================

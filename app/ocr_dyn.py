@@ -176,3 +176,5 @@ def main():
     if not SOURCE_FOLDER.exists():
         print(f"❌ پوشه ورودی پیدا نشد: {SOURCE_FOLDER}")
         sys.exit(1)
+
+    files = list_files(SOURCE_FOLDER)

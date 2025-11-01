@@ -144,3 +144,9 @@ def is_low_contrast(img, sharp_thresh=85, contrast_thresh=25):
     if DEBUG_MODE:
         print(f"   📊 Sharpness: {sharpness:.1f}, Contrast: {contrast:.1f}")
     return sharpness < sharp_thresh or contrast < contrast_thresh
+
+
+def enhance_image_aggressive(img):
+    """پیش‌پردازش قوی برای بهبود خوانایی QR"""
+    # 1. Denoise
+    denoised = cv2.fastNlMeansDenoisingColored(img, None, 10, 10, 7, 21)

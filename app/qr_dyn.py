@@ -115,7 +115,7 @@ def extract_url_from_vcard(data):
     if DEBUG_MODE:
         print(f"      📇 Detected vCard format")
     
-    # جستجوی URL در vCard
+    # search for url in vcard
     url_patterns = [
         r"URL[;:]([^\r\n]+)",
         r"URL;[^:]+:([^\r\n]+)",

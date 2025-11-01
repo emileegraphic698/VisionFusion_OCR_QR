@@ -341,7 +341,7 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
                 if not url.lower().startswith("http"):
                     url = "https://" + url.lower()
                 
-                # تمیز کردن URL
+                # clean url
                 cleaned = clean_url(url)
                 if cleaned:
                     out.append(cleaned)

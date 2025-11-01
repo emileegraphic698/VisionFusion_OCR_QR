@@ -328,7 +328,7 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
             out.append(vcard_url)
             continue
         
-        # جستجوی URL مستقیم
+        # search for direct url
         p = p.strip()
         urls = re.findall(r"(https?://[^\s\"'<>\[\]]+|www\.[^\s\"'<>\[\]]+)", p, re.IGNORECASE)
         

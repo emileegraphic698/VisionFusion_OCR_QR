@@ -181,17 +181,20 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
     detector = cv2.QRCodeDetector()
     payloads = []
     methods_tried = 0
-    ef try_decode(frame, method_name=""):
+
+    def try_decode(frame, method_name=""):
         nonlocal methods_tried
         methods_tried += 1
-        try:# تلاش با detectAndDecode
+        try:
+            # تلاش با detectAndDecode
             val, pts, _ = detector.detectAndDecode(frame)
             if val and val.strip():
                 if DEBUG_MODE:
                     print(f"      ✓ Found with {method_name}")
                 payloads.append(val.strip())
                 return True
-                # اگر نتوانست decode کند ولی detect کرد، تلاش مجدد
+            
+            # اگر نتوانست decode کند ولی detect کرد، تلاش مجدد
             if pts is not None and len(pts) > 0:
                 val, _ = detector.decode(frame, pts)
                 if val and val.strip():
@@ -199,14 +202,15 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
                         print(f"      ✓ Found with {method_name} (2nd attempt)")
                     payloads.append(val.strip())
                     return True
-                    except Exception as e:
+        except Exception as e:
             if DEBUG_MODE:
                 print(f"      ✗ {method_name} failed: {e}")
         return False
 
     if DEBUG_MODE:
         print(f"   🔍 Trying multiple detection methods...")
-# 1. تصویر اصلی
+
+    # 1. تصویر اصلی
     try_decode(img, "Original")
     
     # 2. Grayscale
@@ -226,6 +230,7 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
     
     # 5. معکوس تصویر
     try_decode(cv2.bitwise_not(img), "Inverted")
+    
     # 6. CLAHE enhancement
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
     l, a, b = cv2.split(lab)
@@ -251,6 +256,7 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
         if w > 50 and h > 50:
             resized = cv2.resize(img, (w, h), interpolation=cv2.INTER_CUBIC)
             try_decode(resized, f"Scale {scale}x")
+    
     # 10. Rotation (چرخش)
     rotation_map = {
         90: cv2.ROTATE_90_CLOCKWISE,

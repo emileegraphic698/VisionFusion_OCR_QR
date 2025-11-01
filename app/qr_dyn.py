@@ -226,3 +226,29 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
     
     # 5. معکوس تصویر
     try_decode(cv2.bitwise_not(img), "Inverted")
+    # 6. CLAHE enhancement
+    lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+    l, a, b = cv2.split(lab)
+    clahe = cv2.createCLAHE(clipLimit=4.0, tileGridSize=(8, 8))
+    l2 = clahe.apply(l)
+    enhanced = cv2.cvtColor(cv2.merge((l2, a, b)), cv2.COLOR_LAB2BGR)
+    try_decode(enhanced, "CLAHE")
+    
+    # 7. Sharpening قوی
+    kernel_sharp = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])
+    sharp = cv2.filter2D(img, -1, kernel_sharp)
+    try_decode(sharp, "Sharpened")
+    
+    # 8. Morphological operations
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+    morph = cv2.morphologyEx(gray, cv2.MORPH_CLOSE, kernel)
+    try_decode(cv2.cvtColor(morph, cv2.COLOR_GRAY2BGR), "Morphological")
+    
+    # 9. Multi-scale (مقیاس‌های مختلف)
+    for scale in [0.5, 0.75, 1.5, 2.0]:
+        w = int(img.shape[1] * scale)
+        h = int(img.shape[0] * scale)
+        if w > 50 and h > 50:
+            resized = cv2.resize(img, (w, h), interpolation=cv2.INTER_CUBIC)
+            try_decode(resized, f"Scale {scale}x")
+    

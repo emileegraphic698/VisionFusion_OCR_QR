@@ -458,7 +458,7 @@ def main():
 
     df = pd.DataFrame(results)
     
-    # ✅ ترتیب ستون‌ها: ستون اصلی + ستون فارسی کنارش
+    #  column order: main column + corresponding FA column
     ordered_cols = ["url", "status", "error"]
     
     for field in FIELDS:

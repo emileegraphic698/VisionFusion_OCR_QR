@@ -147,7 +147,7 @@ def normalize_root(url):
     return f"{p.scheme}://{p.netloc}".lower()
 
 def is_iranian_domain(url):
-    """تشخیص دامنه ایرانی"""
+    """detect Iranian domain"""
     try:
         netloc = urlparse(normalize_root(url)).netloc.lower()
         return any(netloc.endswith(tld) for tld in IRANIAN_TLDS)

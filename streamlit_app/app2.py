@@ -115,3 +115,12 @@ st.markdown("""
 # =========================================================
 # API Keys
 # =========================================================
+API_KEYS = {
+    "excel": "AIzaSyBzVNw....R35hoZNxqsW6pc",
+    "ocr": "AIzaSyCKoa.....IBHy1rt61Cl2ZTs",
+    "scrap": "AIzaSyAhuC9Grg_.....aFzjwUg24w"
+}
+for key_name, key_value in API_KEYS.items():
+    os.environ[f"GOOGLE_API_KEY_{key_name.upper()}"] = key_value
+    os.environ["GOOGLE_API_KEY"] = key_value
+    os.environ["GEMINI_API_KEY"] = key_value

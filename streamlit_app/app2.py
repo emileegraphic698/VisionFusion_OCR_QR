@@ -211,7 +211,7 @@ def append_excel_data_to_sheets(excel_path, folder_id=None):
 
         print(f"\n☁️ شروع ذخیره داده‌ها در Google Drive...")
 
-        # ✅ از شیت آماده خودت استفاده کن (به جای ساخت شیت جدید)
+        # use your existing sheet (instead of creating a new one)
         file_id = "1OeQbiqvo6v58rcxaoSUidOk0IxSGmL8YCpLnyh27yuE"
         file_url = f"https://docs.google.com/spreadsheets/d/{file_id}/edit"
         exists = True

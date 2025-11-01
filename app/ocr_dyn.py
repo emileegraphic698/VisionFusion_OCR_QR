@@ -87,3 +87,7 @@ def build_newsdk_schema():
 # =========================================================
 # Helper Functions
 # =========================================================
+
+def list_files(path: Union[str, Path]) -> List[Path]:
+    exts = {".jpg", ".jpeg", ".png", ".pdf"}
+    return sorted([f for f in Path(path).rglob("*") if f.suffix.lower() in exts])

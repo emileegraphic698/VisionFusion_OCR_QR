@@ -359,3 +359,37 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
 
 
 # ----------------------------------------------------------
+def process_image_for_qr(image_path: Path) -> Union[List[str], None]:
+    """پردازش تصویر برای تشخیص QR"""
+    if DEBUG_MODE:
+        print(f"\n   🖼️  Loading: {image_path.name}")
+    
+    img = cv2.imread(str(image_path))
+    if img is None:
+        print(f"   ❌ Cannot read {image_path.name}")
+        return None
+    
+    if DEBUG_MODE:
+        print(f"   📐 Size: {img.shape[1]}x{img.shape[0]}")
+        cv2.imwrite(str(DEBUG_DIR / f"{image_path.stem}_01_original.jpg"), img)
+    
+    # بررسی کنتراست
+    low = is_low_contrast(img)
+    
+    # Enhancement
+    enhanced = enhance_image_aggressive(img)
+    
+    if DEBUG_MODE:
+        cv2.imwrite(str(DEBUG_DIR / f"{image_path.stem}_02_enhanced.jpg"), enhanced)
+    
+    # تشخیص QR
+    result = detect_qr_payloads_enhanced(enhanced, image_path.stem)
+    
+    if result:
+        print(f"   ✅ Found {len(result)} clean URL(s)")
+        for i, qr in enumerate(result, 1):
+            print(f"      {i}. {qr}")
+    else:
+        print(f"   ⚠️  No QR code detected")
+    
+    return result

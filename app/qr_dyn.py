@@ -90,7 +90,7 @@ def clean_url(url):
                 print(f"      🧹 Cleaned: {url} → {clean}")
             return clean
         
-        # اگر query string دارد، حذف می‌کنیم
+        # remove query string if it exists
         if parsed.query:
             clean = f"{parsed.scheme}://{parsed.netloc}{parsed.path}"
             if DEBUG_MODE:

@@ -251,7 +251,7 @@ For commercial or enterprise licensing, please contact:
 ## 🎥 Live Preview
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Ycmmn/VisionFusion_OCR_QR/main/docs/app1.gif?raw=true" 
+  <img src="https://raw.githubusercontent.com/Ycmmn/VisionFusion_OCR_QR/main/docs/Animation-ezgif.com-speed.gif?raw=true" 
        alt="Yabix OCR+QR - How to Run the App" width="48%" />
   <img src="https://raw.githubusercontent.com/Ycmmn/VisionFusion_OCR_QR/main/docs/app2.gif?raw=true" 
        alt="Yabix OCR+QR - Launch Web App" width="48%" />

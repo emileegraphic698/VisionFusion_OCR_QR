@@ -147,21 +147,26 @@ def is_low_contrast(img, sharp_thresh=85, contrast_thresh=25):
 
 
 def enhance_image_aggressive(img):
-    """advanced preprocessing to enhance QR readability"""
+    """پیش‌پردازش قوی برای بهبود خوانایی QR"""
     # 1. Denoise
     denoised = cv2.fastNlMeansDenoisingColored(img, None, 10, 10, 7, 21)
-     # 2. Convert to LAB for better processing
+    
+    # 2. Convert to LAB for better processing
     lab = cv2.cvtColor(denoised, cv2.COLOR_BGR2LAB)
     l, a, b = cv2.split(lab)
+    
     # 3. CLAHE قوی برای افزایش کنتراست
     clahe = cv2.createCLAHE(clipLimit=5.0, tileGridSize=(8, 8))
     l = clahe.apply(l)
+    
     # 4. Merge back
     enhanced = cv2.merge([l, a, b])
     enhanced = cv2.cvtColor(enhanced, cv2.COLOR_LAB2BGR)
+    
     # 5. Unsharp masking برای وضوح بیشتر
     gaussian = cv2.GaussianBlur(enhanced, (0, 0), 3.0)
     enhanced = cv2.addWeighted(enhanced, 2.0, gaussian, -1.0, 0)
+    
     # 6. Contrast boost
     enhanced = cv2.convertScaleAbs(enhanced, alpha=1.3, beta=15)
     

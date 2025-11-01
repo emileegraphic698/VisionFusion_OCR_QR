@@ -162,3 +162,7 @@ def enhance_image_aggressive(img):
     # 5. Unsharp masking برای وضوح بیشتر
     gaussian = cv2.GaussianBlur(enhanced, (0, 0), 3.0)
     enhanced = cv2.addWeighted(enhanced, 2.0, gaussian, -1.0, 0)
+    # 6. Contrast boost
+    enhanced = cv2.convertScaleAbs(enhanced, alpha=1.3, beta=15)
+    
+    return enhanced

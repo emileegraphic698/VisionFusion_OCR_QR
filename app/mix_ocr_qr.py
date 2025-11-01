@@ -59,7 +59,7 @@ def merge_ocr_qr(ocr_data, qr_data):
         file_name = item.get("file_name")
         qr_result = qr_lookup.get(file_name, [])
 
-        # 🖼 حالت تصویر
+        #  image mode
         if file_name.lower().endswith((".jpg", ".jpeg", ".png", ".webp", ".bmp")):
             item = merge_single_image(item, qr_result)
 

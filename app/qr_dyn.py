@@ -596,7 +596,7 @@ def main():
     print(f"📊 Final output → {OUTPUT_JSON_CLEAN}")
     print("=" * 60)
     
-    # خلاصه نتایج
+    # summarize results
     total_qr = sum(
         1 for entry in results 
         for item in entry.get("result", []) 

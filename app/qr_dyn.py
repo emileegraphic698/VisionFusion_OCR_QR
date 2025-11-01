@@ -535,7 +535,7 @@ def clean_qr_json(input_file, output_file):
 
 # ----------------------------------------------------------
 def main():
-    """تابع اصلی"""
+    """main function"""
     print("=" * 60)
     print("🚀 Starting SuperQR v6.1 Processing")
     print("=" * 60)

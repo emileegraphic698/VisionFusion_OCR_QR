@@ -77,3 +77,4 @@ def merge_ocr_qr(ocr_data, qr_data):
     return merged
 
 # =========================================================
+# main execution

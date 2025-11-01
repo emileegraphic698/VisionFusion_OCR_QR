@@ -590,7 +590,7 @@ def extract_exhibition_name(files):
 # Batch Processing Logic
 # =========================================================
 def get_batch_size(file_type):
-    """تعیین اندازه Batch بر اساس نوع فایل"""
+    """set batch size based on file type"""
     file_type = file_type.lower()
     if file_type in ['jpg', 'jpeg', 'png', 'bmp', 'webp', 'gif']:
         return 5

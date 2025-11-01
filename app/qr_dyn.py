@@ -352,7 +352,7 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
             if cleaned:
                 out.append(cleaned)
     
-    # حذف تکراری URL
+    # remove duplicate urls
     out = list(dict.fromkeys(out))
     
     return out if out else None

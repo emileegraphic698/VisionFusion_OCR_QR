@@ -34,3 +34,9 @@ TEMPERATURE = 0.0
 PDF_IMG_DPI = 150
 BATCH_SIZE_PDF = 1
 BATCH_SIZE_IMAGES = 3
+
+# =========================================================
+# Set API Key (only one key)
+# =========================================================
+API_KEY = "AIzaSyC......JDGGXI....rt61Cl2ZTs"
+CLIENT = _genai_new.Client(api_key=API_KEY)

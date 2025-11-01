@@ -212,7 +212,7 @@ def fetch(url: str) -> tuple[str, str]:
     Returns: (html_content, error_message)
     Smart SSL handling: Iranian domains = no verify, others = verify
     """
-    # ✅ تشخیص هوشمند SSL
+    #  smart SSL detection
     verify_ssl = not is_iranian_domain(url)
     ssl_status = "🔒 SSL ON" if verify_ssl else "🔓 SSL OFF (Iranian)"
     

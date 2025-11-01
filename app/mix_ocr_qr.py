@@ -63,7 +63,7 @@ def merge_ocr_qr(ocr_data, qr_data):
         if file_name.lower().endswith((".jpg", ".jpeg", ".png", ".webp", ".bmp")):
             item = merge_single_image(item, qr_result)
 
-        # 📄 حالت PDF
+        # pdf mode
         elif file_name.lower().endswith(".pdf"):
             item = merge_pdf_pages(item, qr_result)
 

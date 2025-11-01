@@ -139,7 +139,7 @@ GOOGLE_SCOPES = [
 
 @st.cache_resource
 def get_google_services():
-    """اتصال به Google Drive و Sheets"""
+    """connect to google drive and sheets"""
     try:
         creds = service_account.Credentials.from_service_account_info(
             st.secrets["gcp_service_account"],

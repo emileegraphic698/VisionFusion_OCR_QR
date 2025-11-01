@@ -508,7 +508,7 @@ def smart_position_from_department(department):
     return f"مسئول {department.title()}"
 
 def add_exhibition_and_source(excel_path, exhibition_name):
-    """نسخه‌ی جامع + اعلان UI"""
+    """unified version + ui notifications"""
     try:
         print(f"\n📝 Adding Exhibition & Source metadata...")
         df = pd.read_excel(excel_path)

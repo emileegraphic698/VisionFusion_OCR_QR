@@ -198,3 +198,12 @@ def main():
         except Exception as e:
             all_out.append({"file_id": f"{idx:03d}", "file_name": p.name, "error": str(e)})
         time.sleep(1)
+
+    for p in pdf_files:
+        print(f"\n📑 Processing PDF: {p.name}")
+        try:
+            res = pdf_to_images_and_process(p)
+            all_out.append({"file_id": p.stem, "file_name": p.name, "result": res})
+        except Exception as e:
+            all_out.append({"file_id": p.stem, "file_name": p.name, "error": str(e)})
+        time.sleep(1)

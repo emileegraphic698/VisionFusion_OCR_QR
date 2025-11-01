@@ -360,7 +360,7 @@ def extract_with_gemini(text: str):
 def translate_fields(data: dict):
     to_translate = {en: data.get(en) for en, _ in TRANSLATABLE_FIELDS if data.get(en)}
     if not to_translate:
-        # ✅ حتی اگر محتوایی برای ترجمه نبود، ستون‌های خالی FA رو اضافه کن
+        #  even if there's no content to translate, add empty FA columns
         for en, fa_col in TRANSLATABLE_FIELDS:
             data[fa_col] = ""
         return data

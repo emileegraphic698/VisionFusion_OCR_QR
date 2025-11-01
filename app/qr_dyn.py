@@ -184,4 +184,10 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
     ef try_decode(frame, method_name=""):
         nonlocal methods_tried
         methods_tried += 1
-        try:
+        try:# تلاش با detectAndDecode
+            val, pts, _ = detector.detectAndDecode(frame)
+            if val and val.strip():
+                if DEBUG_MODE:
+                    print(f"      ✓ Found with {method_name}")
+                payloads.append(val.strip())
+                return True

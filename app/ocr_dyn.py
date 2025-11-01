@@ -126,3 +126,8 @@ def call_gemini_single_key(data: Image.Image, source_path: Path) -> Dict[str, An
 
     if len(image_bytes) > 10_000_000:
         raise RuntimeError(f"Image too large ({len(image_bytes)/1_000_000:.1f} MB).")
+
+    parts = [
+        _genai_types.Part(text=JSON_INSTRUCTIONS),
+        _genai_types.Part(inline_data=_genai_types.Blob(mime_type="image/jpeg", data=image_bytes))
+    ]

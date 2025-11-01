@@ -5,3 +5,7 @@ from urllib.parse import urljoin, urlparse
 import requests
 from bs4 import BeautifulSoup, XMLParsedAsHTMLWarning
 import warnings
+warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
+import pandas as pd
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)

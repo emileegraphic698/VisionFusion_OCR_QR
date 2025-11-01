@@ -34,3 +34,6 @@ OUTPUT_JSON_CLEAN = Path(os.getenv("QR_CLEAN_JSON", SESSION_DIR / "final_superqr
 DEBUG_DIR = SESSION_DIR / "_debug"
 os.makedirs(IMAGES_FOLDER, exist_ok=True)
 os.makedirs(DEBUG_DIR, exist_ok=True)
+
+
+## dpi for pdf

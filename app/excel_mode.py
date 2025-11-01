@@ -77,3 +77,14 @@ SLEEP_BETWEEN = (0.8, 2.0)
 MAX_RETRIES_HTTP = 3
 MAX_RETRIES_GEMINI = 3
 IRANIAN_TLDS = ['.ir', '.ac.ir', '.co.ir', '.org.ir', '.gov.ir', '.id.ir', '.net.ir']
+
+# Fields to extract
+FIELDS = [
+    "CompanyNameEN", "CompanyNameFA", "Logo", "Industry", "Certifications",
+    "ContactName", "PositionEN", "PositionFA", "Department",
+    "Phone1", "Phone2", "Fax", "WhatsApp", "Telegram", "Instagram", "LinkedIn",
+    "Website", "Email", "OtherEmails",
+    "AddressEN", "AddressFA", "Country", "City",
+    "ProductName", "ProductCategory", "ProductDescription", "Applications",
+    "Brands", "Description", "History", "Employees", "ClientsPartners", "Markets"
+]

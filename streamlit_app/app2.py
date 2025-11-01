@@ -732,3 +732,45 @@ st.markdown("""
     <p>تشخیص هوشمند • پردازش خودکار • خروجی یکپارچه • Batch Processing • Quality Control • Google Sheets</p>
 </div>
 """, unsafe_allow_html=True)
+
+# =========================================================
+# 📊 Sidebar
+# =========================================================
+
+# ========== لینک سریع به Google Sheets ==========
+if 'sheet_url' in st.session_state:
+    st.sidebar.markdown(f"""
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
+        <h4 style="color: white; margin: 0 0 0.5rem 0;">📊 جدول داده‌ها</h4>
+        <a href="{st.session_state['sheet_url']}" target="_blank" 
+           style="color: white; background: rgba(255,255,255,0.2); 
+                  padding: 0.5rem 1rem; border-radius: 8px; 
+                  text-decoration: none; display: block; text-align: center;">
+            🔗 باز کردن جدول
+        </a>
+    </div>
+    """, unsafe_allow_html=True)
+elif Path("google_sheet_link.txt").exists():
+    try:
+        saved_link = Path("google_sheet_link.txt").read_text(encoding='utf-8')
+        url_line = [line for line in saved_link.split('\n') if line.startswith('https://')]
+        if url_line:
+            saved_url = url_line[0]
+            st.sidebar.markdown(f"""
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                        padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
+                <h4 style="color: white; margin: 0 0 0.5rem 0;">📊 جدول داده‌ها</h4>
+                <a href="{saved_url}" target="_blank" 
+                   style="color: white; background: rgba(255,255,255,0.2); 
+                          padding: 0.5rem 1rem; border-radius: 8px; 
+                          text-decoration: none; display: block; text-align: center;">
+                    🔗 باز کردن جدول
+                </a>
+                <p style="color: rgba(255,255,255,0.8); font-size: 0.85rem; margin: 0.5rem 0 0 0;">
+                    لینک ذخیره شده
+                </p>
+            </div>
+            """, unsafe_allow_html=True)
+    except:
+        pass

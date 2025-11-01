@@ -216,7 +216,7 @@ streamlit run streamlit_app/app2.py
 | Web   | `web_analysis.xlsx`           | Web-enriched bilingual company data |
 | Final | `merged_final_*.xlsx`         | Master deduplicated dataset         |
 
----#
+---
 
 ## ⚙️ Technologies
 
@@ -248,15 +248,15 @@ For commercial or enterprise licensing, please contact:
 
 ---
 
-# 🎥 Live Preview
+## 🎥 Live Preview
 
 <p align="center">
-  <img src="docs/app1.gif" width="48%" />
-  <img src="docs/app2.gif" width="48%" />
+  <img src="./docs/app1.gif" alt="Yabix OCR+QR English Demo" width="48%" />
+  <img src="./docs/app2.gif" alt="Yabix OCR+QR Persian Demo" width="48%" />
 </p>
 
 <p align="center">
-  <b>Left:</b> How to Run the App &nbsp; | &nbsp; <b>Right:</b> Launch Web App
+  <b>Left:</b> English Interface &nbsp; | &nbsp; <b>Right:</b> Persian Interface
 </p>
 
 <!-- Or use a GIF -->

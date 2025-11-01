@@ -297,7 +297,7 @@ def clean_and_optimize_dataframe(df):
         if df[col].isna().sum() / len(df) > 0.9:
             df = df.drop(columns=[col])
     
-    # ادغام company_names
+    # company_names
     if 'company_names' in df.columns:
         if 'CompanyNameEN' not in df.columns:
             df['CompanyNameEN'] = ""

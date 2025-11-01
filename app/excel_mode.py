@@ -470,3 +470,61 @@ def smart_merge(original_df, scraped_data):
 # =========================================================
 # Worker Thread
 # =========================================================
+def worker(q, results):
+    while True:
+        try:
+            item = q.get_nowait()
+        except:
+            break
+        
+        idx, url = item
+        
+        try:
+            print(f"\n{'='*60}")
+            print(f"[{idx+1}] Processing: {url}")
+            print(f"{'='*60}")
+            
+            text, error = crawl_site(url)
+            
+            if error or not text:
+                data = {
+                    "url": url,
+                    "error": error or "NO_CONTENT",
+                    "status": "FAILED"
+                }
+                print(f"   ❌ Failed: {error or 'NO_CONTENT'}")
+            else:
+                print(f"   🧠 Analyzing with Gemini...")
+                data = extract_with_gemini(text)
+                
+                print(f"   🌐 Translating to Persian...")
+                data = translate_fields(data)
+                
+                data["url"] = url
+                data["status"] = "SUCCESS"
+                data["error"] = ""
+                
+                print(f"   ✅ Success: {data.get('CompanyNameEN') or data.get('CompanyNameFA', 'Unknown')}")
+            
+            with lock:
+                results.append(data)
+                try:
+                    Path(OUTPUT_JSON).write_text(
+                        json.dumps(results, ensure_ascii=False, indent=2),
+                        encoding="utf-8"
+                    )
+                except:
+                    pass
+                    
+        except Exception as e:
+            print(f"   ❌ Exception: {str(e)[:100]}")
+            data = {
+                "url": url,
+                "error": f"EXCEPTION: {str(e)[:100]}",
+                "status": "EXCEPTION"
+            }
+            with lock:
+                results.append(data)
+        
+        q.task_done()
+        time.sleep(random.uniform(*SLEEP_BETWEEN))

@@ -724,5 +724,5 @@ def run_script(script_name, session_dir, log_area, status_text, script_display_n
         return False
 
 # =========================================================
-# 🎯 Header
+# Header
 # =========================================================

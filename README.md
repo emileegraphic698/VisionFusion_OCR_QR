@@ -250,14 +250,13 @@ For commercial or enterprise licensing, please contact:
 
 ## 🎥 Live Preview
 
-<p align="center">
-  <img src="./docs/app1.gif" alt="Yabix OCR+QR English Demo" width="48%" />
-  <img src="./docs/app2.gif" alt="Yabix OCR+QR Persian Demo" width="48%" />
-</p>
+Experience the Streamlit Web App in action 👇
 
-<p align="center">
-  <b>Left:</b> English Interface &nbsp; | &nbsp; <b>Right:</b> Persian Interface
-</p>
+**📘 English Interface**
+![Yabix OCR+QR Demo – English](./docs/app1.gif)
+
+**📗 Persian Interface**
+![Yabix OCR+QR Demo – Persian](./docs/app2.gif)
 
 <!-- Or use a GIF -->
 

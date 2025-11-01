@@ -394,9 +394,11 @@ def process_image_for_qr(image_path: Path) -> Union[List[str], None]:
     
     return result
 
+
+
 # ----------------------------------------------------------
 def process_pdf_for_qr(pdf_path: Path) -> Dict[str, Any]:
-    """پردازش PDF و تبدیل به تصویر"""
+    """process pdf and convert to image"""
     print(f"\n📄 Processing PDF: {pdf_path.name}")
     temp_dir = SESSION_DIR / "_pdf_pages"
     os.makedirs(temp_dir, exist_ok=True)

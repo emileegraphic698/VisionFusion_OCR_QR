@@ -93,3 +93,4 @@ if not ocr_data:
     print(f"🔗 Loaded QR : {len(qr_data)} items")
 
     merged_results = merge_ocr_qr(ocr_data, qr_data)
+    

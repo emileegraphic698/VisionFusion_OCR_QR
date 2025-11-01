@@ -123,3 +123,6 @@ def call_gemini_single_key(data: Image.Image, source_path: Path) -> Dict[str, An
     buffer = io.BytesIO()
     data.save(buffer, format="JPEG", quality=85)
     image_bytes = buffer.getvalue()
+
+    if len(image_bytes) > 10_000_000:
+        raise RuntimeError(f"Image too large ({len(image_bytes)/1_000_000:.1f} MB).")

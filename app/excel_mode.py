@@ -465,3 +465,8 @@ def smart_merge(original_df, scraped_data):
     
     print(f"   ✅ Merged: {len(result_df)} rows × {len(result_df.columns)} columns")
     return result_df
+
+
+# =========================================================
+# 🔄 Worker Thread
+# =========================================================

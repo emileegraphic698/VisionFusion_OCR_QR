@@ -234,7 +234,7 @@ def fetch(url: str) -> tuple[str, str]:
                 if i == MAX_RETRIES_HTTP - 1:
                     return ("", f"HTTP_{r.status_code}")
         except requests.exceptions.SSLError as e:
-            # ✅ اگر سایت خارجی بود و SSL خطا داد، یک بار دیگه بدون verify امتحان کن
+            #  if the site is foreign and SSL fails, try once more without verify
             if verify_ssl and i == 0:
                 print(f"  🔄 SSL Error, retrying without verification: {url}")
                 try:

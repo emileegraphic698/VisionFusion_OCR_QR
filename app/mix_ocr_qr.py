@@ -54,3 +54,14 @@ def merge_ocr_qr(ocr_data, qr_data):
     """ادغام کامل داده‌های OCR و QR"""
     qr_lookup = {item["file_name"]: item.get("result", []) for item in qr_data}
     merged = []
+for item in ocr_data:
+        file_name = item.get("file_name")
+        qr_result = qr_lookup.get(file_name, [])
+
+        # 🖼 حالت تصویر
+        if file_name.lower().endswith((".jpg", ".jpeg", ".png", ".webp", ".bmp")):
+            item = merge_single_image(item, qr_result)
+
+        # 📄 حالت PDF
+        elif file_name.lower().endswith(".pdf"):
+            item = merge_pdf_pages(item, qr_result)

@@ -722,3 +722,7 @@ def run_script(script_name, session_dir, log_area, status_text, script_display_n
         <div class="status-box status-error">❌ خطای اجرا: {str(e)}</div>
         """, unsafe_allow_html=True)
         return False
+
+# =========================================================
+# 🎯 Header
+# =========================================================

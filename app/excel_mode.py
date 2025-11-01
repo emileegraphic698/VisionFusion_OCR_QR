@@ -296,7 +296,7 @@ Fields JSON:
 """
 
 def gemini_json(prompt, schema):
-    """درخواست به Gemini با خروجی JSON"""
+    """send request to Gemini with JSON output"""
     schema_obj = types.Schema(type=types.Type.OBJECT, properties=schema, required=[])
     
     for i in range(MAX_RETRIES_GEMINI):

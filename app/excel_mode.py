@@ -218,7 +218,7 @@ def fetch(url):
     return ("", "MAX_RETRIES")
 
 def clean_text(html):
-    """تمیز کردن HTML و استخراج متن"""
+    """clean html and extract text"""
     if not html:
         return ""
     soup = BeautifulSoup(html, "html.parser")

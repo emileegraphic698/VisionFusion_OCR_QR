@@ -455,3 +455,24 @@ def save_json(path, data):
         json.dumps(data, indent=4, ensure_ascii=False), 
         encoding="utf-8"
     )
+
+
+# ----------------------------------------------------------
+def extract_urls(entry):
+    """استخراج URLها از نتایج"""
+    urls = []
+    for item in entry.get("result", []):
+        link = item.get("qr_link")
+        if link:
+            urls.append(link)
+    return list(dict.fromkeys(urls))
+
+def is_domain_alive(url, timeout=5):
+    """بررسی زنده بودن دامنه"""
+    try:
+        host = re.sub(r"^https?://(www\.)?", "", url).split("/")[0]
+        socket.setdefaulttimeout(timeout)
+        socket.gethostbyname(host)
+        return True
+    except Exception:
+        return False

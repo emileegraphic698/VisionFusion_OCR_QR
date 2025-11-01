@@ -191,3 +191,11 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
                     print(f"      ✓ Found with {method_name}")
                 payloads.append(val.strip())
                 return True
+                # اگر نتوانست decode کند ولی detect کرد، تلاش مجدد
+            if pts is not None and len(pts) > 0:
+                val, _ = detector.decode(frame, pts)
+                if val and val.strip():
+                    if DEBUG_MODE:
+                        print(f"      ✓ Found with {method_name} (2nd attempt)")
+                    payloads.append(val.strip())
+                    return True

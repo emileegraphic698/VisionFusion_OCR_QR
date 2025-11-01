@@ -150,3 +150,6 @@ def enhance_image_aggressive(img):
     """advanced preprocessing to enhance QR readability"""
     # 1. Denoise
     denoised = cv2.fastNlMeansDenoisingColored(img, None, 10, 10, 7, 21)
+     # 2. Convert to LAB for better processing
+    lab = cv2.cvtColor(denoised, cv2.COLOR_BGR2LAB)
+    l, a, b = cv2.split(lab)

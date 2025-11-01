@@ -52,3 +52,8 @@ print("🚀 SuperQR v6.1 (Clean URLs + vCard Support) ready\n")
 # ----------------------------------------------------------
 # QR fallbacks
 # ----------------------------------------------------------
+try:
+    from pyzbar import pyzbar
+    HAS_PYZBAR = True
+    print("✅ pyzbar loaded")
+except ImportError:

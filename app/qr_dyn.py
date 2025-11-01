@@ -29,3 +29,6 @@ if not IMAGES_FOLDER.exists() or not any(IMAGES_FOLDER.glob("*")):
 print(f"📂 Using IMAGES_FOLDER → {IMAGES_FOLDER}")
 
 #outputs (Dynamic)
+OUTPUT_JSON_RAW = Path(os.getenv("QR_RAW_JSON", SESSION_DIR / "final_superqr_v6_raw.json"))
+OUTPUT_JSON_CLEAN = Path(os.getenv("QR_CLEAN_JSON", SESSION_DIR / "final_superqr_v6_clean.json"))
+DEBUG_DIR = SESSION_DIR / "_debug"

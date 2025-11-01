@@ -77,7 +77,7 @@ def clean_url(url):
     
     url = url.strip()
     
-    # اگر URL شامل کاراکترهای encode شده است، decode کنیم
+    # decode url if it contains encoded characters
     try:
         # فقط domain و path اصلی را نگه می‌داریم
         parsed = urlparse(url)

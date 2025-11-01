@@ -28,7 +28,7 @@ def read_json(path: Path):
 
 
 def merge_single_image(item, qr_result):
-    """ادغام داده‌های تصویر"""
+    """merge image data"""
     qr_links = [p.get("qr_link") for p in qr_result if p.get("qr_link")]
     if isinstance(item.get("result"), dict):
         item["result"]["qr_links"] = qr_links if qr_links else None

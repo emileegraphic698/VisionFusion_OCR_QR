@@ -83,7 +83,8 @@ def main():
 
     ocr_data = read_json(OCR_FILE)
     qr_data = read_json(QR_FILE)
-if not ocr_data:
+
+    if not ocr_data:
         print(f"⚠️ OCR file is empty or not found → continuing with QR data only.")
 
     if not qr_data:
@@ -93,4 +94,13 @@ if not ocr_data:
     print(f"🔗 Loaded QR : {len(qr_data)} items")
 
     merged_results = merge_ocr_qr(ocr_data, qr_data)
-    
+
+    OUTPUT_FILE.write_text(json.dumps(merged_results, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    print(f"\n✅ Merge completed successfully!")
+    print(f"📁 Final output saved to → {OUTPUT_FILE}")
+    print(f"📊 Total merged records: {len(merged_results)}\n")
+
+
+if __name__ == "__main__":
+    main()

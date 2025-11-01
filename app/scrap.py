@@ -155,7 +155,7 @@ def domain_exists(url: str) -> bool:
 
 
 # =============================================================
-# 🔹 Extract URLs (from OCR + QR + Excel)
+# Extract URLs (from OCR + QR + Excel)
 # =============================================================
 def extract_urls_from_mix(input_path: str, output_path: str):
     print("🌐 Extracting all URLs from mix_cor_qr.json (OCR + QR + Excel)...")

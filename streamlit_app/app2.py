@@ -402,3 +402,8 @@ def decrease_quota(amount=1):
     quota["remaining"] = max(0, DAILY_LIMIT - quota["used"])
     save_quota(quota)
     return quota
+
+
+# =========================================================
+# ✨ Quality Control Tracking Functions
+# =========================================================

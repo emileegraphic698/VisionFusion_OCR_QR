@@ -239,7 +239,7 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
     enhanced = cv2.cvtColor(cv2.merge((l2, a, b)), cv2.COLOR_LAB2BGR)
     try_decode(enhanced, "CLAHE")
     
-    # 7. Sharpening قوی
+    # 7. Sharpening 
     kernel_sharp = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])
     sharp = cv2.filter2D(img, -1, kernel_sharp)
     try_decode(sharp, "Sharpened")

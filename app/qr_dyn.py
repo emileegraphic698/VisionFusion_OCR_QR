@@ -70,9 +70,62 @@ except ImportError:
     print("⚠️ pyzxing not available")
 
 # ----------------------------------------------------------
-def clean_url(url):
-    """clean url and remove extra parts"""
-    if not url or not isinstance(url, str):
+url = url.strip()
+    
+    # اگر URL شامل کاراکترهای encode شده است، decode کنیم
+    try:
+        # فقط domain و path اصلی را نگه می‌داریم
+        parsed = urlparse(url)
+        
+        # اگر path دارد و encode شده، تمیز می‌کنیم
+        if parsed.path and '%' in parsed.path:
+            # فقط domain + / را برمی‌گردانیم
+            clean = f"{parsed.scheme}://{parsed.netloc}"
+            if DEBUG_MODE:
+                print(f"      🧹 Cleaned: {url} → {clean}")
+            return clean
+        
+        # اگر query string دارد، حذف می‌کنیم
+        if parsed.query:
+            clean = f"{parsed.scheme}://{parsed.netloc}{parsed.path}"
+            if DEBUG_MODE:
+                print(f"      🧹 Cleaned: {url} → {clean}")
+            return clean
+        
+        return url
+    except Exception as e:
+        if DEBUG_MODE:
+            print(f"      ⚠️ URL cleaning error: {e}")
+        return url
+
+def extract_url_from_vcard(data):
+    """استخراج URL از vCard"""
+    if not data or not isinstance(data, str):
         return None
     
-    url = url.strip()
+    # بررسی اینکه آیا vCard است
+    if not (data.upper().startswith("BEGIN:VCARD") or "VCARD" in data.upper()):
+        return None
+    
+    if DEBUG_MODE:
+        print(f"      📇 Detected vCard format")
+    
+    # جستجوی URL در vCard
+    url_patterns = [
+        r"URL[;:]([^\r\n]+)",
+        r"URL;[^:]+:([^\r\n]+)",
+        r"item\d+\.URL[;:]([^\r\n]+)",
+        r"https?://[^\s\r\n]+",
+    ]
+    
+    for pattern in url_patterns:
+        matches = re.findall(pattern, data, re.IGNORECASE | re.MULTILINE)
+        if matches:
+            for match in matches:
+                url = match.strip()
+                if url.lower().startswith("http"):
+                    if DEBUG_MODE:
+                        print(f"      ✓ Found URL in vCard: {url}")
+                    return clean_url(url)
+    
+    return None

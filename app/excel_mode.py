@@ -35,4 +35,28 @@ SOURCE_FOLDER = Path(os.getenv("SOURCE_FOLDER", SESSION_DIR / "uploads"))
 RENAMED_DIR = Path(os.getenv("RENAMED_DIR", SESSION_DIR / "renamed"))
 
 # input: auto-search for Excel file
+INPUT_EXCEL_ENV = os.getenv("INPUT_EXCEL")
+if INPUT_EXCEL_ENV:
+    INPUT_EXCEL = Path(INPUT_EXCEL_ENV)
+else:
+    search_paths = [SESSION_DIR, SOURCE_FOLDER, RENAMED_DIR, SESSION_DIR / "input"]
+    INPUT_EXCEL = None
+    for search_path in search_paths:
+        if search_path.exists():
+            excel_files = list(search_path.glob("*.xlsx"))
+            if excel_files:
+                for f in excel_files:
+                    if not f.name.startswith("output_enriched"):
+                        INPUT_EXCEL = f
+                        break
+                if INPUT_EXCEL:
+                    break
+    if not INPUT_EXCEL:
+        INPUT_EXCEL = SESSION_DIR / "input.xlsx"
 
+OUTPUT_EXCEL = Path(os.getenv(
+    "OUTPUT_EXCEL", 
+    SESSION_DIR / f"output_enriched_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+))
+TEMP_EXCEL = Path(os.getenv("TEMP_EXCEL", SESSION_DIR / "temp_output.xlsx"))
+OUTPUT_JSON = Path(os.getenv("OUTPUT_JSON", SESSION_DIR / "scraped_data.json"))

@@ -585,4 +585,60 @@ def extract_exhibition_name(files):
     if cleaned_parts:
         return " ".join(cleaned_parts[:3])
     return "Unknown_Exhibition"
+
+# =========================================================
+# ✨ Batch Processing Logic
+# =========================================================
+def get_batch_size(file_type):
+    """تعیین اندازه Batch بر اساس نوع فایل"""
+    file_type = file_type.lower()
+    if file_type in ['jpg', 'jpeg', 'png', 'bmp', 'webp', 'gif']:
+        return 5
+    elif file_type == 'pdf':
+        return 4
+    elif file_type in ['xlsx', 'xls']:
+        return 1
+    else:
+        return 1
+
+def create_batches(files_list, batch_size):
+    """تقسیم لیست فایل‌ها به Batch‌های کوچک‌تر"""
+    batches = []
+    for i in range(0, len(files_list), batch_size):
+        batches.append(files_list[i:i + batch_size])
+    return batches
+
+def process_files_in_batches(uploads_dir, pipeline_type):
+    """پردازش فایل‌ها به صورت Batch"""
+    if pipeline_type == 'excel':
+        excel_files = list(uploads_dir.glob("*.xlsx")) + list(uploads_dir.glob("*.xls"))
+        return [(f,) for f in excel_files], 1
     
+    elif pipeline_type == 'ocr_qr':
+        image_files = []
+        pdf_files = []
+        
+        for f in uploads_dir.iterdir():
+            if f.is_file():
+                ext = f.suffix.lower()
+                if ext in ['.jpg', '.jpeg', '.png', '.bmp', '.webp', '.gif']:
+                    image_files.append(f)
+                elif ext == '.pdf':
+                    pdf_files.append(f)
+        
+        image_batches = create_batches(image_files, 5) if image_files else []
+        pdf_batches = create_batches(pdf_files, 4) if pdf_files else []
+        all_batches = image_batches + pdf_batches
+        
+        if image_files and pdf_files:
+            avg_batch_size = (5 + 4) / 2
+        elif image_files:
+            avg_batch_size = 5
+        elif pdf_files:
+            avg_batch_size = 4
+        else:
+            avg_batch_size = 1
+        
+        return all_batches, int(avg_batch_size)
+    
+    return [], 1

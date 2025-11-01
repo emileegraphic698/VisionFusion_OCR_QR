@@ -172,3 +172,100 @@ def are_values_same(v1, v2):
 # =========================================================
 # web scraping with smart ssl
 # =========================================================
+def fetch(url):
+    """دریافت محتوای صفحه با مدیریت هوشمند SSL"""
+    verify_ssl = not is_iranian_domain(url)
+    ssl_status = "🔒 SSL ON" if verify_ssl else "🔓 SSL OFF (Iranian)"
+    
+    for i in range(MAX_RETRIES_HTTP):
+        try:
+            print(f"      🔄 Attempt {i+1}/{MAX_RETRIES_HTTP} [{ssl_status}]")
+            r = requests.get(
+                url,
+                headers=HEADERS,
+                timeout=REQUEST_TIMEOUT,
+                verify=verify_ssl,
+                allow_redirects=True
+            )
+            if r.status_code == 200:
+                return (r.text, "")
+            else:
+                if i == MAX_RETRIES_HTTP - 1:
+                    return ("", f"HTTP_{r.status_code}")
+        except requests.exceptions.SSLError:
+            if verify_ssl and i == 0:
+                try:
+                    r = requests.get(url, headers=HEADERS, timeout=REQUEST_TIMEOUT, 
+                                   verify=False, allow_redirects=True)
+                    if r.status_code == 200:
+                        return (r.text, "")
+                except:
+                    pass
+            if i == MAX_RETRIES_HTTP - 1:
+                return ("", "SSL_ERROR")
+        except requests.exceptions.Timeout:
+            if i == MAX_RETRIES_HTTP - 1:
+                return ("", "TIMEOUT")
+        except requests.exceptions.ConnectionError:
+            if i == MAX_RETRIES_HTTP - 1:
+                return ("", "CONNECTION_ERROR")
+        except Exception as e:
+            if i == MAX_RETRIES_HTTP - 1:
+                return ("", f"ERROR: {str(e)[:50]}")
+        
+        time.sleep(2.0 * (i + 1))
+    
+    return ("", "MAX_RETRIES")
+
+def clean_text(html):
+    """تمیز کردن HTML و استخراج متن"""
+    if not html:
+        return ""
+    soup = BeautifulSoup(html, "html.parser")
+    for tag in soup(["script", "style", "noscript", "iframe", "svg", "nav", "footer"]):
+        tag.extract()
+    text = soup.get_text(" ", strip=True)
+    return re.sub(r"\s+", " ", text).strip()
+
+def crawl_site(root):
+    """کرال کامل سایت"""
+    print(f"   🕷️ Crawling: {root}")
+    seen = set()
+    q = [(root, 0)]
+    texts = []
+    errors = []
+    
+    while q and len(seen) < MAX_PAGES_PER_SITE:
+        url, depth = q.pop(0)
+        if url in seen or depth > MAX_DEPTH:
+            continue
+        seen.add(url)
+        
+        html, error = fetch(url)
+        
+        if error:
+            errors.append(f"{url}: {error}")
+            continue
+        
+        txt = clean_text(html)
+        if txt:
+            texts.append(txt[:40000])
+            print(f"      📄 Extracted {len(txt)} chars")
+        
+        if html and depth < MAX_DEPTH:
+            soup = BeautifulSoup(html, "html.parser")
+            for a in soup.find_all("a", href=True):
+                next_url = urljoin(root, a["href"])
+                if next_url.startswith(root) and next_url not in seen:
+                    q.append((next_url, depth + 1))
+        
+        time.sleep(random.uniform(*SLEEP_BETWEEN))
+    
+    combined = "\n".join(texts)[:180000]
+    
+    if not combined:
+        error_summary = "; ".join(errors[:3])
+        return ("", error_summary or "NO_CONTENT")
+    
+    print(f"      ✅ Total: {len(combined)} chars from {len(texts)} pages")
+    return (combined, "")

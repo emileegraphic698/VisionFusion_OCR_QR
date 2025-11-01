@@ -149,4 +149,4 @@ def call_gemini_single_key(data: Image.Image, source_path: Path) -> Dict[str, An
 # Process PDF into Images and Send
 # =========================================================
 def pdf_to_images_and_process(pdf_path: Path) -> List[Dict[str, Any]]:
-    from pdf2image import convert_from_path
+    from pdf2image import convert_from_pathprint(f"📑 Converting PDF: {pdf_path.name}")

@@ -165,3 +165,8 @@ def pdf_to_images_and_process(pdf_path: Path) -> List[Dict[str, Any]]:
 
     print(f"✅ {len(results)} page(s) processed from {pdf_path.name}")
     return results
+
+
+# =========================================================
+# Main Program Execution
+# =========================================================

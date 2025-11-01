@@ -65,3 +65,4 @@ OUTPUT_JSON = Path(os.getenv("OUTPUT_JSON", SESSION_DIR / "scraped_data.json"))
 # =========================================================
 #  settings
 # =========================================================
+# api key - only one key

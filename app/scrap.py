@@ -463,7 +463,7 @@ def main():
     
     for field in FIELDS:
         ordered_cols.append(field)
-        # اگر این فیلد ترجمه داره، ستون فارسی رو کنارش اضافه کن
+        # if this field is translatable, add FA column next to it
         for en_field, fa_field in TRANSLATABLE_FIELDS:
             if en_field == field:
                 ordered_cols.append(fa_field)

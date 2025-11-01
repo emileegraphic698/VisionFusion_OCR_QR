@@ -207,3 +207,120 @@ def extract_urls_from_mix(input_path: str, output_path: str):
 # =============================================================
 #  Web Crawling & Cleaning (FIXED)
 # =============================================================
+def fetch(url: str) -> tuple[str, str]:
+    """
+    Returns: (html_content, error_message)
+    Smart SSL handling: Iranian domains = no verify, others = verify
+    """
+    # ✅ تشخیص هوشمند SSL
+    verify_ssl = not is_iranian_domain(url)
+    ssl_status = "🔒 SSL ON" if verify_ssl else "🔓 SSL OFF (Iranian)"
+    
+    for i in range(MAX_RETRIES_HTTP):
+        try:
+            print(f"  🔄 Attempt {i+1}/{MAX_RETRIES_HTTP} [{ssl_status}]: {url}")
+            r = requests.get(
+                url, 
+                headers=HEADERS, 
+                timeout=REQUEST_TIMEOUT, 
+                verify=verify_ssl,  # ✅ داینامیک
+                allow_redirects=True
+            )
+            if r.status_code == 200:
+                print(f"  ✅ Success: {url}")
+                return (r.text, "")
+            else:
+                print(f"  ⚠️ Status {r.status_code}: {url}")
+                if i == MAX_RETRIES_HTTP - 1:
+                    return ("", f"HTTP_{r.status_code}")
+        except requests.exceptions.SSLError as e:
+            # ✅ اگر سایت خارجی بود و SSL خطا داد، یک بار دیگه بدون verify امتحان کن
+            if verify_ssl and i == 0:
+                print(f"  🔄 SSL Error, retrying without verification: {url}")
+                try:
+                    r = requests.get(
+                        url, 
+                        headers=HEADERS, 
+                        timeout=REQUEST_TIMEOUT, 
+                        verify=False,
+                        allow_redirects=True
+                    )
+                    if r.status_code == 200:
+                        print(f"  ✅ Success (SSL disabled): {url}")
+                        return (r.text, "")
+                except:
+                    pass
+            print(f"  🔐 SSL Error: {url}")
+            if i == MAX_RETRIES_HTTP - 1:
+                return ("", "SSL_ERROR")
+        except requests.exceptions.Timeout:
+            print(f"  ⏰ Timeout: {url}")
+            if i == MAX_RETRIES_HTTP - 1:
+                return ("", "TIMEOUT")
+        except requests.exceptions.ConnectionError:
+            print(f"  🔌 Connection Error: {url}")
+            if i == MAX_RETRIES_HTTP - 1:
+                return ("", "CONNECTION_ERROR")
+        except Exception as e:
+            print(f"  ❌ Error: {url} -> {str(e)[:100]}")
+            if i == MAX_RETRIES_HTTP - 1:
+                return ("", f"ERROR: {str(e)[:50]}")
+        
+        time.sleep(2.0 * (i + 1))
+    
+    return ("", "MAX_RETRIES_EXCEEDED")
+
+def clean_text(html: str) -> str:
+    if not html: return ""
+    soup = BeautifulSoup(html, "html.parser")
+    for t in soup(["script","style","noscript","iframe","svg"]): t.extract()
+    text = soup.get_text(" ", strip=True)
+    return re.sub(r"\s+", " ", text).strip()
+
+def crawl_site(root: str, max_depth=MAX_DEPTH, max_pages=MAX_PAGES_PER_SITE) -> tuple[str, str]:
+    """
+    Returns: (combined_text, error_message)
+    """
+    print(f"\n🕷️ Starting crawl: {root}")
+    seen = set()
+    q = [(root, 0)]
+    texts = []
+    errors = []
+    
+    while q and len(seen) < max_pages:
+        url, d = q.pop(0)
+        if url in seen or d > max_depth: continue
+        seen.add(url)
+        
+        html, error = fetch(url)
+        
+        if error:
+            errors.append(f"{url}: {error}")
+            continue
+            
+        txt = clean_text(html)
+        if txt:
+            texts.append(txt[:40000])
+            print(f"  📄 Extracted {len(txt)} chars from {url}")
+        else:
+            errors.append(f"{url}: EMPTY_CONTENT")
+        
+        # Only continue crawling if we got content
+        if html:
+            soup = BeautifulSoup(html, "html.parser")
+            for a in soup.find_all("a", href=True):
+                nxt = urljoin(root, a["href"])
+                if nxt.startswith(root) and nxt not in seen and len(seen) < max_pages:
+                    q.append((nxt, d+1))
+        
+        time.sleep(random.uniform(*SLEEP_BETWEEN))
+    
+    combined = "\n".join(texts)[:180000]
+    
+    if not combined:
+        error_summary = "; ".join(errors[:3])
+        print(f"  ❌ No content extracted from {root}")
+        return ("", error_summary or "NO_CONTENT")
+    
+    print(f"  ✅ Total extracted: {len(combined)} chars from {len(texts)} pages")
+    return (combined, "")

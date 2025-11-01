@@ -126,7 +126,7 @@ print(f"{'='*70}\n")
 #  helper functions
 # =========================================================
 def normalize_url(url):
-    """نرمال‌سازی URL"""
+    """normalize url"""
     if not url or pd.isna(url) or str(url).lower() in ['nan', 'none', '']:
         return None
     url = str(url).strip()

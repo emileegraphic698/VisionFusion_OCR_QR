@@ -115,3 +115,7 @@ def ensure_nulls(obj: Dict[str, Any]) -> Dict[str, Any]:
 def call_gemini_single_key(data: Image.Image, source_path: Path) -> Dict[str, Any]:
     schema = build_newsdk_schema()
     cfg = _genai_types.GenerateContentConfig(
+        temperature=TEMPERATURE,
+        response_mime_type="application/json",
+        response_schema=schema,
+    )

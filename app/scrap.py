@@ -203,3 +203,7 @@ def extract_urls_from_mix(input_path: str, output_path: str):
     Path(output_path).write_text(json.dumps(roots, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"✅ Found {len(roots)} clean root URLs → {output_path}")
     return roots
+
+# =============================================================
+# 🔹 Web Crawling & Cleaning (FIXED)
+# =============================================================

@@ -136,3 +136,9 @@ def call_gemini_single_key(data: Image.Image, source_path: Path) -> Dict[str, An
         resp = CLIENT.models.generate_content(model=MODEL_NAME, contents=parts, config=cfg)
         txt = getattr(resp, "text", None)
         if not txt and getattr(resp, "candidates", None):
+            txt = "\n".join(p.text for p in resp.candidates[0].content.parts if getattr(p, "text", None))
+        if not txt:
+            raise RuntimeError("Empty response from Gemini.")
+        print("✅ Gemini response received successfully.")
+        return ensure_nulls(json.loads(txt))
+    except Exception as e:

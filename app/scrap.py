@@ -378,3 +378,126 @@ def translate_fields(data: dict):
 # =============================================================
 # Worker & Main (FIXED)
 # =============================================================
+def worker(q: Queue, results: list):
+    while True:
+        try:
+            root = q.get_nowait()
+        except:
+            break
+        
+        try:
+            print(f"\n{'='*60}")
+            print(f"🌐 Processing: {root}")
+            print(f"{'='*60}")
+            
+            text, error = crawl_site(root)
+            
+            if error or not text:
+                data = {
+                    "url": root, 
+                    "error": error or "NO_CONTENT",
+                    "status": "FAILED"
+                }
+                print(f"❌ Failed: {root} - {error or 'NO_CONTENT'}")
+            else:
+                print(f"🧠 Analyzing with Gemini: {root}")
+                data = extract_with_gemini(text)
+                data = translate_fields(data)
+                data["url"] = root
+                data["status"] = "SUCCESS"
+                data["error"] = ""
+                print(f"✅ Success: {root}")
+                
+        except Exception as e:
+            data = {
+                "url": root, 
+                "error": f"EXCEPTION: {str(e)[:100]}",
+                "status": "EXCEPTION"
+            }
+            print(f"❌ Exception for {root}: {str(e)[:100]}")
+        
+        with lock:
+            results.append(data)
+            # Save after each URL
+            try:
+                Path(OUTPUT_JSON).write_text(
+                    json.dumps(results, ensure_ascii=False, indent=2), 
+                    encoding="utf-8"
+                )
+            except Exception as e:
+                print(f"⚠️ Failed to save JSON: {e}")
+        
+        q.task_done()
+        time.sleep(random.uniform(*SLEEP_BETWEEN))
+
+def main():
+    print("\n" + "="*60)
+    print("🚀 Starting Web Scraping Process")
+    print("="*60 + "\n")
+    
+    roots = extract_urls_from_mix(RAW_INPUT, CLEAN_URLS)
+    if not roots:
+        print("⚠️ No URLs found.")
+        return
+
+    results = []
+    q = Queue()
+    for r in roots: q.put(r)
+
+    threads = []
+    for _ in range(min(THREAD_COUNT, len(roots))):
+        t = threading.Thread(target=worker, args=(q, results), daemon=True)
+        t.start()
+        threads.append(t)
+    
+    for t in threads: t.join()
+
+    print("\n" + "="*60)
+    print("📊 Creating Excel Report")
+    print("="*60 + "\n")
+
+    df = pd.DataFrame(results)
+    
+    # ✅ ترتیب ستون‌ها: ستون اصلی + ستون فارسی کنارش
+    ordered_cols = ["url", "status", "error"]
+    
+    for field in FIELDS:
+        ordered_cols.append(field)
+        # اگر این فیلد ترجمه داره، ستون فارسی رو کنارش اضافه کن
+        for en_field, fa_field in TRANSLATABLE_FIELDS:
+            if en_field == field:
+                ordered_cols.append(fa_field)
+                break
+    
+    # اضافه کردن ستون‌هایی که ترجمه دارند ولی در FIELDS نیستند (مثل CompanyNameEN)
+    for en_field, fa_field in TRANSLATABLE_FIELDS:
+        if en_field not in FIELDS and en_field not in ordered_cols:
+            ordered_cols.append(en_field)
+            ordered_cols.append(fa_field)
+    
+    # اطمینان از وجود همه ستون‌ها
+    for col in ordered_cols:
+        if col not in df.columns:
+            df[col] = ""
+    
+    df = df[ordered_cols]
+    
+    try:
+        tmp = TEMP_EXCEL
+        df.to_excel(tmp, index=False)
+        shutil.move(tmp, OUTPUT_EXCEL)
+        print(f"✅ Excel saved: {OUTPUT_EXCEL}")
+    except Exception as e:
+        print(f"❌ Failed to save Excel: {e}")
+    
+    # Print summary
+    success = len([r for r in results if r.get("status") == "SUCCESS"])
+    failed = len([r for r in results if r.get("status") != "SUCCESS"])
+    
+    print("\n" + "="*60)
+    print(f"✅ Success: {success}/{len(results)}")
+    print(f"❌ Failed: {failed}/{len(results)}")
+    print("="*60 + "\n")
+
+if __name__ == "__main__":
+    main()

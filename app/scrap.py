@@ -369,7 +369,7 @@ def translate_fields(data: dict):
     schema = {k: types.Schema(type=types.Type.STRING, nullable=True) for k in to_translate.keys()}
     tr = gemini_json(prompt, schema)
     
-    # ✅ برای همه فیلدهای قابل ترجمه، چه پر باشند چه خالی، ستون FA رو اضافه کن
+    #  for all translatable fields, whether filled or empty, add FA column
     for en, fa_col in TRANSLATABLE_FIELDS:
         data[fa_col] = tr.get(en, "")
     

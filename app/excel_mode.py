@@ -168,3 +168,8 @@ def are_values_same(v1, v2):
     if not v1 or not v2:
         return False
     return str(v1).strip().lower() == str(v2).strip().lower()
+
+# =========================================================
+# 🌐 Web Scraping با SSL هوشمند
+# =========================================================
+def fetch(url):

@@ -271,5 +271,5 @@ def crawl_site(root):
     return (combined, "")
 
 # =========================================================
-# 🤖 Gemini Extraction & Translation
+# Gemini Extraction & Translation
 # =========================================================

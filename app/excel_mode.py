@@ -330,7 +330,7 @@ def translate_fields(data):
     """translate English fields to Farsi"""
     to_translate = {en: data.get(en) for en, _ in TRANSLATABLE_FIELDS if data.get(en)}
     
-    # اضافه کردن ستون‌های خالی FA
+    # add empty FA columns
     for en, fa_col in TRANSLATABLE_FIELDS:
         if fa_col not in data:
             data[fa_col] = ""

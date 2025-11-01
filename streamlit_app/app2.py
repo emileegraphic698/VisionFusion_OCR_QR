@@ -776,3 +776,47 @@ elif Path("google_sheet_link.txt").exists():
             """, unsafe_allow_html=True)
     except:
         pass
+
+
+# ======================================
+#end of quick link
+#=========================================
+quota = load_quota()
+st.sidebar.markdown(f"""
+<div class="quota-card">
+    <h3>📊 API Quota امروز</h3>
+    <div class="quota-number">{quota['remaining']}</div>
+    <p>از {DAILY_LIMIT} درخواست</p>
+</div>
+""", unsafe_allow_html=True)
+progress_value = quota['used'] / DAILY_LIMIT if DAILY_LIMIT > 0 else 0
+st.sidebar.progress(progress_value)
+
+if quota['remaining'] <= 0:
+    st.sidebar.markdown('<span class="badge badge-error">❌ سهمیه تمام شد</span>', unsafe_allow_html=True)
+elif quota['remaining'] < 20:
+    st.sidebar.markdown('<span class="badge badge-warning">⚠️ کم شده</span>', unsafe_allow_html=True)
+else:
+    st.sidebar.markdown('<span class="badge badge-success">✅ سهمیه خوب</span>', unsafe_allow_html=True)
+
+st.sidebar.markdown("---")
+st.sidebar.markdown("### ⚙️ تنظیمات")
+rate_limit = st.sidebar.slider("⏱️ فاصله بین درخواست‌ها (ثانیه)", 0, 10, 4)
+if rate_limit < 4:
+    st.sidebar.markdown('<span class="badge badge-error">⚠️ خطر Block</span>', unsafe_allow_html=True)
+elif rate_limit == 4:
+    st.sidebar.markdown('<span class="badge badge-success">✅ ایمن (15 RPM)</span>', unsafe_allow_html=True)
+else:
+    st.sidebar.markdown('<span class="badge badge-success">🔒 خیلی ایمن</span>', unsafe_allow_html=True)
+
+debug_mode = st.sidebar.checkbox("🐛 Debug Mode")
+fast_mode = st.sidebar.checkbox("⚡️ Fast Mode", value=True)
+
+st.sidebar.markdown("---")
+st.sidebar.markdown("### 🔑 وضعیت کلیدها")
+for key_name, key_value in API_KEYS.items():
+    st.sidebar.text(f"{key_name.upper()}: {key_value[:20]}...")
+
+st.sidebar.markdown("---")
+st.sidebar.markdown("### 📦 Batch Processing")
+st.sidebar.info("📸 تصاویر: 5 تا\n📄 PDF: 4 تا\n📊 Excel: 1 تا")

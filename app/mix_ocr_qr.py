@@ -23,3 +23,5 @@ def read_json(path: Path):
             return []
         return json.loads(path.read_text(encoding="utf-8"))
     except Exception as e:
+        print(f"❌ Error reading {path}: {e}")
+        return []

@@ -70,7 +70,12 @@ except ImportError:
     print("⚠️ pyzxing not available")
 
 # ----------------------------------------------------------
-url = url.strip()
+def clean_url(url):
+    """تمیز کردن URL و حذف قسمت‌های اضافی"""
+    if not url or not isinstance(url, str):
+        return None
+    
+    url = url.strip()
     
     # اگر URL شامل کاراکترهای encode شده است، decode کنیم
     try:

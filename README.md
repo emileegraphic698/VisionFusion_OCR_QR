@@ -248,11 +248,12 @@ For commercial or enterprise licensing, please contact:
 
 ---
 
-## 🎥 Preview
+## 🎥 Live Preview
 
-*Add your project screenshot or demo GIF here:*
+Experience the Streamlit Web App in action 👇
 
-![Dynamic OCR QR Web App Preview](./docs/app_preview.png)
+![Yabix OCR+QR Demo](./docs/app_demo.gif)
+
 
 <!-- Or use a GIF -->
 

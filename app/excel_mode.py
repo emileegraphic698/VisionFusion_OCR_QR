@@ -533,3 +533,107 @@ def worker(q, results):
 # =========================================================
 #  Main
 # =========================================================
+def main():
+    print("📥 Loading Excel file...")
+    if not INPUT_EXCEL.exists():
+        print(f"❌ File not found: {INPUT_EXCEL}")
+        return
+    
+    df = pd.read_excel(INPUT_EXCEL)
+    print(f"   ✓ Loaded {len(df)} rows, {len(df.columns)} columns")
+    
+    url_col = None
+    for col in df.columns:
+        col_lower = str(col).strip().lower()
+        if 'url' in col_lower or 'website' in col_lower or 'site' in col_lower:
+            url_col = col
+            break
+    
+    if not url_col:
+        print("❌ No URL column found!")
+        return
+    
+    print(f"   ✓ URL column: '{url_col}'")
+    
+    urls = []
+    for idx, row in df.iterrows():
+        url = normalize_root(row[url_col])
+        if url and domain_exists(url):
+            urls.append((idx, url))
+    
+    print(f"   ✓ Found {len(urls)} valid URLs")
+    
+    if not urls:
+        print("❌ No valid URLs to scrape!")
+        return
+    
+    print(f"\n🌐 Starting web scraping ({THREAD_COUNT} threads)...")
+    
+    results = []
+    q = Queue()
+    for item in urls:
+        q.put(item)
+    
+    threads = []
+    for _ in range(min(THREAD_COUNT, len(urls))):
+        t = threading.Thread(target=worker, args=(q, results), daemon=True)
+        t.start()
+        threads.append(t)
+    
+    for t in threads:
+        t.join()
+    
+    final_df = smart_merge(df, results)
+    final_df = clean_duplicate_columns(final_df)
+    
+    print("\n📊 Organizing columns...")
+    priority_cols = []
+    
+    for col in df.columns:
+        base_col = re.sub(r'\[\d+\]$', '', str(col))
+        if base_col not in priority_cols and base_col in final_df.columns:
+            priority_cols.append(base_col)
+    
+    standard_fields = ["url", "status", "error", "CompanyNameEN", "CompanyNameFA", 
+                      "CompanyNameFA_translated", "Industry", "Phone1", "Phone2", 
+                      "Email", "Website", "AddressEN", "AddressFA", "AddressFA_translated",
+                      "ProductName", "ProductNameFA", "ProductCategory", "ProductCategoryFA",
+                      "Description", "DescriptionFA"]
+    
+    for field in standard_fields:
+        if field not in priority_cols and field in final_df.columns:
+            priority_cols.append(field)
+    
+    for col in final_df.columns:
+        if col not in priority_cols:
+            priority_cols.append(col)
+    
+    final_df = final_df[[c for c in priority_cols if c in final_df.columns]]
+    
+    print(f"\n💾 Saving final Excel...")
+    try:
+        final_df.to_excel(TEMP_EXCEL, index=False)
+        shutil.move(str(TEMP_EXCEL), str(OUTPUT_EXCEL))
+        print(f"   ✅ Saved: {OUTPUT_EXCEL}")
+    except Exception as e:
+        print(f"   ❌ Save failed: {e}")
+        try:
+            final_df.to_excel(OUTPUT_EXCEL, index=False)
+            print(f"   ✅ Saved (direct): {OUTPUT_EXCEL}")
+        except Exception as e2:
+            print(f"   ❌ Direct save also failed: {e2}")
+    
+    success = sum(1 for r in results if r.get('status') == 'SUCCESS')
+    failed = len(results) - success
+    
+    print(f"\n{'='*70}")
+    print("📊 FINAL STATISTICS")
+    print(f"{'='*70}")
+    print(f"✅ Successfully scraped: {success}/{len(results)}")
+    print(f"❌ Failed: {failed}/{len(results)}")
+    print(f"📁 Output saved: {OUTPUT_EXCEL}")
+    print(f"📊 Final size: {len(final_df)} rows × {len(final_df.columns)} columns")
+    print(f"{'='*70}\n")
+
+if __name__ == "__main__":
+    main()

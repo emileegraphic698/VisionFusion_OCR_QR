@@ -61,3 +61,8 @@ except ImportError:
     print("⚠️ pyzbar not available")
 
 try:
+    from pyzxing import BarCodeReader
+    zxing_reader = BarCodeReader()
+    HAS_ZXING = True
+    print("✅ pyzxing loaded")
+except ImportError:

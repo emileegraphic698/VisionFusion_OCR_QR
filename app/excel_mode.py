@@ -155,7 +155,7 @@ def is_iranian_domain(url):
         return False
 
 def domain_exists(url):
-    """بررسی وجود دامنه"""
+    """check domain existence"""
     try:
         host = urlparse(normalize_root(url)).netloc
         socket.gethostbyname(host)

@@ -127,6 +127,239 @@ for key_name, key_value in API_KEYS.items():
 
 
 # =========================================================
-# ☁️ GOOGLE SHEETS INTEGRATION
+# GOOGLE SHEETS INTEGRATION
 # =========================================================
 from google.oauth2 import service_account
+from googleapiclient.discovery import build
+
+GOOGLE_SCOPES = [
+    'https://www.googleapis.com/auth/drive.file',
+    'https://www.googleapis.com/auth/spreadsheets'
+]
+
+@st.cache_resource
+def get_google_services():
+    """اتصال به Google Drive و Sheets"""
+    try:
+        creds = service_account.Credentials.from_service_account_info(
+            st.secrets["gcp_service_account"],
+            scopes=GOOGLE_SCOPES
+        )
+        drive_service = build('drive', 'v3', credentials=creds)
+        sheets_service = build('sheets', 'v4', credentials=creds)
+        return drive_service, sheets_service
+    except Exception as e:
+        st.error(f"❌ خطا در اتصال به Google: {e}")
+        return None, None
+
+def _col_index_to_letter(col_index):
+    """تبدیل index به حرف Excel (0->A, 25->Z, 26->AA)"""
+    result = ""
+    while col_index >= 0:
+        result = chr(col_index % 26 + 65) + result
+        col_index = col_index // 26 - 1
+    return result
+
+def find_or_create_data_table(drive_service, sheets_service, folder_id=None):
+    """پیدا کردن یا ساخت جدول در Drive"""
+    try:
+        table_name = "Exhibition_Data_Table"
+        query = f"name='{table_name}' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false"
+        if folder_id:
+            query += f" and '{folder_id}' in parents"
+        
+        results = drive_service.files().list(
+            q=query, spaces='drive', fields='files(id, name, webViewLink)', pageSize=1
+        ).execute()
+        
+        files = results.get('files', [])
+        
+        if files:
+            file_id = files[0]['id']
+            file_url = files[0].get('webViewLink', f"https://docs.google.com/spreadsheets/d/{file_id}/edit")
+            print(f"   ✅ جدول موجود: {file_id}")
+            return file_id, file_url, True
+        
+        print(f"   📝 ساخت جدول جدید...")
+        spreadsheet = sheets_service.spreadsheets().create(
+            body={
+                'properties': {'title': table_name},
+                'sheets': [{'properties': {'title': 'Data', 'gridProperties': {'frozenRowCount': 1}}}]
+            },
+            fields='spreadsheetId'
+        ).execute()
+        
+        file_id = spreadsheet.get('spreadsheetId')
+        file_url = f"https://docs.google.com/spreadsheets/d/{file_id}/edit"
+        
+        if folder_id:
+            drive_service.files().update(fileId=file_id, addParents=folder_id, fields='id, parents').execute()
+        
+        print(f"   ✅ جدول جدید ساخته شد: {file_id}")
+        return file_id, file_url, False
+        
+    except Exception as e:
+        print(f"   ❌ خطا: {e}")
+        return None, None, False
+
+def append_excel_data_to_sheets(excel_path, folder_id=None):
+    """خواندن داده‌های Excel و append به Google Sheets (تعداد ردیف متغیر)"""
+    try:
+        drive_service, sheets_service = get_google_services()
+        if not drive_service or not sheets_service:
+            return False, "عدم اتصال به Google", None, 0
+
+        print(f"\n☁️ شروع ذخیره داده‌ها در Google Drive...")
+
+        # ✅ از شیت آماده خودت استفاده کن (به جای ساخت شیت جدید)
+        file_id = "1OeQbiqvo6v58rcxaoSUidOk0IxSGmL8YCpLnyh27yuE"
+        file_url = f"https://docs.google.com/spreadsheets/d/{file_id}/edit"
+        exists = True
+        print(f"   ✅ استفاده از Google Sheet موجود: {file_url}")
+
+        #file_id, file_url, exists = find_or_create_data_table(drive_service, sheets_service, folder_id)
+        if not file_id:
+            return False, "خطا در ساخت جدول", None, 0
+        
+        print(f"📖 خواندن داده‌های Excel: {excel_path.name}")
+        df = pd.read_excel(excel_path)
+        if df.empty:
+            return False, "Excel خالی است", None, 0
+        
+        print(f"   ✅ {len(df)} ردیف × {len(df.columns)} ستون خوانده شد")
+        
+        for col in df.columns:
+            if df[col].dtype == 'object':
+                df[col] = df[col].astype(str).replace('nan', '').replace('None', '').replace('NaT', '')
+        
+        sheet_name = 'Sheet1'
+        
+        result = sheets_service.spreadsheets().values().get(
+            spreadsheetId=file_id, range=f'{sheet_name}!1:1'
+        ).execute()
+        
+        existing_headers = result.get('values', [[]])[0] if result.get('values') else []
+        new_headers = df.columns.tolist()
+        
+        print(f"   📋 ستون‌های موجود: {len(existing_headers)} | ستون‌های جدید: {len(new_headers)}")
+        
+        if not existing_headers:
+            values = [new_headers] + df.values.tolist()
+            print(f"   ℹ️ جدول خالی، اضافه کردن {len(new_headers)} ستون")
+        else:
+            new_columns = [col for col in new_headers if col not in existing_headers]
+            
+            all_columns = existing_headers.copy()
+            for col in new_columns:
+                if col not in all_columns:
+                    all_columns.append(col)
+            
+            print(f"   📊 ترتیب نهایی: {len(all_columns)} ستون")
+            
+            if new_columns:
+                print(f"   🆕 ستون‌های جدید: {new_columns}")
+                print(f"   🔄 آپدیت هدرها...")
+                sheets_service.spreadsheets().values().update(
+                    spreadsheetId=file_id,
+                    range=f'{sheet_name}!1:1',
+                    valueInputOption='USER_ENTERED',
+                    body={'values': [all_columns]}
+                ).execute()
+                
+                result = sheets_service.spreadsheets().values().get(
+                    spreadsheetId=file_id, range=f'{sheet_name}!A:A'
+                ).execute()
+                existing_rows_count = len(result.get('values', [])) - 1
+                
+                if existing_rows_count > 0:
+                    print(f"   📝 پر کردن {existing_rows_count} ردیف قدیمی...")
+                    empty_values = [[''] * len(new_columns) for _ in range(existing_rows_count)]
+                    start_col_index = len(existing_headers)
+                    start_col_letter = _col_index_to_letter(start_col_index)
+                    end_col_letter = _col_index_to_letter(start_col_index + len(new_columns) - 1)
+                    
+                    sheets_service.spreadsheets().values().update(
+                        spreadsheetId=file_id,
+                        range=f'{sheet_name}!{start_col_letter}2:{end_col_letter}{existing_rows_count+1}',
+                        valueInputOption='USER_ENTERED',
+                        body={'values': empty_values}
+                    ).execute()
+                    print(f"   ✅ ردیف‌های قدیمی آپدیت شد")
+            
+            for col in all_columns:
+                if col not in df.columns:
+                    df[col] = ''
+            
+            df = df[all_columns]
+            print(f"   ✅ DataFrame مرتب شد: {len(df)} ردیف × {len(all_columns)} ستون")
+            values = df.values.tolist()
+        
+        result = sheets_service.spreadsheets().values().get(
+            spreadsheetId=file_id, range=f'{sheet_name}!A:A'
+        ).execute()
+        existing_rows = len(result.get('values', []))
+        
+        print(f"   📊 ردیف فعلی: {existing_rows}")
+        print(f"   📤 اضافه کردن {len(values)} ردیف...")
+        
+        body = {'values': values}
+        result = sheets_service.spreadsheets().values().append(
+            spreadsheetId=file_id,
+            range=f'{sheet_name}!A:A',
+            valueInputOption='USER_ENTERED',
+            insertDataOption='INSERT_ROWS',
+            body=body
+        ).execute()
+        
+        updated_rows = result.get('updates', {}).get('updatedRows', 0)
+        total_rows = existing_rows + updated_rows
+        
+        result = sheets_service.spreadsheets().values().get(
+            spreadsheetId=file_id, range=f'{sheet_name}!1:1'
+        ).execute()
+        total_columns = len(result.get('values', [[]])[0])
+        
+        total_cells = total_rows * total_columns
+        capacity = (total_cells / 10_000_000) * 100
+        
+        print(f"   ✅ {updated_rows} ردیف جدید اضافه شد")
+        print(f"   📊 جمع: {total_rows} ردیف × {total_columns} ستون")
+        print(f"   📊 کل سلول‌ها: {total_cells:,} ({capacity:.1f}%)")
+        print(f"   🔗 {file_url}")
+        
+        message = f"✅ {updated_rows} ردیف جدید | جمع: {total_rows} ردیف | {total_columns} ستون"
+        return True, message, file_url, total_rows
+        
+    except Exception as e:
+        print(f"   ❌ خطا: {e}")
+        import traceback
+        traceback.print_exc()
+        return False, str(e), None, 0
+
+def get_or_create_folder(folder_name="Exhibition_Data"):
+    """پیدا/ساخت پوشه در Drive"""
+    try:
+        drive_service, _ = get_google_services()
+        if not drive_service:
+            return None
+        
+        query = f"name='{folder_name}' and mimeType='application/vnd.google-apps.folder' and trashed=false"
+        results = drive_service.files().list(
+            q=query, spaces='drive', fields='files(id, name)', pageSize=1
+        ).execute()
+        files = results.get('files', [])
+        
+        if files:
+            print(f"   ✅ پوشه موجود: {files[0]['name']}")
+            return files[0]['id']
+        
+        folder = drive_service.files().create(
+            body={'name': folder_name, 'mimeType': 'application/vnd.google-apps.folder'},
+            fields='id'
+        ).execute()
+        print(f"   ✅ پوشه جدید: {folder_name}")
+        return folder.get('id')
+        
+    except Exception as e:
+        print(f"   ❌ خطا: {e}")
+        return None

@@ -7,3 +7,10 @@ from PIL import Image
 # =========================================================
 # 🔹 Gemini SDK Import
 # =========================================================
+try:
+    import google.genai as _genai_new
+    from google.genai import types as _genai_types
+    print("✅ Gemini SDK loaded successfully (google-genai).")
+except Exception as e:
+    print("❌ Gemini SDK failed to load:", e)
+    sys.exit(1)

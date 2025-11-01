@@ -269,3 +269,7 @@ def crawl_site(root):
     
     print(f"      ✅ Total: {len(combined)} chars from {len(texts)} pages")
     return (combined, "")
+
+# =========================================================
+# 🤖 Gemini Extraction & Translation
+# =========================================================

@@ -646,3 +646,79 @@ def process_files_in_batches(uploads_dir, pipeline_type):
 # =========================================================
 # run script with fast mode + log file
 # =========================================================
+def run_script(script_name, session_dir, log_area, status_text, script_display_name="", fast_mode=True):
+    script_path = Path(script_name)
+    if not script_display_name:
+        script_display_name = script_name
+    if not script_path.exists():
+        script_path = Path.cwd() / script_name
+        if not script_path.exists():
+            status_text.markdown(f"""
+            <div class="status-box status-error">❌ فایل {script_name} یافت نشد!</div>
+            """, unsafe_allow_html=True)
+            return False
+
+    status_text.markdown(f"""
+    <div class="status-box status-info">
+        <div class="loading-spinner"></div> در حال اجرای {script_display_name}...
+    </div>
+    """, unsafe_allow_html=True)
+
+    logs_dir = session_dir / "logs"
+    logs_dir.mkdir(exist_ok=True)
+    timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+    log_file = logs_dir / f"log_{script_path.stem}_{timestamp}.txt"
+
+    env = os.environ.copy()
+    env["SESSION_DIR"] = str(session_dir)
+    env["SOURCE_FOLDER"] = str(session_dir / "uploads")
+
+    try:
+        with subprocess.Popen(
+            [sys.executable, str(script_path)],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            cwd=Path.cwd(),
+            env=env,
+            text=True,
+            bufsize=1
+        ) as process:
+            all_output = ""
+            line_count = 0
+            with open(log_file, "w", encoding="utf-8") as log_f:
+                for line in process.stdout:
+                    all_output += line
+                    log_f.write(line)
+                    log_f.flush()
+                    line_count += 1
+                    if fast_mode:
+                        if line_count % 10 == 0:
+                            log_area.code(all_output[-2000:], language="bash")
+                    else:
+                        log_area.code(all_output[-3000:], language="bash")
+                        time.sleep(0.05)
+            process.wait()
+
+        if process.returncode == 0:
+            status_text.markdown(f"""
+            <div class="status-box status-success">✅ {script_display_name} موفقیت‌آمیز بود!</div>
+            """, unsafe_allow_html=True)
+            return True
+        else:
+            status_text.markdown(f"""
+            <div class="status-box status-warning">⚠️ {script_display_name} با مشکل مواجه شد (exit code: {process.returncode})</div>
+            """, unsafe_allow_html=True)
+            try:
+                with open(log_file, 'r', encoding='utf-8') as f:
+                    lines = f.readlines()
+                    if lines:
+                        st.code(''.join(lines[-50:]), language='bash')
+            except:
+                pass
+            return False
+
+    except Exception as e:
+        status_text.markdown(f"""
+        <div class="status-box status-error">❌ خطای اجرا: {str(e)}</div>
+        """, unsafe_allow_html=True)
+        return False

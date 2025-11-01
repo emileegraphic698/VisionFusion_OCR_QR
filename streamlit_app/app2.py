@@ -602,7 +602,7 @@ def get_batch_size(file_type):
         return 1
 
 def create_batches(files_list, batch_size):
-    """تقسیم لیست فایل‌ها به Batch‌های کوچک‌تر"""
+    """split file list into smaller batches"""
     batches = []
     for i in range(0, len(files_list), batch_size):
         batches.append(files_list[i:i + batch_size])

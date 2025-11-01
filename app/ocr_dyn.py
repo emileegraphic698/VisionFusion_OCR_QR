@@ -192,3 +192,9 @@ def main():
     for idx, p in enumerate(image_files, start=1):
         print(f"🖼 Processing image [{idx}/{len(image_files)}]: {p.name}")
         try:
+            img = to_pil(p)
+            res = call_gemini_single_key(img, p)
+            all_out.append({"file_id": f"{idx:03d}", "file_name": p.name, "result": res})
+        except Exception as e:
+            all_out.append({"file_id": f"{idx:03d}", "file_name": p.name, "error": str(e)})
+        time.sleep(1)

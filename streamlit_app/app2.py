@@ -363,3 +363,9 @@ def get_or_create_folder(folder_name="Exhibition_Data"):
     except Exception as e:
         print(f"   ❌ خطا: {e}")
         return None
+
+
+
+# =========================================================
+# 📅 Quota Management
+# =========================================================

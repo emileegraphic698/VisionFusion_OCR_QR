@@ -153,3 +153,6 @@ def enhance_image_aggressive(img):
      # 2. Convert to LAB for better processing
     lab = cv2.cvtColor(denoised, cv2.COLOR_BGR2LAB)
     l, a, b = cv2.split(lab)
+    # 3. CLAHE قوی برای افزایش کنتراست
+    clahe = cv2.createCLAHE(clipLimit=5.0, tileGridSize=(8, 8))
+    l = clahe.apply(l)

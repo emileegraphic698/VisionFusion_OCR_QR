@@ -433,7 +433,7 @@ def add_qc_metadata_to_excel(excel_path, qc_metadata):
         return False
 
 def save_qc_log(session_dir, qc_metadata, exhibition_name, pipeline_type, total_files):
-    """ذخیره لاگ کنترل کیفیت در فایل JSON"""
+    """save quality control log to a json file"""
     try:
         qc_log_file = session_dir / "qc_log.json"
         qc_log = {

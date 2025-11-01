@@ -583,7 +583,7 @@ def main():
                 "result": []
             })
     
-    # ذخیره نتایج خام
+    # save raw results
     print("\n" + "=" * 60)
     save_json(OUTPUT_JSON_RAW, results)
     print(f"✅ Raw results saved → {OUTPUT_JSON_RAW}")

@@ -170,3 +170,9 @@ def pdf_to_images_and_process(pdf_path: Path) -> List[Dict[str, Any]]:
 # =========================================================
 # Main Program Execution
 # =========================================================
+def main():
+    print(f"🔑 Using single API key.\n")
+    
+    if not SOURCE_FOLDER.exists():
+        print(f"❌ پوشه ورودی پیدا نشد: {SOURCE_FOLDER}")
+        sys.exit(1)

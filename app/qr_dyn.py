@@ -446,3 +446,12 @@ def process_image_file(image_path: Path) -> Dict[str, Any]:
         "file_name": image_path.name,
         "result": [{"page": 1, "qr_link": qr_links[0] if qr_links else None}]
     }
+
+
+# ----------------------------------------------------------
+def save_json(path, data):
+    """ذخیره JSON با encoding مناسب"""
+    Path(path).write_text(
+        json.dumps(data, indent=4, ensure_ascii=False), 
+        encoding="utf-8"
+    )

@@ -434,3 +434,15 @@ def process_pdf_for_qr(pdf_path: Path) -> Dict[str, Any]:
         results.append(page_result)
 
     return {"file_id": pdf_path.stem, "file_name": pdf_path.name, "result": results}
+
+
+
+# ----------------------------------------------------------
+def process_image_file(image_path: Path) -> Dict[str, Any]:
+    """پردازش فایل تصویری"""
+    qr_links = process_image_for_qr(image_path)
+    return {
+        "file_id": image_path.stem,
+        "file_name": image_path.name,
+        "result": [{"page": 1, "qr_link": qr_links[0] if qr_links else None}]
+    }

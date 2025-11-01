@@ -354,7 +354,7 @@ def create_final_dataframe(records):
     
     df = pd.DataFrame(records)
     
-    # حذف متادیتا
+    # remove metadata
     remove = ['ocr_text', 'AddressFA_translated', 'CompanyNameFA_translated',
               'file_id', 'file_name', 'page', 'DataSource']
     for col in remove:

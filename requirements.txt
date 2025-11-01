@@ -1,34 +1,56 @@
-# core ai & google libraries
+# =========================================================
+# 🧩 Core AI & Google Libraries
+# =========================================================
 google-genai==0.7.0
 google-api-python-client
 google-auth
 google-auth-oauthlib
 google-auth-httplib2
 
-# data handling
+# =========================================================
+# 🧠 Data Handling
+# =========================================================
 pandas==2.2.3
 numpy==1.26.4
 openpyxl
 python-dateutil==2.9.0.post0
 
-# web & requests
+# =========================================================
+# 🌐 Web & Requests
+# =========================================================
 requests==2.32.3
 urllib3
 beautifulsoup4
 lxml
+html5lib
 
-# pdf & image processing
+# =========================================================
+# 📄 PDF & Image Processing / OCR
+# =========================================================
 pillow==10.4.0
 pdf2image
 opencv-python
 pyzbar
 pyzxing
+pytesseract
+poppler-utils   # ⬅️ For Linux/Mac; on Windows install Poppler manually and set POPPLER_PATH
 
-# utilities
+# =========================================================
+# ⚙️ Utilities & Helpers
+# =========================================================
 pathlib
 tqdm==4.66.5
 regex==2024.9.11
+python-dotenv
+concurrent-log-handler
+shutilwhich
 
-# streamlit & supabase
+# =========================================================
+# 🚀 Streamlit App
+# =========================================================
 streamlit==1.39.0
+
+# =========================================================
+# 🗄️ Supabase Integration
+# =========================================================
 supabase==2.4.0

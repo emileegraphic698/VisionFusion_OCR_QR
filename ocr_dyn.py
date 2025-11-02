@@ -5,6 +5,19 @@ import os, sys, json, time, io
 from typing import Any, Dict, List, Union
 from PIL import Image
 
+from pathlib import Path
+import os
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_DIR = BASE_DIR / "data"
+INPUT_DIR = DATA_DIR / "input"
+OUTPUT_DIR = DATA_DIR / "output"
+
+os.makedirs(INPUT_DIR, exist_ok=True)
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+
+
 # =========================================================
 # 🔹 Gemini SDK Import
 # =========================================================
@@ -17,18 +30,19 @@ except Exception as e:
     sys.exit(1)
 
 # =========================================================
-# 🧩 Dynamic Paths
+#  Dynamic Paths (Fixed for Render/GitHub)
 # =========================================================
-SESSION_DIR = Path(os.getenv("SESSION_DIR", Path.cwd()))
-SOURCE_FOLDER = Path(os.getenv("SOURCE_FOLDER", SESSION_DIR / "uploads"))
-OUT_JSON = Path(os.getenv("OUT_JSON", SESSION_DIR / "gemini_output.json"))
+SOURCE_FOLDER = INPUT_DIR       
+OUT_JSON = OUTPUT_DIR / "gemini_output.json"  
 
-# ✅ مسیر Poppler برای PDF → Image
+
+
+#path to Poppler for converting PDF to images
 POPPLER_PATH = os.getenv("POPPLER_PATH", r"C:\poppler\Library\bin")
 os.environ["PATH"] += os.pathsep + POPPLER_PATH
 
 # =========================================================
-# ⚙️ تنظیمات عمومی
+# General Settings
 # =========================================================
 MODEL_NAME = "gemini-2.5-flash"
 TEMPERATURE = 0.0
@@ -37,13 +51,14 @@ BATCH_SIZE_PDF = 1
 BATCH_SIZE_IMAGES = 3
 
 # =========================================================
-# 🔑 تنظیم کلید API (فقط یک کلید)
+# Set API Key (only one key)
 # =========================================================
-API_KEY = "AIzaSyCKoaSP6Wgj5FCJDGGXIBHy1rt61Cl2ZTs"
+API_KEY = "AIzaSyC......JDGGXI....rt61Cl2ZTs"
 CLIENT = _genai_new.Client(api_key=API_KEY)
 
+
 # =========================================================
-# 🧩 Gemini Prompt
+# Gemini Prompt
 # =========================================================
 JSON_INSTRUCTIONS = """
 You are an information extraction engine. Extract OCR text and structured fields from the scanned document.
@@ -52,7 +67,7 @@ If a field has no value, return null.
 """
 
 # =========================================================
-# 🔹 تعریف ساختار خروجی JSON
+# Define JSON Output Structure
 # =========================================================
 def build_newsdk_schema():
     P = _genai_types
@@ -83,9 +98,11 @@ def build_newsdk_schema():
         required=["ocr_text"]
     )
 
+
 # =========================================================
-# 🧩 توابع کمکی
+# Helper Functions
 # =========================================================
+
 def list_files(path: Union[str, Path]) -> List[Path]:
     exts = {".jpg", ".jpeg", ".png", ".pdf"}
     return sorted([f for f in Path(path).rglob("*") if f.suffix.lower() in exts])
@@ -106,8 +123,9 @@ def ensure_nulls(obj: Dict[str, Any]) -> Dict[str, Any]:
         obj["ocr_text"] = ""
     return obj
 
+
 # =========================================================
-# 🔁 تابع ارسال با یک کلید (بدون چرخش)
+# Single-Key Send Function
 # =========================================================
 def call_gemini_single_key(data: Image.Image, source_path: Path) -> Dict[str, Any]:
     schema = build_newsdk_schema()
@@ -141,8 +159,9 @@ def call_gemini_single_key(data: Image.Image, source_path: Path) -> Dict[str, An
     except Exception as e:
         raise RuntimeError(f"Gemini API Error: {e}")
 
+
 # =========================================================
-# 📄 پردازش PDF به تصاویر و ارسال
+# Process PDF into Images and Send
 # =========================================================
 def pdf_to_images_and_process(pdf_path: Path) -> List[Dict[str, Any]]:
     from pdf2image import convert_from_path
@@ -162,8 +181,9 @@ def pdf_to_images_and_process(pdf_path: Path) -> List[Dict[str, Any]]:
     print(f"✅ {len(results)} page(s) processed from {pdf_path.name}")
     return results
 
+
 # =========================================================
-# 🚀 اجرای اصلی برنامه
+# Main Program 
 # =========================================================
 def main():
     print(f"🔑 Using single API key.\n")

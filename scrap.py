@@ -10,6 +10,17 @@ import pandas as pd
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_DIR = BASE_DIR / "data"
+INPUT_DIR = DATA_DIR / "input"
+OUTPUT_DIR = DATA_DIR / "output"
+
+os.makedirs(INPUT_DIR, exist_ok=True)
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+
+
 # =========================================================
 # 🔹 Gemini SDK Import (Fixed)
 # =========================================================
@@ -28,19 +39,26 @@ except ImportError:
         sys.exit(1)
 
 # =========================================================
-# 🧩 مسیرهای داینامیک سشن
+# Fixed Paths for Render/GitHub
 # =========================================================
-SESSION_DIR = Path(os.getenv("SESSION_DIR", Path.cwd()))
-SOURCE_FOLDER = Path(os.getenv("SOURCE_FOLDER", SESSION_DIR / "uploads"))
-RENAMED_DIR = Path(os.getenv("RENAMED_DIR", SESSION_DIR / "renamed"))
-OUT_JSON = Path(os.getenv("OUT_JSON", SESSION_DIR / "gemini_scrap_output.json"))
-QR_RAW_JSON = Path(os.getenv("QR_RAW_JSON", SESSION_DIR / "final_superqr_v6_raw.json"))
-QR_CLEAN_JSON = Path(os.getenv("QR_CLEAN_JSON", SESSION_DIR / "final_superqr_v6_clean.json"))
-MIX_OCR_QR_JSON = Path(os.getenv("MIX_OCR_QR_JSON", SESSION_DIR / "mix_ocr_qr.json"))
-WEB_ANALYSIS_XLSX = Path(os.getenv("WEB_ANALYSIS_XLSX", SESSION_DIR / "web_analysis.xlsx"))
+SOURCE_FOLDER = INPUT_DIR
+RENAMED_DIR = DATA_DIR / "renamed"
 
 
-# 🔧 Configuration
+MIX_OCR_QR_JSON = OUTPUT_DIR / "mix_ocr_qr.json"
+OUT_JSON = OUTPUT_DIR / "gemini_scrap_output.json"
+CLEAN_URLS = OUTPUT_DIR / "urls_clean.json"
+WEB_ANALYSIS_XLSX = OUTPUT_DIR / "web_analysis.xlsx"
+TEMP_EXCEL = OUTPUT_DIR / "web_analysis.tmp.xlsx"
+
+
+os.makedirs(SOURCE_FOLDER, exist_ok=True)
+os.makedirs(RENAMED_DIR, exist_ok=True)
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+
+
+#  Configuration
 GOOGLE_API_KEY = "AIzaSyAhuC9Grg_FlxwDwYUW-_CpNaFzjwUg24w"
 MODEL_NAME = "gemini-2.5-flash"
 
@@ -49,18 +67,19 @@ MAX_DEPTH = 2
 MAX_PAGES_PER_SITE = 25
 REQUEST_TIMEOUT = (8, 20)
 SLEEP_BETWEEN = (0.8, 2.0)
-MAX_RETRIES_HTTP = 3  # ✅ افزایش retry
+MAX_RETRIES_HTTP = 3  #  increase retry attempts
 MAX_RETRIES_GEMINI = 3
 CHECK_DOMAIN_EXISTENCE = True
 
-# ✅ لیست دامنه‌های ایرانی که SSL ممکنه مشکل داشته باشند
+# list of Iranian domains that may have SSL issues
 IRANIAN_TLDS = ['.ir', '.ac.ir', '.co.ir', '.org.ir', '.gov.ir', '.id.ir', '.net.ir']
 
 client = genai.Client(api_key=GOOGLE_API_KEY)
 lock = threading.Lock()
 
+
 # =========================================================
-# 🔧 مسیرهای ورودی و خروجی داینامیک
+#  dynamic input and output paths
 # =========================================================
 RAW_INPUT = Path(os.getenv("RAW_INPUT", MIX_OCR_QR_JSON))
 CLEAN_URLS = Path(os.getenv("CLEAN_URLS", SESSION_DIR / "urls_clean.json"))
@@ -123,8 +142,9 @@ HEADERS = {
     "Connection": "keep-alive",
 }
 
+
 # =============================================================
-# 🔹 Utility Functions
+# Utility Functions
 # =============================================================
 def normalize_root(url: str) -> str:
     u = url.strip()
@@ -150,8 +170,9 @@ def domain_exists(url: str) -> bool:
         print(f"❌ Domain check failed for {url}: {e}")
         return False
 
+
 # =============================================================
-# 🔹 Extract URLs (from OCR + QR + Excel)
+# Extract URLs (from OCR + QR + Excel)
 # =============================================================
 def extract_urls_from_mix(input_path: str, output_path: str):
     print("🌐 Extracting all URLs from mix_cor_qr.json (OCR + QR + Excel)...")
@@ -201,14 +222,14 @@ def extract_urls_from_mix(input_path: str, output_path: str):
     return roots
 
 # =============================================================
-# 🔹 Web Crawling & Cleaning (FIXED)
+#  Web Crawling & Cleaning (FIXED)
 # =============================================================
 def fetch(url: str) -> tuple[str, str]:
     """
     Returns: (html_content, error_message)
     Smart SSL handling: Iranian domains = no verify, others = verify
     """
-    # ✅ تشخیص هوشمند SSL
+    #  smart SSL detection
     verify_ssl = not is_iranian_domain(url)
     ssl_status = "🔒 SSL ON" if verify_ssl else "🔓 SSL OFF (Iranian)"
     
@@ -219,7 +240,7 @@ def fetch(url: str) -> tuple[str, str]:
                 url, 
                 headers=HEADERS, 
                 timeout=REQUEST_TIMEOUT, 
-                verify=verify_ssl,  # ✅ داینامیک
+                verify=verify_ssl,  # dynamic
                 allow_redirects=True
             )
             if r.status_code == 200:
@@ -230,7 +251,7 @@ def fetch(url: str) -> tuple[str, str]:
                 if i == MAX_RETRIES_HTTP - 1:
                     return ("", f"HTTP_{r.status_code}")
         except requests.exceptions.SSLError as e:
-            # ✅ اگر سایت خارجی بود و SSL خطا داد، یک بار دیگه بدون verify امتحان کن
+            #  if the site is foreign and SSL fails, try once more without verify
             if verify_ssl and i == 0:
                 print(f"  🔄 SSL Error, retrying without verification: {url}")
                 try:
@@ -321,8 +342,9 @@ def crawl_site(root: str, max_depth=MAX_DEPTH, max_pages=MAX_PAGES_PER_SITE) -> 
     print(f"  ✅ Total extracted: {len(combined)} chars from {len(texts)} pages")
     return (combined, "")
 
+
 # =============================================================
-# 🔹 Gemini + Translation
+# Gemini + Translation
 # =============================================================
 def gemini_json(prompt: str, schema: dict):
     schema = types.Schema(type=types.Type.OBJECT, properties=schema, required=[])
@@ -355,7 +377,7 @@ def extract_with_gemini(text: str):
 def translate_fields(data: dict):
     to_translate = {en: data.get(en) for en, _ in TRANSLATABLE_FIELDS if data.get(en)}
     if not to_translate:
-        # ✅ حتی اگر محتوایی برای ترجمه نبود، ستون‌های خالی FA رو اضافه کن
+        #  even if there's no content to translate, add empty FA columns
         for en, fa_col in TRANSLATABLE_FIELDS:
             data[fa_col] = ""
         return data
@@ -364,14 +386,14 @@ def translate_fields(data: dict):
     schema = {k: types.Schema(type=types.Type.STRING, nullable=True) for k in to_translate.keys()}
     tr = gemini_json(prompt, schema)
     
-    # ✅ برای همه فیلدهای قابل ترجمه، چه پر باشند چه خالی، ستون FA رو اضافه کن
+    #  for all translatable fields, whether filled or empty, add FA column
     for en, fa_col in TRANSLATABLE_FIELDS:
         data[fa_col] = tr.get(en, "")
     
     return data
 
 # =============================================================
-# 🔹 Worker & Main (FIXED)
+# Worker & Main (FIXED)
 # =============================================================
 def worker(q: Queue, results: list):
     while True:
@@ -430,7 +452,7 @@ def main():
     print("🚀 Starting Web Scraping Process")
     print("="*60 + "\n")
     
-    roots = extract_urls_from_mix(RAW_INPUT, CLEAN_URLS)
+    roots = extract_urls_from_mix(MIX_OCR_QR_JSON, CLEAN_URLS)
     if not roots:
         print("⚠️ No URLs found.")
         return
@@ -453,24 +475,24 @@ def main():
 
     df = pd.DataFrame(results)
     
-    # ✅ ترتیب ستون‌ها: ستون اصلی + ستون فارسی کنارش
+    #  column order: main column + corresponding FA column
     ordered_cols = ["url", "status", "error"]
     
     for field in FIELDS:
         ordered_cols.append(field)
-        # اگر این فیلد ترجمه داره، ستون فارسی رو کنارش اضافه کن
+        # if this field is translatable, add FA column next to it
         for en_field, fa_field in TRANSLATABLE_FIELDS:
             if en_field == field:
                 ordered_cols.append(fa_field)
                 break
     
-    # اضافه کردن ستون‌هایی که ترجمه دارند ولی در FIELDS نیستند (مثل CompanyNameEN)
+    # add columns that have translations but are not in FIELDS (e.g., CompanyNameEN)
     for en_field, fa_field in TRANSLATABLE_FIELDS:
         if en_field not in FIELDS and en_field not in ordered_cols:
             ordered_cols.append(en_field)
             ordered_cols.append(fa_field)
     
-    # اطمینان از وجود همه ستون‌ها
+    # ensure all columns exist
     for col in ordered_cols:
         if col not in df.columns:
             df[col] = ""
@@ -480,8 +502,8 @@ def main():
     try:
         tmp = TEMP_EXCEL
         df.to_excel(tmp, index=False)
-        shutil.move(tmp, OUTPUT_EXCEL)
-        print(f"✅ Excel saved: {OUTPUT_EXCEL}")
+        shutil.move(tmp, WEB_ANALYSIS_XLSX)
+        print(f"✅ Excel saved: {WEB_ANALYSIS_XLSX}")
     except Exception as e:
         print(f"❌ Failed to save Excel: {e}")
     

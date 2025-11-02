@@ -4,6 +4,20 @@ from pathlib import Path
 import os, sys, json, time, io
 from typing import Any, Dict, List, Union
 from PIL import Image
+
+from pathlib import Path
+import os
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_DIR = BASE_DIR / "data"
+INPUT_DIR = DATA_DIR / "input"
+OUTPUT_DIR = DATA_DIR / "output"
+
+os.makedirs(INPUT_DIR, exist_ok=True)
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+
+
 # =========================================================
 # 🔹 Gemini SDK Import
 # =========================================================

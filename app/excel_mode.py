@@ -3,6 +3,9 @@
 🚀 Excel Web Scraper - Professional Edition
 Professional Excel web scraper + Gemini smart analysis + translation
 """
+
+
+
 from pathlib import Path
 import os, json, re, time, random, threading, socket, shutil
 from queue import Queue
@@ -14,6 +17,20 @@ warnings.filterwarnings("ignore")
 import pandas as pd
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+
+
+from pathlib import Path
+import os
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_DIR = BASE_DIR / "data"
+INPUT_DIR = DATA_DIR / "input"
+OUTPUT_DIR = DATA_DIR / "output"
+
+os.makedirs(INPUT_DIR, exist_ok=True)
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
 
 # =========================================================
 # Gemini SDK Import

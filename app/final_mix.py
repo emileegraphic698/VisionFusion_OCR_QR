@@ -5,6 +5,18 @@ Smart merging of JSON and Excel with full cleaning and optimization
 """
 
 from pathlib import Path
+import os
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_DIR = BASE_DIR / "data"
+INPUT_DIR = DATA_DIR / "input"
+OUTPUT_DIR = DATA_DIR / "output"
+
+os.makedirs(INPUT_DIR, exist_ok=True)
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+
+from pathlib import Path
 import os, json, re, pandas as pd
 from collections import defaultdict
 import time

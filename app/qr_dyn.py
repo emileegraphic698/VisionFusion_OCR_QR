@@ -17,6 +17,19 @@ import warnings, ctypes, os
 warnings.filterwarnings("ignore")
 os.environ["ZBAR_LOG_LEVEL"] = "0"
 
+from pathlib import Path
+import os
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_DIR = BASE_DIR / "data"
+INPUT_DIR = DATA_DIR / "input"
+OUTPUT_DIR = DATA_DIR / "output"
+
+os.makedirs(INPUT_DIR, exist_ok=True)
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+
+
 # =========================================================
 # Dynamic Paths
 # =========================================================

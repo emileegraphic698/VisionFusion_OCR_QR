@@ -1,5 +1,5 @@
 # =========================================================
-# 🧩 Core AI & Google Libraries
+# 🧠 Core AI & Google Libraries
 # =========================================================
 google-genai
 google-api-python-client
@@ -29,20 +29,16 @@ html5lib
 # =========================================================
 pillow
 pdf2image
-opencv-python
+opencv-python-headless
 pyzbar
-pyzxing
 pytesseract
 
 # =========================================================
 # ⚙️ Utilities & Helpers
 # =========================================================
-pathlib
 tqdm
 regex
 python-dotenv
-concurrent-log-handler
-shutilwhich
 
 # =========================================================
 # 🚀 Streamlit App

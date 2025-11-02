@@ -73,14 +73,12 @@ except ImportError:
     HAS_PYZBAR = False
     print("⚠️ pyzbar not available")
 
-try:
-    from pyzxing import BarCodeReader
-    zxing_reader = BarCodeReader()
-    HAS_ZXING = True
-    print("✅ pyzxing loaded")
-except ImportError:
-    HAS_ZXING = False
-    print("⚠️ pyzxing not available")
+
+HAS_ZXING = False
+zxing_reader = None
+print("⚠️ pyzxing disabled (not available in cloud)")
+
+
 
 # ----------------------------------------------------------
 def clean_url(url):

@@ -31,6 +31,17 @@ from supabase import create_client, Client
 # =========================================================
 # 🔹 Import Scripts as Modules
 # =========================================================
+
+import sys
+from pathlib import Path
+
+
+CURRENT_DIR = Path(__file__).resolve().parent
+
+BASE_DIR = CURRENT_DIR.parent
+
+sys.path.append(str(BASE_DIR / "app"))
+
 from ocr_dyn import run_ocr_extraction
 from qr_dyn import run_qr_detection
 from mix_ocr_qr_dyn import run_ocr_qr_merge

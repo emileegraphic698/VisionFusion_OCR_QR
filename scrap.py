@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from pathlib import Path
 import os, re, json, time, random, threading, socket, shutil
 from queue import Queue
@@ -10,8 +11,10 @@ import pandas as pd
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-
-BASE_DIR = Path(__file__).resolve().parent.parent
+# =========================================================
+# Fixed Paths
+# =========================================================
+BASE_DIR = Path.cwd()
 DATA_DIR = BASE_DIR / "data"
 INPUT_DIR = DATA_DIR / "input"
 OUTPUT_DIR = DATA_DIR / "output"
@@ -19,10 +22,13 @@ OUTPUT_DIR = DATA_DIR / "output"
 os.makedirs(INPUT_DIR, exist_ok=True)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-
+# =========================================================
+# Get SESSION_DIR from environment or use OUTPUT_DIR
+# =========================================================
+SESSION_DIR = Path(os.getenv("SESSION_DIR", str(OUTPUT_DIR)))
 
 # =========================================================
-# 🔹 Gemini SDK Import (Fixed)
+# Gemini SDK Import
 # =========================================================
 try:
     import google.genai as genai
@@ -30,8 +36,8 @@ try:
     print("✅ Gemini SDK loaded successfully (google-genai).")
 except ImportError:
     try:
-        import google.genai as genai
-        from google.genai import types
+        import google.generativeai as genai
+        from google.generativeai import types
         print("⚠️ Using legacy google-generativeai SDK.")
     except Exception as e:
         print("❌ Gemini SDK not installed properly:", e)
@@ -39,7 +45,7 @@ except ImportError:
         sys.exit(1)
 
 # =========================================================
-# Fixed Paths for Render/GitHub
+# File Paths
 # =========================================================
 SOURCE_FOLDER = INPUT_DIR
 RENAMED_DIR = DATA_DIR / "renamed"
@@ -52,44 +58,30 @@ TEMP_EXCEL = OUTPUT_DIR / "web_analysis.tmp.xlsx"
 
 os.makedirs(SOURCE_FOLDER, exist_ok=True)
 os.makedirs(RENAMED_DIR, exist_ok=True)
-os.makedirs(OUTPUT_DIR, exist_ok=True)
-os.makedirs(SOURCE_FOLDER, exist_ok=True)
-os.makedirs(RENAMED_DIR, exist_ok=True)
-os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-
-
-#  Configuration
-GOOGLE_API_KEY = "AIzaSyAhuC9Grg_FlxwDwYUW-_CpNaFzjwUg24w"
-MODEL_NAME = "gemini-2.5-flash"
+# =========================================================
+# Configuration
+# =========================================================
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "AIzaSyAhuC9Grg_FlxwDwYUW-_CpNaFzjwUg24w")
+MODEL_NAME = "gemini-2.0-flash-exp"
 
 THREAD_COUNT = 5
 MAX_DEPTH = 2
 MAX_PAGES_PER_SITE = 25
 REQUEST_TIMEOUT = (8, 20)
 SLEEP_BETWEEN = (0.8, 2.0)
-MAX_RETRIES_HTTP = 3  #  increase retry attempts
+MAX_RETRIES_HTTP = 3
 MAX_RETRIES_GEMINI = 3
 CHECK_DOMAIN_EXISTENCE = True
 
-# list of Iranian domains that may have SSL issues
 IRANIAN_TLDS = ['.ir', '.ac.ir', '.co.ir', '.org.ir', '.gov.ir', '.id.ir', '.net.ir']
 
 client = genai.Client(api_key=GOOGLE_API_KEY)
 lock = threading.Lock()
 
-
 # =========================================================
-#  dynamic input and output paths
-# =========================================================
-RAW_INPUT = Path(os.getenv("RAW_INPUT", MIX_OCR_QR_JSON))
-CLEAN_URLS = OUTPUT_DIR / "urls_clean.json"
-OUTPUT_JSON = Path(os.getenv("OUTPUT_JSON", OUT_JSON))
-OUTPUT_EXCEL = Path(os.getenv("OUTPUT_EXCEL", WEB_ANALYSIS_XLSX))
-TEMP_EXCEL = Path(os.getenv("TEMP_EXCEL", SESSION_DIR / "web_analysis.tmp.xlsx"))
-
-# ---------------------------------------------
 # Fields & Prompts
+# =========================================================
 FIELDS = [
     "CompanyNameEN", "CompanyNameFA", "Logo", "Industry", "Certifications",
     "ContactName", "PositionEN", "PositionFA", "Department",
@@ -143,10 +135,9 @@ HEADERS = {
     "Connection": "keep-alive",
 }
 
-
-# =============================================================
+# =========================================================
 # Utility Functions
-# =============================================================
+# =========================================================
 def normalize_root(url: str) -> str:
     u = url.strip()
     if not re.match(r"^https?://", u, re.I):
@@ -155,7 +146,6 @@ def normalize_root(url: str) -> str:
     return f"{p.scheme}://{p.netloc}".lower()
 
 def is_iranian_domain(url: str) -> bool:
-    """Check if URL is Iranian domain"""
     try:
         netloc = urlparse(normalize_root(url)).netloc.lower()
         return any(netloc.endswith(tld) for tld in IRANIAN_TLDS)
@@ -165,18 +155,17 @@ def is_iranian_domain(url: str) -> bool:
 def domain_exists(url: str) -> bool:
     try:
         host = urlparse(normalize_root(url)).netloc
+        socket.setdefaulttimeout(5)
         socket.gethostbyname(host)
         return True
-    except Exception as e:
-        print(f"❌ Domain check failed for {url}: {e}")
+    except Exception:
         return False
 
-
-# =============================================================
-# Extract URLs (from OCR + QR + Excel)
-# =============================================================
+# =========================================================
+# Extract URLs
+# =========================================================
 def extract_urls_from_mix(input_path: str, output_path: str):
-    print("🌐 Extracting all URLs from mix_cor_qr.json (OCR + QR + Excel)...")
+    print("🌐 Extracting all URLs from mix_ocr_qr.json...")
     try:
         raw = json.loads(Path(input_path).read_text(encoding="utf-8"))
     except Exception as e:
@@ -222,15 +211,10 @@ def extract_urls_from_mix(input_path: str, output_path: str):
     print(f"✅ Found {len(roots)} clean root URLs → {output_path}")
     return roots
 
-# =============================================================
-#  Web Crawling & Cleaning (FIXED)
-# =============================================================
+# =========================================================
+# Web Crawling & Cleaning (FIXED SSL)
+# =========================================================
 def fetch(url: str) -> tuple[str, str]:
-    """
-    Returns: (html_content, error_message)
-    Smart SSL handling: Iranian domains = no verify, others = verify
-    """
-    #  smart SSL detection
     verify_ssl = not is_iranian_domain(url)
     ssl_status = "🔒 SSL ON" if verify_ssl else "🔓 SSL OFF (Iranian)"
     
@@ -241,7 +225,7 @@ def fetch(url: str) -> tuple[str, str]:
                 url, 
                 headers=HEADERS, 
                 timeout=REQUEST_TIMEOUT, 
-                verify=verify_ssl,  # dynamic
+                verify=verify_ssl,
                 allow_redirects=True
             )
             if r.status_code == 200:
@@ -252,7 +236,6 @@ def fetch(url: str) -> tuple[str, str]:
                 if i == MAX_RETRIES_HTTP - 1:
                     return ("", f"HTTP_{r.status_code}")
         except requests.exceptions.SSLError as e:
-            #  if the site is foreign and SSL fails, try once more without verify
             if verify_ssl and i == 0:
                 print(f"  🔄 SSL Error, retrying without verification: {url}")
                 try:
@@ -296,9 +279,6 @@ def clean_text(html: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 def crawl_site(root: str, max_depth=MAX_DEPTH, max_pages=MAX_PAGES_PER_SITE) -> tuple[str, str]:
-    """
-    Returns: (combined_text, error_message)
-    """
     print(f"\n🕷️ Starting crawl: {root}")
     seen = set()
     q = [(root, 0)]
@@ -323,7 +303,6 @@ def crawl_site(root: str, max_depth=MAX_DEPTH, max_pages=MAX_PAGES_PER_SITE) -> 
         else:
             errors.append(f"{url}: EMPTY_CONTENT")
         
-        # Only continue crawling if we got content
         if html:
             soup = BeautifulSoup(html, "html.parser")
             for a in soup.find_all("a", href=True):
@@ -343,12 +322,11 @@ def crawl_site(root: str, max_depth=MAX_DEPTH, max_pages=MAX_PAGES_PER_SITE) -> 
     print(f"  ✅ Total extracted: {len(combined)} chars from {len(texts)} pages")
     return (combined, "")
 
-
-# =============================================================
+# =========================================================
 # Gemini + Translation
-# =============================================================
+# =========================================================
 def gemini_json(prompt: str, schema: dict):
-    schema = types.Schema(type=types.Type.OBJECT, properties=schema, required=[])
+    schema_obj = types.Schema(type=types.Type.OBJECT, properties=schema, required=[])
     for i in range(MAX_RETRIES_GEMINI):
         try:
             resp = client.models.generate_content(
@@ -357,7 +335,7 @@ def gemini_json(prompt: str, schema: dict):
                 config=types.GenerateContentConfig(
                     temperature=0.1,
                     response_mime_type="application/json",
-                    response_schema=schema
+                    response_schema=schema_obj
                 )
             )
             return json.loads(resp.text)
@@ -377,25 +355,24 @@ def extract_with_gemini(text: str):
 
 def translate_fields(data: dict):
     to_translate = {en: data.get(en) for en, _ in TRANSLATABLE_FIELDS if data.get(en)}
+    for en, fa_col in TRANSLATABLE_FIELDS:
+        data[fa_col] = ""
+    
     if not to_translate:
-        #  even if there's no content to translate, add empty FA columns
-        for en, fa_col in TRANSLATABLE_FIELDS:
-            data[fa_col] = ""
         return data
     
     prompt = PROMPT_TRANSLATE_EN2FA.format(json_chunk=json.dumps(to_translate, ensure_ascii=False))
     schema = {k: types.Schema(type=types.Type.STRING, nullable=True) for k in to_translate.keys()}
     tr = gemini_json(prompt, schema)
     
-    #  for all translatable fields, whether filled or empty, add FA column
     for en, fa_col in TRANSLATABLE_FIELDS:
         data[fa_col] = tr.get(en, "")
     
     return data
 
-# =============================================================
-# Worker & Main (FIXED)
-# =============================================================
+# =========================================================
+# Worker & Main
+# =========================================================
 def worker(q: Queue, results: list):
     while True:
         try:
@@ -436,9 +413,8 @@ def worker(q: Queue, results: list):
         
         with lock:
             results.append(data)
-            # Save after each URL
             try:
-                Path(OUTPUT_JSON).write_text(
+                Path(OUT_JSON).write_text(
                     json.dumps(results, ensure_ascii=False, indent=2), 
                     encoding="utf-8"
                 )
@@ -453,7 +429,7 @@ def main():
     print("🚀 Starting Web Scraping Process")
     print("="*60 + "\n")
     
-    roots = extract_urls_from_mix(MIX_OCR_QR_JSON, CLEAN_URLS)
+    roots = extract_urls_from_mix(str(MIX_OCR_QR_JSON), str(CLEAN_URLS))
     if not roots:
         print("⚠️ No URLs found.")
         return
@@ -476,24 +452,20 @@ def main():
 
     df = pd.DataFrame(results)
     
-    #  column order: main column + corresponding FA column
     ordered_cols = ["url", "status", "error"]
     
     for field in FIELDS:
         ordered_cols.append(field)
-        # if this field is translatable, add FA column next to it
         for en_field, fa_field in TRANSLATABLE_FIELDS:
             if en_field == field:
                 ordered_cols.append(fa_field)
                 break
     
-    # add columns that have translations but are not in FIELDS (e.g., CompanyNameEN)
     for en_field, fa_field in TRANSLATABLE_FIELDS:
         if en_field not in FIELDS and en_field not in ordered_cols:
             ordered_cols.append(en_field)
             ordered_cols.append(fa_field)
     
-    # ensure all columns exist
     for col in ordered_cols:
         if col not in df.columns:
             df[col] = ""
@@ -501,25 +473,22 @@ def main():
     df = df[ordered_cols]
     
     try:
-        tmp = TEMP_EXCEL
-        df.to_excel(tmp, index=False)
-        shutil.move(tmp, WEB_ANALYSIS_XLSX)
+        df.to_excel(TEMP_EXCEL, index=False)
+        shutil.move(str(TEMP_EXCEL), str(WEB_ANALYSIS_XLSX))
         print(f"✅ Excel saved: {WEB_ANALYSIS_XLSX}")
     except Exception as e:
         print(f"❌ Failed to save Excel: {e}")
     
-    # Print summary
     success = len([r for r in results if r.get("status") == "SUCCESS"])
-    failed = len([r for r in results if r.get("status") != "SUCCESS"])
+    failed = len(results) - success
     
     print("\n" + "="*60)
     print(f"✅ Success: {success}/{len(results)}")
     print(f"❌ Failed: {failed}/{len(results)}")
     print("="*60 + "\n")
 
-
 def run_web_scraping():
-    """اجرای web scraping"""
+    """Run web scraping"""
     print("🌐 Starting web scraping...")
     main()
     return str(WEB_ANALYSIS_XLSX)

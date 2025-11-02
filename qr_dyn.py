@@ -20,14 +20,29 @@ os.environ["ZBAR_LOG_LEVEL"] = "0"
 from pathlib import Path
 import os
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-DATA_DIR = BASE_DIR / "data"
-INPUT_DIR = DATA_DIR / "input"
-OUTPUT_DIR = DATA_DIR / "output"
+# =========================================================
+# 🔧 Dynamic Path Resolution (Works on Streamlit Cloud)
+# =========================================================
+SESSION_DIR = os.getenv("SESSION_DIR")
+
+if SESSION_DIR:
+    # حالت Streamlit Cloud
+    BASE_DIR = Path(SESSION_DIR)
+    DATA_DIR = BASE_DIR
+    INPUT_DIR = BASE_DIR / "uploads"
+    OUTPUT_DIR = BASE_DIR
+else:
+    # حالت Local
+    BASE_DIR = Path(__file__).resolve().parent.parent
+    DATA_DIR = BASE_DIR / "data"
+    INPUT_DIR = DATA_DIR / "input"
+    OUTPUT_DIR = DATA_DIR / "output"
 
 os.makedirs(INPUT_DIR, exist_ok=True)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
+print(f"📂 SESSION_DIR: {SESSION_DIR or 'Not Set'}")
+print(f"📂 OUTPUT_DIR: {OUTPUT_DIR}")
 
 
 # =========================================================

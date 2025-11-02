@@ -1,51 +1,18 @@
-# =========================================================
-# 🧠 Core AI & Google Libraries
-# =========================================================
-google-genai
-google-api-python-client
-google-auth
-google-auth-oauthlib
-google-auth-httplib2
-
-# =========================================================
-# 🧠 Data Handling
-# =========================================================
-pandas
-numpy
-openpyxl
-python-dateutil
-
-# =========================================================
-# 🌐 Web & Requests
-# =========================================================
-requests
-urllib3
-beautifulsoup4
-lxml
-html5lib
-
-# =========================================================
-# 📄 PDF & Image Processing / OCR
-# =========================================================
-pillow
-pdf2image
-opencv-python-headless
-pyzbar
-pytesseract
-
-# =========================================================
-# ⚙️ Utilities & Helpers
-# =========================================================
-tqdm
-regex
-python-dotenv
-
-# =========================================================
-# 🚀 Streamlit App
-# =========================================================
-streamlit
-
-# =========================================================
-# 🗄️ Supabase Integration
-# =========================================================
-supabase
+streamlit==1.28.0
+pandas==2.1.1
+numpy==1.24.3
+openpyxl==3.1.2
+opencv-python-headless==4.8.1.78
+pyzbar==0.1.9
+pdf2image==1.16.3
+Pillow==10.0.1
+beautifulsoup4==4.12.2
+requests==2.31.0
+google-generativeai==0.3.1
+google-auth==2.23.3
+google-auth-oauthlib==1.1.0
+google-auth-httplib2==0.1.1
+google-api-python-client==2.103.0
+supabase==2.0.2
+urllib3==2.0.7
+lxml==4.9.3

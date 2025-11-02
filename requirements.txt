@@ -20,3 +20,15 @@ pytesseract
 html5lib
 regex
 tqdm
+gspread
+google-auth
+streamlit
+google-genai
+pillow
+pdf2image
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
+google-api-python-client
+pandas
+openpyxl

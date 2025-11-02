@@ -11,7 +11,7 @@ A full merge of the two apps: "Ultimate Smart Exhibition Pipeline" + "Smart Data
 - ☁️ Google Sheets integration: auto-save data to Google Drive  
 
 Run:  
-    streamlit run app2.py
+    streamlit run smart_exhibition_pipeline_english.py
 
 """
 
@@ -138,18 +138,17 @@ st.markdown("""
 # =========================================================
 # API Keys
 # =========================================================
-try:
-    API_KEYS = {
-        "excel": st.secrets["gemini"]["api_key_excel"],
-        "ocr": st.secrets["gemini"]["api_key_ocr"],
-        "scrap": st.secrets["gemini"]["api_key_scrap"]
-    }
-except:
-    API_KEYS = {
-        "excel": os.getenv("GEMINI_API_KEY_EXCEL", "AIzaSyBzVNw34fbQRcxCSZDouR35hoZNxqsW6pc"),
-        "ocr": os.getenv("GEMINI_API_KEY_OCR", "AIzaSyCKoaSP6Wgj5FCJDGGXIBHy1rt61Cl2ZTs"),
-        "scrap": os.getenv("GEMINI_API_KEY_SCRAP", "AIzaSyAhuC9Grg_FlxwDwYUW-_CpNaFzjwUg24w")
-    }
+API_KEYS = {
+    "excel": "AIzaSyBzVNw....R35hoZNxqsW6pc",
+    "ocr": "AIzaSyCKoa.....IBHy1rt61Cl2ZTs",
+    "scrap": "AIzaSyAhuC9Grg_.....aFzjwUg24w"
+}
+for key_name, key_value in API_KEYS.items():
+    os.environ[f"GOOGLE_API_KEY_{key_name.upper()}"] = key_value
+    os.environ["GOOGLE_API_KEY"] = key_value
+    os.environ["GEMINI_API_KEY"] = key_value
+
+
 # =========================================================
 # GOOGLE SHEETS INTEGRATION
 # =========================================================
@@ -163,21 +162,18 @@ GOOGLE_SCOPES = [
 
 @st.cache_resource
 def get_google_services():
+    """Connect to Google Drive and Sheets"""
     try:
         creds = service_account.Credentials.from_service_account_info(
             st.secrets["gcp_service_account"],
             scopes=GOOGLE_SCOPES
         )
-    except Exception:
-        # ✅ اضافه کن:
-        creds_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
-        if creds_path and Path(creds_path).exists():
-            creds = service_account.Credentials.from_service_account_file(
-                creds_path, scopes=GOOGLE_SCOPES
-            )
-        else:
-            st.error("❌ No Google credentials found!")
-            return None, None
+        drive_service = build('drive', 'v3', credentials=creds)
+        sheets_service = build('sheets', 'v4', credentials=creds)
+        return drive_service, sheets_service
+    except Exception as e:
+        st.error(f"❌ Error connecting to Google: {e}")
+        return None, None
 
 def _col_index_to_letter(col_index):
     """Convert index to Excel column letter (0->A, 25->Z, 26->AA)"""
@@ -186,6 +182,48 @@ def _col_index_to_letter(col_index):
         result = chr(col_index % 26 + 65) + result
         col_index = col_index // 26 - 1
     return result
+
+def find_or_create_data_table(drive_service, sheets_service, folder_id=None):
+    """Find or create a sheet in Drive"""
+    try:
+        table_name = "Exhibition_Data_Table"
+        query = f"name='{table_name}' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false"
+        if folder_id:
+            query += f" and '{folder_id}' in parents"
+        
+        results = drive_service.files().list(
+            q=query, spaces='drive', fields='files(id, name, webViewLink)', pageSize=1
+        ).execute()
+        
+        files = results.get('files', [])
+        
+        if files:
+            file_id = files[0]['id']
+            file_url = files[0].get('webViewLink', f"https://docs.google.com/spreadsheets/d/{file_id}/edit")
+            print(f"   ✅ Existing table found: {file_id}")
+            return file_id, file_url, True
+        
+        print(f"   📝 Creating new table...")
+        spreadsheet = sheets_service.spreadsheets().create(
+            body={
+                'properties': {'title': table_name},
+                'sheets': [{'properties': {'title': 'Data', 'gridProperties': {'frozenRowCount': 1}}}]
+            },
+            fields='spreadsheetId'
+        ).execute()
+        
+        file_id = spreadsheet.get('spreadsheetId')
+        file_url = f"https://docs.google.com/spreadsheets/d/{file_id}/edit"
+        
+        if folder_id:
+            drive_service.files().update(fileId=file_id, addParents=folder_id, fields='id, parents').execute()
+        
+        print(f"   ✅ New table created: {file_id}")
+        return file_id, file_url, False
+        
+    except Exception as e:
+        print(f"   ❌ Error: {e}")
+        return None, None, False
 
 def append_excel_data_to_sheets(excel_path, folder_id=None):
     """Read Excel data and append to Google Sheets (variable row count)"""
@@ -196,10 +234,13 @@ def append_excel_data_to_sheets(excel_path, folder_id=None):
 
         print(f"\n☁️ Starting data save to Google Drive...")
 
+        # ✅ Use existing Google Sheet instead of creating a new one
         file_id = "1OeQbiqvo6v58rcxaoSUidOk0IxSGmL8YCpLnyh27yuE"
         file_url = f"https://docs.google.com/spreadsheets/d/{file_id}/edit"
+        exists = True
         print(f"   ✅ Using existing Google Sheet: {file_url}")
 
+        # file_id, file_url, exists = find_or_create_data_table(drive_service, sheets_service, folder_id)
         if not file_id:
             return False, "Error creating table", None, 0
         
@@ -210,6 +251,7 @@ def append_excel_data_to_sheets(excel_path, folder_id=None):
         
         print(f"   ✅ {len(df)} rows × {len(df.columns)} columns read")
         
+        # ✅ Clean DataFrame from NaN and None values
         df = df.replace({np.nan: "", None: ""})
         
         for col in df.columns:
@@ -278,6 +320,7 @@ def append_excel_data_to_sheets(excel_path, folder_id=None):
             print(f"   ✅ DataFrame sorted: {len(df)} rows × {len(all_columns)} columns")
             values = df.values.tolist()
 
+        # ✅ Convert all NaN or None to string before sending to Sheets
         values = [[("" if (pd.isna(cell) or cell is None) else str(cell)) for cell in row] for row in values]
         
         result = sheets_service.spreadsheets().values().get(
@@ -636,22 +679,20 @@ def process_files_in_batches(uploads_dir, pipeline_type):
     
     return [], 1
 
-
 # =========================================================
-# Run Script with subprocess
+# Run Script with Fast Mode + Log File
 # =========================================================
 def run_script(script_name, session_dir, log_area, status_text, script_display_name="", fast_mode=True):
-    """Run script with subprocess"""
-    script_path = Path.cwd() / "app" / script_name
-    
+    script_path = Path(script_name)
     if not script_display_name:
         script_display_name = script_name
-    
     if not script_path.exists():
-        status_text.markdown(f"""
-        <div class="status-box status-error">❌ File {script_name} not found!</div>
-        """, unsafe_allow_html=True)
-        return False
+        script_path = Path.cwd() / script_name
+        if not script_path.exists():
+            status_text.markdown(f"""
+            <div class="status-box status-error">❌ File {script_name} not found!</div>
+            """, unsafe_allow_html=True)
+            return False
 
     status_text.markdown(f"""
     <div class="status-box status-info">
@@ -666,7 +707,7 @@ def run_script(script_name, session_dir, log_area, status_text, script_display_n
 
     env = os.environ.copy()
     env["SESSION_DIR"] = str(session_dir)
-    env["SOURCE_FOLDER"] = str(session_dir / "uploads")
+    env["SOURCE_FOLDER"] = str(uploads_dir)
 
     try:
         with subprocess.Popen(
@@ -696,21 +737,27 @@ def run_script(script_name, session_dir, log_area, status_text, script_display_n
 
         if process.returncode == 0:
             status_text.markdown(f"""
-            <div class="status-box status-success">✅ {script_display_name} completed!</div>
+            <div class="status-box status-success">✅ {script_display_name} completed successfully!</div>
             """, unsafe_allow_html=True)
             return True
         else:
             status_text.markdown(f"""
-            <div class="status-box status-warning">⚠️ {script_display_name} issue (code: {process.returncode})</div>
+            <div class="status-box status-warning">⚠️ {script_display_name} encountered an issue (exit code: {process.returncode})</div>
             """, unsafe_allow_html=True)
+            try:
+                with open(log_file, 'r', encoding='utf-8') as f:
+                    lines = f.readlines()
+                    if lines:
+                        st.code(''.join(lines[-50:]), language='bash')
+            except:
+                pass
             return False
 
     except Exception as e:
         status_text.markdown(f"""
-        <div class="status-box status-error">❌ Error: {str(e)}</div>
+        <div class="status-box status-error">❌ Execution error: {str(e)}</div>
         """, unsafe_allow_html=True)
         return False
-
 
 # =========================================================
 # Header
@@ -726,6 +773,9 @@ st.markdown("""
 # Sidebar
 # =========================================================
 
+# ==================================
+# Quick Link to Google Sheets
+# ==================================
 if 'sheet_url' in st.session_state:
     st.sidebar.markdown(f"""
     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
@@ -763,6 +813,10 @@ elif Path("google_sheet_link.txt").exists():
     except:
         pass
 
+
+# ======================================
+# End of Quick Link
+# ======================================
 quota = load_quota()
 st.sidebar.markdown(f"""
 <div class="quota-card">
@@ -977,7 +1031,6 @@ if uploaded_files:
                     "📊 Excel Web Scraper",
                     fast_mode
                 )
-
                 progress_bar.progress(100)
 
                 if total_rows > 0:
@@ -1003,7 +1056,7 @@ if uploaded_files:
                 stages = [
                     ("📘 OCR Extraction", "ocr_dyn.py", 20),
                     ("🔍 QR Detection", "qr_dyn.py", 40),
-                    ("🧩 Merge OCR+QR", "mix_ocr_qr.py", 60),
+                    ("🧩 Merge OCR+QR", "mix_ocr_qr_dyn.py", 60),
                     ("🌐 Web Scraping", "scrap.py", 80),
                     ("💠 Final Merge", "final_mix.py", 100)
                 ]
@@ -1020,7 +1073,6 @@ if uploaded_files:
                         script, session_dir, log_area, status_text,
                         stage_name, fast_mode
                     )
-                    
                     if not stage_success:
                         all_success = False
                         st.markdown(f"""
@@ -1052,6 +1104,7 @@ if uploaded_files:
                     add_exhibition_and_source(output_file, exhibition_name)
                     add_qc_metadata_to_excel(output_file, qc_metadata)
                 
+                # ========== GOOGLE SHEETS UPLOAD ==========
                 st.markdown("---")
                 st.markdown("## ☁️ Saving Data to Google Drive")
                 st.info("💡 Only Excel data is saved, not the file itself!")
@@ -1118,6 +1171,7 @@ if uploaded_files:
                 except Exception as e:
                     sheets_status.error(f"❌ Error: {e}")
                     st.warning("💡 Make sure Google Drive API and Sheets API are enabled")
+                # ========== END GOOGLE SHEETS ==========
 
             st.markdown("---")
 
@@ -1195,7 +1249,7 @@ if uploaded_files:
                                 cols_display = ", ".join(df_prev.columns.tolist()[:20])
                                 if len(df_prev.columns) > 20: cols_display += "..."
                                 st.info(f"🔤 Columns: {cols_display}")
-                                st.dataframe(df_prev.head(10))
+                                st.dataframe(df_prev.head(10), width='stretch')
                         except Exception as e:
                             st.warning(f"⚠️ Error displaying preview: {e}")
 
@@ -1227,6 +1281,12 @@ if uploaded_files:
                     <p>Some data was not processed. Check the logs.</p>
                 </div>
                 """, unsafe_allow_html=True)
+                st.info("💡 Note: If a company doesn't have a URL, its information cannot be retrieved from the web.")
+                if debug_mode:
+                    with st.expander("🔍 Session file list"):
+                        for f in session_dir.rglob("*"):
+                            if f.is_file():
+                                st.write(f"📄 {f.relative_to(session_dir)}")
 
         except Exception as e:
             st.markdown("""

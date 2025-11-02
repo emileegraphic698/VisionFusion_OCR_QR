@@ -1,58 +1,34 @@
 # -*- coding: utf-8 -*-
 """
 🚀 Complete JSON + Excel Merger - Final Version
-Smart merging of JSON and Excel with full cleaning and optimization
+ادغام هوشمند JSON و Excel با پاکسازی و بهینه‌سازی کامل
 """
 
 from pathlib import Path
-import os
-import json
-import re
-import pandas as pd
+import os, json, re, pandas as pd
 from collections import defaultdict
 import time
 
-
-import logging
-import tempfile
-
-# Setup logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
-
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-DATA_DIR = BASE_DIR / "data"
-INPUT_DIR = DATA_DIR / "input"
-OUTPUT_DIR = DATA_DIR / "output"
-
-os.makedirs(INPUT_DIR, exist_ok=True)
-os.makedirs(OUTPUT_DIR, exist_ok=True)
-
 # =========================================================
-# 🧩 Fixed Paths for Render/GitHub
+# 🧩 مسیرهای داینامیک
 # =========================================================
-INPUT_JSON = OUTPUT_DIR / "mix_ocr_qr.json"         # ورودی از ادغام OCR + QR
-INPUT_EXCEL = OUTPUT_DIR / "web_analysis.xlsx"      # ورودی از Web Scraper
+SESSION_DIR = Path(os.getenv("SESSION_DIR", Path.cwd()))
+INPUT_JSON = Path(os.getenv("INPUT_JSON", SESSION_DIR / "mix_ocr_qr.json"))
+INPUT_EXCEL = Path(os.getenv("INPUT_EXCEL", SESSION_DIR / "web_analysis.xlsx"))
 timestamp = pd.Timestamp.now().strftime("%Y%m%d_%H%M%S")
-OUTPUT_EXCEL = OUTPUT_DIR / f"merged_final_{timestamp}.xlsx"  # خروجی نهایی
-
-os.makedirs(OUTPUT_DIR, exist_ok=True)
+OUTPUT_EXCEL = Path(os.getenv("OUTPUT_EXCEL", SESSION_DIR / f"merged_final_{timestamp}.xlsx"))
 
 print("\n" + "="*70)
 print("🚀 Complete JSON + Excel Merger (Optimized)")
 print("="*70)
+print(f"📂 Session: {SESSION_DIR}")
 print(f"📥 JSON: {INPUT_JSON}")
 print(f"📥 Excel: {INPUT_EXCEL}")
 print(f"📤 Output: {OUTPUT_EXCEL}")
 print("="*70 + "\n")
 
-
 # =========================================================
-#  helper functions
+# 🧠 توابع کمکی
 # =========================================================
 def is_persian(text):
     if not text or pd.isna(text):
@@ -121,9 +97,8 @@ def extract_key_identifier(record):
     
     return ("unique", str(id(record)))
 
-
 # =========================================================
-#  load JSON
+# 📥 بارگذاری JSON
 # =========================================================
 def load_json_records(json_path):
     print("\n📥 Loading JSON...")
@@ -181,7 +156,7 @@ def load_json_records(json_path):
         return []
 
 # =========================================================
-#  load Excel
+# 📥 بارگذاری Excel
 # =========================================================
 def load_excel_records(excel_path):
     print("\n📥 Loading Excel...")
@@ -212,9 +187,8 @@ def load_excel_records(excel_path):
         print(f"   ❌ Error: {e}")
         return []
 
-
 # =========================================================
-#  merge two records
+# 🔄 ادغام دو رکورد
 # =========================================================
 def merge_two_records(r1, r2):
     merged = {}
@@ -238,9 +212,8 @@ def merge_two_records(r1, r2):
             merged[f"{key}[{counter}]"] = v2
     return merged
 
-
 # =========================================================
-# smart merge
+# 🔗 ادغام هوشمند
 # =========================================================
 def smart_merge_records(json_records, excel_records):
     print("\n🔗 Merging intelligently...")
@@ -286,20 +259,19 @@ def smart_merge_records(json_records, excel_records):
     print(f"   ✅ Created {len(merged_records)} final records")
     return merged_records
 
-
 # =========================================================
-#  clean DataFrame
+# 🧹 پاکسازی DataFrame
 # =========================================================
 def clean_and_optimize_dataframe(df):
     print("\n🧹 Optimizing DataFrame...")
     
-    # remove empty values
+    # حذف خالی‌ها
     empty = df.columns[df.isna().all()].tolist()
     if empty:
         df = df.drop(columns=empty)
         print(f"   🗑️ Removed {len(empty)} empty columns")
     
-    # merge duplicates
+    # ادغام تکراری‌ها
     merges = [
         ('urls', 'Website'),
         ('phones', 'Phone1'),
@@ -315,13 +287,13 @@ def clean_and_optimize_dataframe(df):
             df = df.drop(columns=[old])
             print(f"   ✂️ {old} → {new}")
     
-    # remove empty multi-values
+    # حذف multi-value خالی
     multi = [c for c in df.columns if '[' in c and ']' in c]
     for col in multi:
         if df[col].isna().sum() / len(df) > 0.9:
             df = df.drop(columns=[col])
     
-    # company_names
+    # ادغام company_names
     if 'company_names' in df.columns:
         if 'CompanyNameEN' not in df.columns:
             df['CompanyNameEN'] = ""
@@ -341,7 +313,7 @@ def clean_and_optimize_dataframe(df):
         df = df.drop(columns=['company_names'])
         print(f"   ✂️ company_names → CompanyName fields")
     
-    # addresses
+    # ادغام addresses
     if 'addresses' in df.columns:
         if 'AddressEN' not in df.columns:
             df['AddressEN'] = ""
@@ -361,7 +333,7 @@ def clean_and_optimize_dataframe(df):
         df = df.drop(columns=['addresses'])
         print(f"   ✂️ addresses → Address fields")
     
-    # notes
+    # ادغام notes
     if 'notes' in df.columns and 'Description' in df.columns:
         df['Description'] = df['Description'].fillna(df['notes'])
         df = df.drop(columns=['notes'])
@@ -370,7 +342,7 @@ def clean_and_optimize_dataframe(df):
     return df
 
 # =========================================================
-# final ordering
+# 📊 ترتیب‌بندی نهایی
 # =========================================================
 def create_final_dataframe(records):
     if not records:
@@ -378,7 +350,7 @@ def create_final_dataframe(records):
     
     df = pd.DataFrame(records)
     
-    # remove metadata
+    # حذف متادیتا
     remove = ['ocr_text', 'AddressFA_translated', 'CompanyNameFA_translated',
               'file_id', 'file_name', 'page', 'DataSource']
     for col in remove:
@@ -404,9 +376,8 @@ def create_final_dataframe(records):
     
     return df[ordered + remaining]
 
-
 # =========================================================
-# save
+# 💾 ذخیره
 # =========================================================
 def save_excel(df, path):
     if df.empty:
@@ -424,9 +395,8 @@ def save_excel(df, path):
         print(f"   ❌ Error: {e}")
         return False
 
-
 # =========================================================
-#  execute
+# 🚀 اجرا
 # =========================================================
 def main():
     start = time.time()
@@ -450,15 +420,6 @@ def main():
         print("="*70)
         return 0
     return 1
-
-
-def run_final_merge():
-    """final merge"""
-    print("📊 Starting final merge...")
-    code = main()
-    if code == 0 and OUTPUT_EXCEL.exists():
-        return True, [str(OUTPUT_EXCEL)]
-    return False, []
 
 if __name__ == "__main__":
     exit(main())

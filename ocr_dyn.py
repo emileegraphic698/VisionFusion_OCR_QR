@@ -53,7 +53,7 @@ BATCH_SIZE_IMAGES = 3
 # =========================================================
 # Set API Key (only one key)
 # =========================================================
-API_KEY = "AIzaSyC......JDGGXI....rt61Cl2ZTs"
+API_KEY = "AIzaSyCKoaSP6Wgj5FCJDGGXIBHy1rt61Cl2ZTs"
 CLIENT = _genai_new.Client(api_key=API_KEY)
 
 

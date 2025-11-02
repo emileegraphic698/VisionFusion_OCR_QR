@@ -66,7 +66,7 @@ print(f"{'='*70}\n")
 #  settings
 # =========================================================
 # api key - only one key
-GOOGLE_API_KEY = "AIzaSyB.....ZDouR35hoZNxqsW6pc"
+GOOGLE_API_KEY = "AIzaSyBzVNw34fbQRcxCSZDouR35hoZNxqsW6pc"
 
 MODEL_NAME = "gemini-2.0-flash-exp"
 THREAD_COUNT = 5

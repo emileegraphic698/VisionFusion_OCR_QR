@@ -28,8 +28,6 @@ import numpy as np
 import re
 import shutil
 
-from supabase import create_client, Client
-
 # =========================================================
 # Page Settings
 # =========================================================
@@ -62,7 +60,6 @@ st.markdown(f"""
     </p>
 </div>
 """, unsafe_allow_html=True)
-
 
 # =========================================================
 # Cool UI with Professional Gradients
@@ -147,7 +144,6 @@ for key_name, key_value in API_KEYS.items():
     os.environ[f"GOOGLE_API_KEY_{key_name.upper()}"] = key_value
     os.environ["GOOGLE_API_KEY"] = key_value
     os.environ["GEMINI_API_KEY"] = key_value
-
 
 # =========================================================
 # GOOGLE SHEETS INTEGRATION
@@ -240,7 +236,6 @@ def append_excel_data_to_sheets(excel_path, folder_id=None):
         exists = True
         print(f"   ✅ Using existing Google Sheet: {file_url}")
 
-        # file_id, file_url, exists = find_or_create_data_table(drive_service, sheets_service, folder_id)
         if not file_id:
             return False, "Error creating table", None, 0
         
@@ -365,7 +360,6 @@ def append_excel_data_to_sheets(excel_path, folder_id=None):
         traceback.print_exc()
         return False, str(e), None, 0
 
-
 def get_or_create_folder(folder_name="Exhibition_Data"):
     """Find or create folder in Drive"""
     try:
@@ -393,8 +387,6 @@ def get_or_create_folder(folder_name="Exhibition_Data"):
     except Exception as e:
         print(f"   ❌ Error: {e}")
         return None
-
-
 
 # =========================================================
 # Quota Management
@@ -432,7 +424,6 @@ def decrease_quota(amount=1):
     quota["remaining"] = max(0, DAILY_LIMIT - quota["used"])
     save_quota(quota)
     return quota
-
 
 # =========================================================
 # Quality Control Tracking Functions
@@ -479,7 +470,6 @@ def save_qc_log(session_dir, qc_metadata, exhibition_name, pipeline_type, total_
     except Exception as e:
         print(f"   ❌ Error saving QC log: {e}")
         return False
-
 
 # =========================================================
 # Shared Smart Functions
@@ -598,7 +588,6 @@ def add_exhibition_and_source(excel_path, exhibition_name):
         print(f"   ❌ Error adding metadata: {e}")
         st.error(f"Error adding metadata: {e}")
         return False
-
 
 # =========================================================
 # Detect Pipeline Type and Exhibition Name
@@ -813,7 +802,6 @@ elif Path("google_sheet_link.txt").exists():
     except:
         pass
 
-
 # ======================================
 # End of Quick Link
 # ======================================
@@ -856,7 +844,6 @@ for key_name, key_value in API_KEYS.items():
 st.sidebar.markdown("---")
 st.sidebar.markdown("### 📦 Batch Processing")
 st.sidebar.info("📸 Images: 5\n📄 PDFs: 4\n📊 Excel: 1")
-
 
 # =========================================================
 # Upload Files

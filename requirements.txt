@@ -1,8 +1,7 @@
 # =========================================================
 # 🧩 Core AI & Google Libraries
 # =========================================================
-# Downgrade to avoid websockets conflict with supabase
-google-genai==0.6.0
+google-genai
 google-api-python-client
 google-auth
 google-auth-oauthlib
@@ -11,15 +10,15 @@ google-auth-httplib2
 # =========================================================
 # 🧠 Data Handling
 # =========================================================
-pandas==2.2.3
-numpy==1.26.4
+pandas
+numpy
 openpyxl
-python-dateutil==2.9.0.post0
+python-dateutil
 
 # =========================================================
 # 🌐 Web & Requests
 # =========================================================
-requests==2.32.3
+requests
 urllib3
 beautifulsoup4
 lxml
@@ -28,7 +27,7 @@ html5lib
 # =========================================================
 # 📄 PDF & Image Processing / OCR
 # =========================================================
-pillow==10.4.0
+pillow
 pdf2image
 opencv-python
 pyzbar
@@ -39,8 +38,8 @@ pytesseract
 # ⚙️ Utilities & Helpers
 # =========================================================
 pathlib
-tqdm==4.66.5
-regex==2024.9.11
+tqdm
+regex
 python-dotenv
 concurrent-log-handler
 shutilwhich
@@ -48,11 +47,9 @@ shutilwhich
 # =========================================================
 # 🚀 Streamlit App
 # =========================================================
-streamlit==1.39.0
-# Let pip resolve websockets version automatically
-websockets>=11.0,<12.0
+streamlit
 
 # =========================================================
 # 🗄️ Supabase Integration
 # =========================================================
-supabase==2.4.0
+supabase

@@ -6,11 +6,7 @@ import os
 from pathlib import Path
 
 def get_base_dir():
-    """
-    تشخیص محیط و بازگشت مسیر پایه
-    - Local: پوشه جاری
-    - Streamlit Cloud: /tmp/exhibition_data
-    """
+    """تشخیص محیط و بازگشت مسیر پایه"""
     # چک محیط Streamlit Cloud
     if os.getenv("STREAMLIT_SHARING_MODE") or os.getenv("STREAMLIT_RUNTIME_ENV"):
         base = Path("/tmp/exhibition_data")
@@ -49,13 +45,4 @@ os.environ["SESSION_DIR"] = str(BASE_DIR)
 os.environ["SOURCE_FOLDER"] = str(UPLOADS_DIR)
 os.environ["OUTPUT_DIR"] = str(OUTPUT_DIR)
 
-print(f"""
-{'='*60}
-🎯 Streamlit Cloud Path Manager Initialized
-{'='*60}
-📂 BASE_DIR: {BASE_DIR}
-📂 UPLOADS: {UPLOADS_DIR}
-📂 OUTPUT: {OUTPUT_DIR}
-📂 LOGS: {LOGS_DIR}
-{'='*60}
-""")
+print(f"✅ Config loaded: BASE_DIR={BASE_DIR}")

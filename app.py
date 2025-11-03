@@ -948,7 +948,7 @@ if uploaded_files:
     print(f"✅ SESSION_DIR set to: {os.environ['SESSION_DIR']}")
 
 # ساخت پوشه‌ها
-   session_dir = config.BASE_DIR
+    session_dir = config.BASE_DIR
     uploads_dir = config.UPLOADS_DIR
     logs_dir = config.LOGS_DIR
 # ذخیره فایل‌های آپلود شده

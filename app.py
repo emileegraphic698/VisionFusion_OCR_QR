@@ -163,15 +163,32 @@ GOOGLE_SCOPES = [
 def get_google_services():
     """اتصال به Google Drive و Sheets"""
     try:
+        # ✅ چک کردن وجود secrets
+        if "gcp_service_account" not in st.secrets:
+            print("❌ gcp_service_account not found in secrets!")
+            st.error("❌ لطفاً Service Account را در Secrets تنظیم کنید")
+            return None, None
+        
+        print("✅ Found gcp_service_account in secrets")
+        
         creds = service_account.Credentials.from_service_account_info(
             st.secrets["gcp_service_account"],
             scopes=GOOGLE_SCOPES
         )
+        
+        print("✅ Credentials created successfully")
+        
         drive_service = build('drive', 'v3', credentials=creds)
         sheets_service = build('sheets', 'v4', credentials=creds)
+        
+        print("✅ Google Services connected successfully")
+        
         return drive_service, sheets_service
     except Exception as e:
+        print(f"❌ خطا در اتصال به Google: {e}")
         st.error(f"❌ خطا در اتصال به Google: {e}")
+        import traceback
+        traceback.print_exc()
         return None, None
 
 def _col_index_to_letter(col_index):

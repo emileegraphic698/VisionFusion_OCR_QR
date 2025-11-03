@@ -225,7 +225,7 @@ import numpy as np
 from pathlib import Path
 from googleapiclient.http import MediaFileUpload
 
-def upload_excel_to_google_services(excel_path, folder_id=None):
+def append_excel_data_to_sheets(excel_path, folder_id=None):
     """
     Uploads Excel file to Google Drive and appends its data to Google Sheets.
     Compatible with Streamlit Cloud.

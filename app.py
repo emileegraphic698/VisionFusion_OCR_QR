@@ -163,14 +163,24 @@ GOOGLE_SCOPES = [
 def get_google_services():
     """اتصال به Google Drive و Sheets"""
     try:
+        # ✅ اضافه کن
+        print("🔍 DEBUG: Trying to connect to Google Services...")
+        
         creds = service_account.Credentials.from_service_account_info(
             st.secrets["gcp_service_account"],
             scopes=GOOGLE_SCOPES
         )
         drive_service = build('drive', 'v3', credentials=creds)
         sheets_service = build('sheets', 'v4', credentials=creds)
+        
+        # ✅ اضافه کن
+        print("✅ DEBUG: Google Services connected successfully!")
+        
         return drive_service, sheets_service
     except Exception as e:
+        # ✅ اضافه کن
+        print(f"❌ DEBUG: Failed to connect: {e}")
+        
         st.error(f"❌ خطا در اتصال به Google: {e}")
         return None, None
 
@@ -225,10 +235,32 @@ def find_or_create_data_table(drive_service, sheets_service, folder_id=None):
         return None, None, False
 
 def append_excel_data_to_sheets(excel_path, folder_id=None):
-    """
-    Read Excel data and append to Google Sheets (variable row count).
-    ✅ FIXED: Compatible with Streamlit Cloud UploadedFile
-    """
+    """Read Excel data and append to Google Sheets"""
+    try:
+        # ✅ اضافه کن این خطوط
+        print("\n" + "="*80)
+        print("🔍 DEBUG: append_excel_data_to_sheets CALLED")
+        print(f"🔍 DEBUG: excel_path type = {type(excel_path)}")
+        print(f"🔍 DEBUG: excel_path = {excel_path}")
+        print("="*80 + "\n")
+        
+        drive_service, sheets_service = get_google_services()
+        if not drive_service or not sheets_service:
+            print("❌ DEBUG: Google services are None!")
+            return False, "Google connection failed", None, 0
+    
+    if success and output_files:
+                st.info("📝 در حال اضافه کردن Exhibition، Source و QC Metadata...")
+                for output_file in output_files:
+                    add_exhibition_and_source(output_file, exhibition_name)
+                    add_qc_metadata_to_excel(output_file, qc_metadata)
+                
+                # ✅ اضافه کن این خط رو
+                st.warning(f"🔍 DEBUG: تعداد فایل‌های خروجی: {len(output_files)}")
+                for f in output_files:
+                    st.info(f"📄 فایل: {f.name} | حجم: {f.stat().st_size} bytes")
+                
+                # ========== GOOGLE SHEETS UPLOAD ==========
     try:
         drive_service, sheets_service = get_google_services()
         if not drive_service or not sheets_service:

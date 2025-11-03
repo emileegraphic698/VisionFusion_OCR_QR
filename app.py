@@ -1162,36 +1162,36 @@ if uploaded_files:
                         total_cells = total_rows * 90
                         capacity = (total_cells / 10_000_000) * 100
                             
-                            col_a, col_b, col_c = st.columns(3)
-                            with col_a:
-                                st.metric("📊 کل ردیف‌ها", f"{total_rows:,}")
-                            with col_b:
-                                st.metric("📦 کل سلول‌ها", f"{total_cells:,}")
-                            with col_c:
-                                st.metric("⚡️ ظرفیت", f"{capacity:.1f}%")
+                        col_a, col_b, col_c = st.columns(3)
+                        with col_a:
+                            st.metric("📊 کل ردیف‌ها", f"{total_rows:,}")
+                        with col_b:
+                            st.metric("📦 کل سلول‌ها", f"{total_cells:,}")
+                        with col_c:
+                            st.metric("⚡️ ظرفیت", f"{capacity:.1f}%")
                             
-                            st.markdown(f"""
-                            <div class="file-display" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-                                <h4>🔗 لینک دائمی جدول</h4>
-                                <p style="background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 8px; margin: 0.5rem 0;">
-                                    <a href="{url_gs}" target="_blank" style="color: white; font-weight: bold; font-size: 1.1rem;">
-                                        📊 باز کردن در Google Drive
-                                    </a>
-                                </p>
-                                <p style="font-size: 0.9rem; margin: 0.5rem 0 0 0; opacity: 0.9;">
-                                    💡 این لینک همیشه ثابت است! Bookmark کنید!
-                                </p>
-                            </div>
-                            """, unsafe_allow_html=True)
+                        st.markdown(f"""
+                        <div class="file-display" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                            <h4>🔗 لینک دائمی جدول</h4>
+                            <p style="background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 8px; margin: 0.5rem 0;">
+                                <a href="{url_gs}" target="_blank" style="color: white; font-weight: bold; font-size: 1.1rem;">
+                                    📊 باز کردن در Google Drive
+                                </a>
+                            </p>
+                            <p style="font-size: 0.9rem; margin: 0.5rem 0 0 0; opacity: 0.9;">
+                                💡 این لینک همیشه ثابت است! Bookmark کنید!
+                            </p>
+                        </div>
+                        """, unsafe_allow_html=True)
                             
-                            st.code(url_gs, language=None)
+                        st.code(url_gs, language=None)
                             
-                            if capacity > 80:
-                                st.warning(f"⚠️ ظرفیت بالا ({capacity:.1f}%)!")
-                            else:
-                                st.success(f"✅ فضای کافی ({100-capacity:.1f}% باقی)")
+                        if capacity > 80:
+                            st.warning(f"⚠️ ظرفیت بالا ({capacity:.1f}%)!")
                         else:
-                            sheets_status.error(f"❌ خطا: {msg_gs}")
+                            st.success(f"✅ فضای کافی ({100-capacity:.1f}% باقی)")
+                    else:
+                        sheets_status.error(f"❌ خطا: {msg_gs}")
                 
                 except Exception as e:
                     sheets_status.error(f"❌ خطا: {e}")

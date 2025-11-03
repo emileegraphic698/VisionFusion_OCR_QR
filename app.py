@@ -234,6 +234,13 @@ def append_excel_data_to_sheets(excel_path, folder_id=None):
         
         print(f"✅ File exists: {excel_path} ({excel_path.stat().st_size} bytes)")
         
+        # ✅ دریافت Google Services
+        drive_service, sheets_service = get_google_services()
+        if not drive_service or not sheets_service:
+            print(f"❌ Google Services connection failed")
+            return False, "Google connection failed", None, 0
+        
+        print(f"☁️ Starting data save to Google Drive...")
 
         # ✅ Use existing Google Sheet instead of creating a new one
         file_id = "1OeQbiqvo6v58rcxaoSUidOk0IxSGmL8YCpLnyh27yuE"
@@ -241,7 +248,6 @@ def append_excel_data_to_sheets(excel_path, folder_id=None):
         exists = True
         print(f"   ✅ Using existing Google Sheet: {file_url}")
 
-        # file_id, file_url, exists = find_or_create_data_table(drive_service, sheets_service, folder_id)
         if not file_id:
             return False, "Error creating table", None, 0
         

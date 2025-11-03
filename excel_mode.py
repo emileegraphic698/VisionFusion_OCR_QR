@@ -15,12 +15,7 @@ warnings.filterwarnings("ignore")
 import pandas as pd
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-import config
 
-def run_qr_detection(session_dir_path=None):
-    BASE_DIR = config.BASE_DIR if not session_dir_path else Path(session_dir_path)
-    INPUT_DIR = BASE_DIR / "uploads"
-    OUTPUT_JSON_CLEAN = config.QR_CLEAN
 # =========================================================
 # 🔹 Gemini SDK Import
 # =========================================================

@@ -1,6 +1,20 @@
 # -*- coding: utf-8 -*-
+"""
+🎯 Smart Exhibition Pipeline — Final Unified Edition + Google Sheets
+ادغام کامل دو اپ: «Ultimate Smart Exhibition Pipeline» + «Smart Data Pipeline»
+- UI خفن نسخه ۱ + منطق و لاگ‌نویسی و مدیریت سهمیه نسخه ۲
+- Excel Mode و OCR/QR Mode با تشخیص خودکار
+- Smart Metadata Injection (Exhibition + Source + Smart Position)
+- Fast Mode, Debug Mode, Rate Limiting, Daily Quota
+- ✨ Batch Processing: Images(5), PDFs(4), Excel(1)
+- ✨ Quality Control Tracking: User Name, Role, Date, Time
+- ☁️ Google Sheets Integration: ذخیره خودکار داده‌ها در Google Drive
+
+اجرا:
+    streamlit run smart_exhibition_pipeline_final.py
+"""
+
 import streamlit as st
-import config 
 import subprocess
 import os
 import sys
@@ -149,32 +163,15 @@ GOOGLE_SCOPES = [
 def get_google_services():
     """اتصال به Google Drive و Sheets"""
     try:
-        # ✅ چک کردن وجود secrets
-        if "gcp_service_account" not in st.secrets:
-            print("❌ gcp_service_account not found in secrets!")
-            st.error("❌ لطفاً Service Account را در Secrets تنظیم کنید")
-            return None, None
-        
-        print("✅ Found gcp_service_account in secrets")
-        
         creds = service_account.Credentials.from_service_account_info(
             st.secrets["gcp_service_account"],
             scopes=GOOGLE_SCOPES
         )
-        
-        print("✅ Credentials created successfully")
-        
         drive_service = build('drive', 'v3', credentials=creds)
         sheets_service = build('sheets', 'v4', credentials=creds)
-        
-        print("✅ Google Services connected successfully")
-        
         return drive_service, sheets_service
     except Exception as e:
-        print(f"❌ خطا در اتصال به Google: {e}")
         st.error(f"❌ خطا در اتصال به Google: {e}")
-        import traceback
-        traceback.print_exc()
         return None, None
 
 def _col_index_to_letter(col_index):
@@ -228,22 +225,13 @@ def find_or_create_data_table(drive_service, sheets_service, folder_id=None):
         return None, None, False
 
 def append_excel_data_to_sheets(excel_path, folder_id=None):
-    """Read Excel data and append to Google Sheets"""
+    """Read Excel data and append to Google Sheets (variable row count)"""
     try:
-        # ✅ چک کردن فایل
-        if not excel_path.exists():
-            print(f"❌ File not found: {excel_path}")
-            return False, "File not found", None, 0
-        
-        print(f"✅ File exists: {excel_path} ({excel_path.stat().st_size} bytes)")
-        
-        # ✅ دریافت Google Services
         drive_service, sheets_service = get_google_services()
         if not drive_service or not sheets_service:
-            print(f"❌ Google Services connection failed")
             return False, "Google connection failed", None, 0
-        
-        print(f"☁️ Starting data save to Google Drive...")
+
+        print(f"\n☁️ Starting data save to Google Drive...")
 
         # ✅ Use existing Google Sheet instead of creating a new one
         file_id = "1OeQbiqvo6v58rcxaoSUidOk0IxSGmL8YCpLnyh27yuE"
@@ -251,6 +239,7 @@ def append_excel_data_to_sheets(excel_path, folder_id=None):
         exists = True
         print(f"   ✅ Using existing Google Sheet: {file_url}")
 
+        # file_id, file_url, exists = find_or_create_data_table(drive_service, sheets_service, folder_id)
         if not file_id:
             return False, "Error creating table", None, 0
         
@@ -681,80 +670,81 @@ def process_files_in_batches(uploads_dir, pipeline_type):
 # =========================================================
 # 🔄 اجرای اسکریپت با Fast Mode + Log File
 # =========================================================
-def run_script_as_function(script_name, session_dir, log_area, status_text, script_display_name=""):
-    """
-    اجرای اسکریپت به صورت تابع (بدون subprocess)
-    """
+def run_script(script_name, session_dir, log_area, status_text, script_display_name="", fast_mode=True):
+    script_path = Path(script_name)
+    if not script_display_name:
+        script_display_name = script_name
+    if not script_path.exists():
+        script_path = Path.cwd() / script_name
+        if not script_path.exists():
+            status_text.markdown(f"""
+            <div class="status-box status-error">❌ فایل {script_name} یافت نشد!</div>
+            """, unsafe_allow_html=True)
+            return False
+
     status_text.markdown(f"""
     <div class="status-box status-info">
         <div class="loading-spinner"></div> در حال اجرای {script_display_name}...
     </div>
     """, unsafe_allow_html=True)
-    
+
     logs_dir = session_dir / "logs"
     logs_dir.mkdir(exist_ok=True)
     timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-    log_file = logs_dir / f"log_{script_name}_{timestamp}.txt"
-    
-    # ✅ Import و اجرای مستقیم
-    import sys
-    from io import StringIO
-    
-    # Redirect stdout to capture logs
-    old_stdout = sys.stdout
-    sys.stdout = captured_output = StringIO()
-    
+    log_file = logs_dir / f"log_{script_path.stem}_{timestamp}.txt"
+
+    env = os.environ.copy()
+    env["SESSION_DIR"] = str(session_dir)
+    env["SOURCE_FOLDER"] = str(session_dir / "uploads")
+
     try:
-        if script_name == "ocr_dyn.py":
-            from ocr_dyn import run_ocr_extraction
-            result = run_ocr_extraction(str(session_dir))
-            
-        elif script_name == "qr_dyn.py":
-            from qr_dyn import run_qr_detection
-            result = run_qr_detection(str(session_dir))
-            
-        elif script_name == "mix_ocr_qr_dyn.py":
-            from mix_ocr_qr_dyn import run_mix_ocr_qr
-            result = run_mix_ocr_qr(str(session_dir))
-            
-        elif script_name == "scrap.py":
-            from scrap import run_web_scraping
-            result = run_web_scraping(str(session_dir))
-            
-        elif script_name == "final_mix.py":
-            from final_mix import run_final_merge
-            result = run_final_merge(str(session_dir))
-            
+        with subprocess.Popen(
+            [sys.executable, str(script_path)],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            cwd=Path.cwd(),
+            env=env,
+            text=True,
+            bufsize=1
+        ) as process:
+            all_output = ""
+            line_count = 0
+            with open(log_file, "w", encoding="utf-8") as log_f:
+                for line in process.stdout:
+                    all_output += line
+                    log_f.write(line)
+                    log_f.flush()
+                    line_count += 1
+                    if fast_mode:
+                        if line_count % 10 == 0:
+                            log_area.code(all_output[-2000:], language="bash")
+                    else:
+                        log_area.code(all_output[-3000:], language="bash")
+                        time.sleep(0.05)
+            process.wait()
+
+        if process.returncode == 0:
+            status_text.markdown(f"""
+            <div class="status-box status-success">✅ {script_display_name} موفقیت‌آمیز بود!</div>
+            """, unsafe_allow_html=True)
+            return True
         else:
-            raise ValueError(f"Unknown script: {script_name}")
-        
-        # Get captured logs
-        log_content = captured_output.getvalue()
-        sys.stdout = old_stdout
-        
-        # Save logs
-        log_file.write_text(log_content, encoding='utf-8')
-        
-        # Display logs
-        log_area.code(log_content[-2000:], language="bash")
-        
-        status_text.markdown(f"""
-        <div class="status-box status-success">✅ {script_display_name} موفقیت‌آمیز بود!</div>
-        """, unsafe_allow_html=True)
-        
-        return True
-        
+            status_text.markdown(f"""
+            <div class="status-box status-warning">⚠️ {script_display_name} با مشکل مواجه شد (exit code: {process.returncode})</div>
+            """, unsafe_allow_html=True)
+            try:
+                with open(log_file, 'r', encoding='utf-8') as f:
+                    lines = f.readlines()
+                    if lines:
+                        st.code(''.join(lines[-50:]), language='bash')
+            except:
+                pass
+            return False
+
     except Exception as e:
-        sys.stdout = old_stdout
-        log_content = captured_output.getvalue()
-        log_file.write_text(log_content + f"\n\nERROR: {str(e)}", encoding='utf-8')
-        
         status_text.markdown(f"""
-        <div class="status-box status-error">❌ خطا: {str(e)}</div>
+        <div class="status-box status-error">❌ خطای اجرا: {str(e)}</div>
         """, unsafe_allow_html=True)
-        
-        log_area.code(log_content[-2000:] + f"\n\nERROR: {str(e)}", language="bash")
-        
         return False
 
 # =========================================================
@@ -872,15 +862,13 @@ with col_qc1:
     qc_user_name = st.text_input(
         "🧑‍💼 نام و نام خانوادگی",
         placeholder="مثال: علی احمدی",
-        help="نام کامل ناظر کیفیت داده‌ها",
-        key="qc_user_name"
+        help="نام کامل ناظر کیفیت داده‌ها"
     )
 with col_qc2:
     qc_user_role = st.text_input(
         "💼 سمت/نقش",
         placeholder="مثال: کارشناس کنترل کیفیت",
-        help="سمت یا نقش شما در سازمان",
-        key="qc_user_role"
+        help="سمت یا نقش شما در سازمان"
     )
 
 if qc_user_name and qc_user_role:
@@ -897,43 +885,6 @@ if qc_user_name and qc_user_role:
 
 st.markdown("---")
 
-if uploaded_files:
-    pipeline_type = detect_pipeline_type(uploaded_files)
-    exhibition_name = extract_exhibition_name(uploaded_files)
-
-    col1, col2, col3 = st.columns(3)
-with col_qc1:
-    qc_user_name = st.text_input(
-        "🧑‍💼 نام و نام خانوادگی",
-        placeholder="مثال: علی احمدی",
-        help="نام کامل ناظر کیفیت داده‌ها",
-        key="qc_user_name"  # ✅ اضافه کن
-    )
-with col_qc2:
-    qc_user_role = st.text_input(
-        "💼 سمت/نقش",
-        placeholder="مثال: کارشناس کنترل کیفیت",
-        help="سمت یا نقش شما در سازمان",
-        key="qc_user_role"  # ✅ اضافه کن
-    )
-    with col3:
-        st.markdown(f"""
-        <div class="metric-card">
-            <h3>🏢 نمایشگاه</h3>
-            <h2>{exhibition_name[:15]}</h2>
-        </div>
-        """, unsafe_allow_html=True)
-
-    exhibition_name = st.text_input(
-        "📝 ویرایش نام نمایشگاه",
-        value=exhibition_name,
-        help="در ستون Exhibition ثبت می‌شود"
-    )
-
-    import os
-    from pathlib import Path
-    import streamlit as st
-    import datetime
 if uploaded_files:
     pipeline_type = detect_pipeline_type(uploaded_files)
     exhibition_name = extract_exhibition_name(uploaded_files)
@@ -962,55 +913,35 @@ if uploaded_files:
         """, unsafe_allow_html=True)
 
     exhibition_name = st.text_input(
-    "📝 ویرایش نام نمایشگاه",
-    value=exhibition_name,
-    help="در ستون Exhibition ثبت می‌شود",
-    key="exhibition_name_input"  # ✅ اضافه کن
-)
+        "📝 ویرایش نام نمایشگاه",
+        value=exhibition_name,
+        help="در ستون Exhibition ثبت می‌شود"
+    )
 
-    # =========================================================
-    # 📂 تنظیم مسیرها با config (بدون تکرار!)
-    # =========================================================
-    session_dir = config.BASE_DIR
-    uploads_dir = config.UPLOADS_DIR
-    logs_dir = config.LOGS_DIR
-
-    # تنظیم Environment Variables
-    os.environ["SESSION_DIR"] = str(session_dir.resolve())
-    os.environ["SOURCE_FOLDER"] = str(uploads_dir.resolve())
-    os.environ["OUTPUT_DIR"] = str(session_dir.resolve())
-    os.environ["EXHIBITION_NAME"] = exhibition_name
-
-    print(f"✅ SESSION_DIR set to: {os.environ['SESSION_DIR']}")
-
-    # ساخت پوشه‌ها
+    session_timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+    session_dir = Path(f"session_{session_timestamp}")
+    uploads_dir = session_dir / "uploads"
+    logs_dir = session_dir / "logs"
     uploads_dir.mkdir(parents=True, exist_ok=True)
     logs_dir.mkdir(parents=True, exist_ok=True)
 
-    # ذخیره فایل‌های آپلود شده
     for f in uploaded_files:
-        dest = uploads_dir / f.name
-        dest.write_bytes(f.getbuffer())
-        if not dest.exists():
-            st.error(f"❌ فایل ذخیره نشد: {dest}")
+        (uploads_dir / f.name).write_bytes(f.getbuffer())
 
-    # تعریف مسیرهای داینامیک برای pipeline
+    os.environ["SESSION_DIR"] = str(session_dir)
+    os.environ["SOURCE_FOLDER"] = str(uploads_dir)
+    os.environ["EXHIBITION_NAME"] = exhibition_name
+
     if pipeline_type == 'excel':
         excel_files = list(uploads_dir.glob("*.xlsx")) + list(uploads_dir.glob("*.xls"))
         if excel_files:
             os.environ["INPUT_EXCEL"] = str(excel_files[0])
-        else:
-            st.warning("⚠️ هیچ فایل Excel پیدا نشد!")
 
-    # پردازش فایل‌ها به Batch
     batches, batch_size = process_files_in_batches(uploads_dir, pipeline_type)
     total_batches = len(batches)
-
+    
     if total_batches > 0:
         st.info(f"📦 تعداد Batch‌ها: {total_batches} | اندازه هر Batch: {batch_size}")
-
-    st.markdown("---")
-
 
     st.markdown("---")
 
@@ -1096,7 +1027,6 @@ if uploaded_files:
                     output_files = [f for f in session_dir.glob("**/*.xlsx")
                                     if "output" in f.name.lower() or "enriched" in f.name.lower()]
 
-            
             else:
                 st.markdown("""
                 <div class="status-box status-info">🖼 OCR/QR Pipeline فعال شد</div>
@@ -1121,10 +1051,10 @@ if uploaded_files:
                     if total_batches > 0:
                         st.markdown(f"**{stage_name}** - پردازش {total_batches} Batch...")
 
-                    stage_success = run_script_as_function(
-                        script, session_dir, log_area, status_text, stage_name
+                    stage_success = run_script(
+                        script, session_dir, log_area, status_text,
+                        stage_name, fast_mode
                     )
-            
                     if not stage_success:
                         all_success = False
                         st.markdown(f"""
@@ -1133,11 +1063,11 @@ if uploaded_files:
 
                     progress_bar.progress(progress_val)
                     time.sleep(rate_limit)
-            
+                    
                     quota_decrease_amount = max(1, total_batches)
                     quota = decrease_quota(quota_decrease_amount)
                     quota_display.success(f"✅ سهمیه باقیمانده: {quota['remaining']}/{DAILY_LIMIT}")
-            
+                    
                     if quota['remaining'] <= 0:
                         st.markdown('<div class="status-box status-error">❌ سهمیه API تمام شد!</div>', unsafe_allow_html=True)
                         break
@@ -1164,81 +1094,66 @@ if uploaded_files:
                 sheets_status = st.empty()
                 sheets_status.info("📤 در حال آپلود داده‌ها...")
                 
-                # ✅ بررسی وجود فایل
-                if not output_file.exists():
-                    st.error(f"❌ فایل پیدا نشد: {output_file}")
+                try:
+                    folder_id = get_or_create_folder("Exhibition_Data")
                     
-
-
-            if output_file.stat().st_size == 0:
-                st.warning(f"⚠️ فایل خالی است: {output_file}")
-                
-                
-
-            st.info(f"📤 آپلود {output_file.name} ({output_file.stat().st_size / 1024:.1f} KB)...")
-
-
-
-            try:
-                folder_id = get_or_create_folder("Exhibition_Data")
-                    
-                for output_file in output_files:
-                    success_gs, msg_gs, url_gs, total_rows = append_excel_data_to_sheets(
-                        excel_path=output_file,
-                        folder_id=folder_id
+                    for output_file in output_files:
+                        success_gs, msg_gs, url_gs, total_rows = append_excel_data_to_sheets(
+                            excel_path=output_file,
+                            folder_id=folder_id
                         )
                         
-                    if success_gs:
-                        sheets_status.markdown(f"""
-                        <div class="status-box status-success">
-                            {msg_gs}
-                        </div>
-                        """, unsafe_allow_html=True)
+                        if success_gs:
+                            sheets_status.markdown(f"""
+                            <div class="status-box status-success">
+                                {msg_gs}
+                            </div>
+                            """, unsafe_allow_html=True)
                             
-                        st.session_state['sheet_url'] = url_gs
-                        st.session_state['sheet_id'] = url_gs.split('/d/')[1].split('/')[0] if '/d/' in url_gs else ''
+                            st.session_state['sheet_url'] = url_gs
+                            st.session_state['sheet_id'] = url_gs.split('/d/')[1].split('/')[0] if '/d/' in url_gs else ''
                             
-                        link_file = Path("google_sheet_link.txt")
-                        link_file.write_text(f"لینک جدول:\n{url_gs}", encoding='utf-8')
+                            link_file = Path("google_sheet_link.txt")
+                            link_file.write_text(f"لینک جدول:\n{url_gs}", encoding='utf-8')
                             
-                        total_cells = total_rows * 90
-                        capacity = (total_cells / 10_000_000) * 100
+                            total_cells = total_rows * 90
+                            capacity = (total_cells / 10_000_000) * 100
                             
-                        col_a, col_b, col_c = st.columns(3)
-                        with col_a:
-                            st.metric("📊 کل ردیف‌ها", f"{total_rows:,}")
-                        with col_b:
-                            st.metric("📦 کل سلول‌ها", f"{total_cells:,}")
-                        with col_c:
-                            st.metric("⚡️ ظرفیت", f"{capacity:.1f}%")
+                            col_a, col_b, col_c = st.columns(3)
+                            with col_a:
+                                st.metric("📊 کل ردیف‌ها", f"{total_rows:,}")
+                            with col_b:
+                                st.metric("📦 کل سلول‌ها", f"{total_cells:,}")
+                            with col_c:
+                                st.metric("⚡️ ظرفیت", f"{capacity:.1f}%")
                             
-                        st.markdown(f"""
-                        <div class="file-display" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-                            <h4>🔗 لینک دائمی جدول</h4>
-                            <p style="background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 8px; margin: 0.5rem 0;">
-                                <a href="{url_gs}" target="_blank" style="color: white; font-weight: bold; font-size: 1.1rem;">
-                                    📊 باز کردن در Google Drive
-                                </a>
-                            </p>
-                            <p style="font-size: 0.9rem; margin: 0.5rem 0 0 0; opacity: 0.9;">
-                                💡 این لینک همیشه ثابت است! Bookmark کنید!
-                            </p>
-                        </div>
-                        """, unsafe_allow_html=True)
+                            st.markdown(f"""
+                            <div class="file-display" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                                <h4>🔗 لینک دائمی جدول</h4>
+                                <p style="background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 8px; margin: 0.5rem 0;">
+                                    <a href="{url_gs}" target="_blank" style="color: white; font-weight: bold; font-size: 1.1rem;">
+                                        📊 باز کردن در Google Drive
+                                    </a>
+                                </p>
+                                <p style="font-size: 0.9rem; margin: 0.5rem 0 0 0; opacity: 0.9;">
+                                    💡 این لینک همیشه ثابت است! Bookmark کنید!
+                                </p>
+                            </div>
+                            """, unsafe_allow_html=True)
                             
-                        st.code(url_gs, language=None)
+                            st.code(url_gs, language=None)
                             
-                        if capacity > 80:
-                            st.warning(f"⚠️ ظرفیت بالا ({capacity:.1f}%)!")
+                            if capacity > 80:
+                                st.warning(f"⚠️ ظرفیت بالا ({capacity:.1f}%)!")
+                            else:
+                                st.success(f"✅ فضای کافی ({100-capacity:.1f}% باقی)")
                         else:
-                            st.success(f"✅ فضای کافی ({100-capacity:.1f}% باقی)")
-                    else:
-                        sheets_status.error(f"❌ خطا: {msg_gs}")
+                            sheets_status.error(f"❌ خطا: {msg_gs}")
                 
-            except Exception as e:
-                sheets_status.error(f"❌ خطا: {e}")
-                st.warning("💡 مطمئن شوید Google Drive API و Sheets API فعال است")
-            # ========== END GOOGLE SHEETS ==========
+                except Exception as e:
+                    sheets_status.error(f"❌ خطا: {e}")
+                    st.warning("💡 مطمئن شوید Google Drive API و Sheets API فعال است")
+                # ========== END GOOGLE SHEETS ==========
 
             st.markdown("---")
 

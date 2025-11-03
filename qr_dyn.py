@@ -17,13 +17,6 @@ import warnings, ctypes, os
 warnings.filterwarnings("ignore")
 os.environ["ZBAR_LOG_LEVEL"] = "0"
 
-import config
-
-def run_qr_detection(session_dir_path=None):
-    BASE_DIR = config.BASE_DIR if not session_dir_path else Path(session_dir_path)
-    INPUT_DIR = BASE_DIR / "uploads"
-    OUTPUT_JSON_CLEAN = config.QR_CLEAN
-
 # =========================================================
 # 🧩 مسیرهای داینامیک سشن (Dynamic Paths)
 # =========================================================

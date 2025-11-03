@@ -8,12 +8,7 @@ from pathlib import Path
 import os, json, re, pandas as pd
 from collections import defaultdict
 import time
-import config
 
-def run_qr_detection(session_dir_path=None):
-    BASE_DIR = config.BASE_DIR if not session_dir_path else Path(session_dir_path)
-    INPUT_DIR = BASE_DIR / "uploads"
-    OUTPUT_JSON_CLEAN = config.QR_CLEAN
 # =========================================================
 # 🧩 مسیرهای داینامیک
 # =========================================================

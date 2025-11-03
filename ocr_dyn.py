@@ -3,17 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 import os, sys, json, time, io
 from typing import Any, Dict, List, Union
-import config
 from PIL import Image
 
-
-def run_ocr_extraction(session_dir_path=None):
-    """اجرای OCR با مسیر مرکزی"""
-    # استفاده از config
-    BASE_DIR = config.BASE_DIR if not session_dir_path else Path(session_dir_path)
-    INPUT_DIR = BASE_DIR / "uploads"
-    OUTPUT_DIR = BASE_DIR
-    OUT_JSON = config.OCR_OUTPUT
 # =========================================================
 # 🔹 Gemini SDK Import
 # =========================================================

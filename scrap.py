@@ -45,6 +45,8 @@ SESSION_DIR.mkdir(parents=True, exist_ok=True)
 SOURCE_FOLDER = SESSION_DIR / "uploads"
 RENAMED_DIR = SESSION_DIR / "renamed"
 OUT_JSON = SESSION_DIR / "gemini_scrap_output.json"
+QR_RAW_JSON = SESSION_DIR / "final_superqr_v6_raw.json"
+QR_CLEAN_JSON = SESSION_DIR / "final_superqr_v6_clean.json"
 MIX_OCR_QR_JSON = SESSION_DIR / "mix_ocr_qr.json"
 WEB_ANALYSIS_XLSX = SESSION_DIR / "web_analysis.xlsx"
 

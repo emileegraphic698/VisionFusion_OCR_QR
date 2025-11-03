@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-🚀 Excel Web Scraper - Professional Edition (Universal Paths)
-این نسخه همان منطق نسخهٔ اول است، اما مسیرها و I/O کاملاً داینامیک
-تا روی لوکال، Render و Streamlit Cloud به‌راحتی کار کند.
+🚀 Excel Web Scraper - Professional Edition
+وب‌اسکرپ حرفه‌ای از اکسل + تحلیل هوشمند Gemini + ترجمه
 """
 
 from pathlib import Path
@@ -16,34 +15,12 @@ warnings.filterwarnings("ignore")
 import pandas as pd
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+import config
 
-# =========================================================
-# 📁 Dynamic Path Resolution (Compatible with Streamlit Cloud / Render / Local)
-# =========================================================
-# Try to read SESSION_DIR env var (set by Streamlit Cloud). If set, use it.
-# ✅ مسیر ثابت
-SESSION_DIR_ENV = os.getenv("SESSION_DIR")
-if SESSION_DIR_ENV:
-    BASE_DIR = Path(SESSION_DIR_ENV)
-else:
-    BASE_DIR = Path.cwd() / "session_current"
-
-BASE_DIR.mkdir(parents=True, exist_ok=True)
-
-UPLOADS_DIR = BASE_DIR / "uploads"
-OUTPUT_DIR = BASE_DIR
-JSON_DIR = BASE_DIR / "json_data"
-
-for d in (UPLOADS_DIR, OUTPUT_DIR, JSON_DIR):
-    d.mkdir(parents=True, exist_ok=True)
-
-print(f"\n✅ Path system initialized")
-print(f" BASE_DIR: {path_str(BASE_DIR)}")
-print(f" UPLOADS_DIR: {path_str(UPLOADS_DIR)}")
-print(f" OUTPUT_DIR: {path_str(OUTPUT_DIR)}")
-print(f" JSON_DIR: {path_str(JSON_DIR)}")
-print(f" ACTIVE_OUTPUT_DIR: {path_str(ACTIVE_OUTPUT_DIR)}\n")
-
+def run_qr_detection(session_dir_path=None):
+    BASE_DIR = config.BASE_DIR if not session_dir_path else Path(session_dir_path)
+    INPUT_DIR = BASE_DIR / "uploads"
+    OUTPUT_JSON_CLEAN = config.QR_CLEAN
 # =========================================================
 # 🔹 Gemini SDK Import
 # =========================================================
@@ -52,67 +29,58 @@ try:
     from google.genai import types
     print("✅ Gemini SDK loaded successfully")
 except Exception as e:
-    print(f"❌ Gemini SDK import error: {e}")
-    # we don't exit here; downstream code will try to fail gracefully if SDK missing
-    genai = None
-    types = None
+    print(f"❌ Gemini SDK error: {e}")
+    import sys
+    sys.exit(1)
 
 # =========================================================
-# 🧩 Input / Output selection logic (search uploads & defaults)
+# 🧩 مسیرهای داینامیک
 # =========================================================
-# allow user to override via env vars
+SESSION_DIR = Path(os.getenv("SESSION_DIR", Path.cwd()))
+SOURCE_FOLDER = Path(os.getenv("SOURCE_FOLDER", SESSION_DIR / "uploads"))
+RENAMED_DIR = Path(os.getenv("RENAMED_DIR", SESSION_DIR / "renamed"))
+
+# ورودی: جستجوی خودکار فایل Excel
 INPUT_EXCEL_ENV = os.getenv("INPUT_EXCEL")
 if INPUT_EXCEL_ENV:
     INPUT_EXCEL = Path(INPUT_EXCEL_ENV)
 else:
-    # search likely locations for an .xlsx (prefer uploads)
-    search_paths = [
-        UPLOADS_DIR,
-        BASE_DIR / "uploads",
-        BASE_DIR,
-        Path.cwd()
-    ]
+    search_paths = [SESSION_DIR, SOURCE_FOLDER, RENAMED_DIR, SESSION_DIR / "input"]
     INPUT_EXCEL = None
-    for sp in search_paths:
-        try:
-            if sp and sp.exists():
-                excel_files = list(sp.glob("*.xlsx"))
-                if excel_files:
-                    for f in excel_files:
-                        if not f.name.startswith(("output_enriched", "merged_final", "temp_output")):
-                            INPUT_EXCEL = f
-                            break
-                    if INPUT_EXCEL:
+    for search_path in search_paths:
+        if search_path.exists():
+            excel_files = list(search_path.glob("*.xlsx"))
+            if excel_files:
+                for f in excel_files:
+                    if not f.name.startswith("output_enriched"):
+                        INPUT_EXCEL = f
                         break
-        except Exception:
-            continue
+                if INPUT_EXCEL:
+                    break
     if not INPUT_EXCEL:
-        INPUT_EXCEL = UPLOADS_DIR / "input.xlsx"
+        INPUT_EXCEL = SESSION_DIR / "input.xlsx"
 
-# output filenames (go to ACTIVE_OUTPUT_DIR or JSON_DIR)
-timestamp = pd.Timestamp.now().strftime("%Y%m%d_%H%M%S")
-OUTPUT_EXCEL = Path(ACTIVE_OUTPUT_DIR) / f"output_enriched_{timestamp}.xlsx"
-TEMP_EXCEL = Path(ACTIVE_OUTPUT_DIR) / "temp_output.xlsx"
-OUTPUT_JSON = JSON_DIR / "scraped_data.json"
-
-print(f"📥 Input Excel: {path_str(INPUT_EXCEL)}")
-print(f"📤 Output Excel: {path_str(OUTPUT_EXCEL)}")
-print(f"🗃 Output JSON: {path_str(OUTPUT_JSON)}\n")
+OUTPUT_EXCEL = Path(os.getenv(
+    "OUTPUT_EXCEL", 
+    SESSION_DIR / f"output_enriched_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+))
+TEMP_EXCEL = Path(os.getenv("TEMP_EXCEL", SESSION_DIR / "temp_output.xlsx"))
+OUTPUT_JSON = Path(os.getenv("OUTPUT_JSON", SESSION_DIR / "scraped_data.json"))
 
 # =========================================================
-# ⚙️ تنظیمات (unchanged logic)
+# ⚙️ تنظیمات
 # =========================================================
-# API Key - only one key (keep same as original; you might move to env var)
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "AIzaSyBzVNw34fbQRcxCSZDouR35hoZNxqsW6pc")
+# API Key - فقط یک کلید
+GOOGLE_API_KEY = "AIzaSyBzVNw34fbQRcxCSZDouR35hoZNxqsW6pc"
 
 MODEL_NAME = "gemini-2.0-flash-exp"
-THREAD_COUNT = int(os.getenv("THREAD_COUNT", 5))
-MAX_DEPTH = int(os.getenv("MAX_DEPTH", 2))
-MAX_PAGES_PER_SITE = int(os.getenv("MAX_PAGES_PER_SITE", 25))
+THREAD_COUNT = 5
+MAX_DEPTH = 2
+MAX_PAGES_PER_SITE = 25
 REQUEST_TIMEOUT = (8, 20)
 SLEEP_BETWEEN = (0.8, 2.0)
-MAX_RETRIES_HTTP = int(os.getenv("MAX_RETRIES_HTTP", 3))
-MAX_RETRIES_GEMINI = int(os.getenv("MAX_RETRIES_GEMINI", 3))
+MAX_RETRIES_HTTP = 3
+MAX_RETRIES_GEMINI = 3
 IRANIAN_TLDS = ['.ir', '.ac.ir', '.co.ir', '.org.ir', '.gov.ir', '.id.ir', '.net.ir']
 
 # Fields to extract

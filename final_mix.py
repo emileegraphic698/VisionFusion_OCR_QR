@@ -1,32 +1,28 @@
 # -*- coding: utf-8 -*-
+"""
+🚀 Complete JSON + Excel Merger - Final Version
+ادغام هوشمند JSON و Excel با پاکسازی و بهینه‌سازی کامل
+"""
 
 from pathlib import Path
 import os, json, re, pandas as pd
 from collections import defaultdict
 import time
-import os
-from pathlib import Path
-import pandas as pd
+import config
 
+def run_qr_detection(session_dir_path=None):
+    BASE_DIR = config.BASE_DIR if not session_dir_path else Path(session_dir_path)
+    INPUT_DIR = BASE_DIR / "uploads"
+    OUTPUT_JSON_CLEAN = config.QR_CLEAN
 # =========================================================
-# 🧩 مسیرهای داینامیک برای Streamlit Cloud
+# 🧩 مسیرهای داینامیک
 # =========================================================
-SESSION_DIR_ENV = os.getenv("SESSION_DIR")
-if SESSION_DIR_ENV:
-    SESSION_DIR = Path(SESSION_DIR_ENV)
-else:
-    SESSION_DIR = Path.cwd() / "session_current"
-
-SESSION_DIR.mkdir(parents=True, exist_ok=True)
-
-INPUT_JSON = SESSION_DIR / "mix_ocr_qr.json"
-INPUT_EXCEL = SESSION_DIR / "web_analysis.xlsx"
+SESSION_DIR = Path(os.getenv("SESSION_DIR", Path.cwd()))
+INPUT_JSON = Path(os.getenv("INPUT_JSON", SESSION_DIR / "mix_ocr_qr.json"))
+INPUT_EXCEL = Path(os.getenv("INPUT_EXCEL", SESSION_DIR / "web_analysis.xlsx"))
 timestamp = pd.Timestamp.now().strftime("%Y%m%d_%H%M%S")
-OUTPUT_EXCEL = SESSION_DIR / f"merged_final_{timestamp}.xlsx"
+OUTPUT_EXCEL = Path(os.getenv("OUTPUT_EXCEL", SESSION_DIR / f"merged_final_{timestamp}.xlsx"))
 
-
-
-# نمایش مسیرها
 print("\n" + "="*70)
 print("🚀 Complete JSON + Excel Merger (Optimized)")
 print("="*70)
@@ -429,27 +425,6 @@ def main():
         print("="*70)
         return 0
     return 1
-
-
-def run_final_merge(session_dir_path):
-    """ادغام نهایی"""
-    global SESSION_DIR, INPUT_JSON, INPUT_EXCEL, OUTPUT_EXCEL
-    
-    SESSION_DIR = Path(session_dir_path)
-    INPUT_JSON = SESSION_DIR / "mix_ocr_qr.json"
-    INPUT_EXCEL = SESSION_DIR / "web_analysis.xlsx"
-    timestamp = pd.Timestamp.now().strftime("%Y%m%d_%H%M%S")
-    OUTPUT_EXCEL = SESSION_DIR / f"merged_final_{timestamp}.xlsx"
-    
-    print(f"📂 Final Mix Session: {SESSION_DIR}")
-    
-    main()
-    
-    if OUTPUT_EXCEL.exists():
-        print(f"✅ Final output created: {OUTPUT_EXCEL}")
-        return str(OUTPUT_EXCEL)
-    else:
-        raise FileNotFoundError(f"Final output not found: {OUTPUT_EXCEL}")
 
 if __name__ == "__main__":
     exit(main())

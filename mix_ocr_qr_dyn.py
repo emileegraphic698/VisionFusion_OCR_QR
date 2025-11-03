@@ -1,55 +1,27 @@
 # -*- coding: utf-8 -*-
-
 from pathlib import Path
 import os
 import json
+import config
+
+def run_qr_detection(session_dir_path=None):
+    BASE_DIR = config.BASE_DIR if not session_dir_path else Path(session_dir_path)
+    INPUT_DIR = BASE_DIR / "uploads"
+    OUTPUT_JSON_CLEAN = config.QR_CLEAN
+# =========================================================
+# 🧩 مسیرهای پویا
+SESSION_DIR = Path(os.getenv("SESSION_DIR", Path.cwd()))
+SOURCE_FOLDER = Path(os.getenv("SOURCE_FOLDER", SESSION_DIR / "uploads"))
+RENAMED_DIR = Path(os.getenv("RENAMED_DIR", SESSION_DIR / "renamed"))
+
+OCR_FILE = Path(os.getenv("OCR_FILE", SESSION_DIR / "gemini_output.json"))
+QR_FILE = Path(os.getenv("QR_FILE", SESSION_DIR / "final_superqr_v6_clean.json"))
+OUTPUT_FILE = Path(os.getenv("OUTPUT_FILE", SESSION_DIR / "mix_ocr_qr.json"))
 
 # =========================================================
-# 🔧 Dynamic Path Resolution (Works on Streamlit Cloud)
-# =========================================================
-SESSION_DIR = os.getenv("SESSION_DIR")
-
-if SESSION_DIR:
-    BASE_DIR = Path(SESSION_DIR)
-else:
-    BASE_DIR = Path.cwd() / "session_current"
-
-INPUT_DIR = BASE_DIR / "uploads"
-OUTPUT_DIR = BASE_DIR
-DATA_DIR = BASE_DIR
-RENAMED_DIR = DATA_DIR / "renamed"
-
-for folder in [INPUT_DIR, OUTPUT_DIR, RENAMED_DIR]:
-    folder.mkdir(parents=True, exist_ok=True)
-
-# فایل‌های ورودی
-OCR_FILE = OUTPUT_DIR / "gemini_output.json"
-QR_FILE = OUTPUT_DIR / "final_superqr_v6_clean.json"
-OUTPUT_FILE = OUTPUT_DIR / "mix_ocr_qr.json"
-
-print(f"📂 SESSION_DIR: {SESSION_DIR or 'Not Set'}")
-print(f"📂 OUTPUT_DIR: {OUTPUT_DIR}")
-
-
-# =========================================================
-# 🧩 Dynamic Paths (Fixed for Render/GitHub)
-# =========================================================
-SOURCE_FOLDER = INPUT_DIR
-RENAMED_DIR = DATA_DIR / "renamed"
-
-
-OCR_FILE = OUTPUT_DIR / "gemini_output.json"
-QR_FILE = OUTPUT_DIR / "final_superqr_v6_clean.json"
-OUTPUT_FILE = OUTPUT_DIR / "mix_ocr_qr.json"
-
-os.makedirs(SOURCE_FOLDER, exist_ok=True)
-os.makedirs(RENAMED_DIR, exist_ok=True)
-os.makedirs(OUTPUT_DIR, exist_ok=True)
-
-# =========================================================
-#  helper functions
+# 📦 توابع کمکی
 def read_json(path: Path):
-    """safe json file reading"""
+    """خواندن امن فایل JSON"""
     try:
         if not path.exists():
             print(f"⚠️ File not found: {path}")
@@ -59,9 +31,8 @@ def read_json(path: Path):
         print(f"❌ Error reading {path}: {e}")
         return []
 
-
 def merge_single_image(item, qr_result):
-    """merge image data"""
+    """ادغام داده‌های تصویر"""
     qr_links = [p.get("qr_link") for p in qr_result if p.get("qr_link")]
     if isinstance(item.get("result"), dict):
         item["result"]["qr_links"] = qr_links if qr_links else None
@@ -69,9 +40,8 @@ def merge_single_image(item, qr_result):
         item["result"] = {"qr_links": qr_links if qr_links else None}
     return item
 
-
 def merge_pdf_pages(item, qr_result):
-    """merge multi-page pdf data"""
+    """ادغام داده‌های PDF چندصفحه‌ای"""
     if not isinstance(item.get("result"), list):
         return item
 
@@ -81,10 +51,8 @@ def merge_pdf_pages(item, qr_result):
         page_obj["qr_link"] = qr_match
     return item
 
-
-
 def merge_ocr_qr(ocr_data, qr_data):
-    """merge complete ocr and qr data"""
+    """ادغام کامل داده‌های OCR و QR"""
     qr_lookup = {item["file_name"]: item.get("result", []) for item in qr_data}
     merged = []
 
@@ -92,15 +60,15 @@ def merge_ocr_qr(ocr_data, qr_data):
         file_name = item.get("file_name")
         qr_result = qr_lookup.get(file_name, [])
 
-        #  image mode
+        # 🖼 حالت تصویر
         if file_name.lower().endswith((".jpg", ".jpeg", ".png", ".webp", ".bmp")):
             item = merge_single_image(item, qr_result)
 
-        # pdf mode
+        # 📄 حالت PDF
         elif file_name.lower().endswith(".pdf"):
             item = merge_pdf_pages(item, qr_result)
 
-        # other formats
+        # 🧩 سایر فرمت‌ها
         else:
             item["result"] = item.get("result", {})
             item["result"]["qr_links"] = None
@@ -110,7 +78,7 @@ def merge_ocr_qr(ocr_data, qr_data):
     return merged
 
 # =========================================================
-# main execution
+# 🚀 اجرای اصلی
 def main():
     print("\n🚀 Starting OCR + QR merge process...\n")
 
@@ -133,27 +101,6 @@ def main():
     print(f"\n✅ Merge completed successfully!")
     print(f"📁 Final output saved to → {OUTPUT_FILE}")
     print(f"📊 Total merged records: {len(merged_results)}\n")
-
-
-def run_mix_ocr_qr(session_dir_path):
-    """ادغام OCR + QR"""
-    global SESSION_DIR, BASE_DIR, OUTPUT_DIR, OCR_FILE, QR_FILE, OUTPUT_FILE
-    
-    BASE_DIR = Path(session_dir_path)
-    OUTPUT_DIR = BASE_DIR
-    OCR_FILE = OUTPUT_DIR / "gemini_output.json"
-    QR_FILE = OUTPUT_DIR / "final_superqr_v6_clean.json"
-    OUTPUT_FILE = OUTPUT_DIR / "mix_ocr_qr.json"
-    
-    print(f"📂 Mix Session: {BASE_DIR}")
-    
-    main()
-    
-    if OUTPUT_FILE.exists():
-        print(f"✅ Mix output created: {OUTPUT_FILE}")
-        return str(OUTPUT_FILE)
-    else:
-        raise FileNotFoundError(f"Mix output not found: {OUTPUT_FILE}")
 
 
 if __name__ == "__main__":

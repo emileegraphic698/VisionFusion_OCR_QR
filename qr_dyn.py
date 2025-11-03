@@ -17,64 +17,42 @@ import warnings, ctypes, os
 warnings.filterwarnings("ignore")
 os.environ["ZBAR_LOG_LEVEL"] = "0"
 
-from pathlib import Path
-import os
+import config
+
+def run_qr_detection(session_dir_path=None):
+    BASE_DIR = config.BASE_DIR if not session_dir_path else Path(session_dir_path)
+    INPUT_DIR = BASE_DIR / "uploads"
+    OUTPUT_JSON_CLEAN = config.QR_CLEAN
 
 # =========================================================
-# 🔧 Dynamic Path Resolution (Works on Streamlit Cloud)
+# 🧩 مسیرهای داینامیک سشن (Dynamic Paths)
 # =========================================================
-# ✅ مسیر ثابت
-SESSION_DIR = os.getenv("SESSION_DIR")
+SESSION_DIR = Path(os.getenv("SESSION_DIR", Path.cwd()))
 
-if SESSION_DIR:
-    BASE_DIR = Path(SESSION_DIR)
-else:
-    BASE_DIR = Path.cwd() / "session_current"
+# ورودی‌ها: اگر uploads خالی بود، مسیر خود SESSION_DIR
+IMAGES_FOLDER = SESSION_DIR / "uploads"
+if not IMAGES_FOLDER.exists() or not any(IMAGES_FOLDER.glob("*")):
+    IMAGES_FOLDER = SESSION_DIR
+print(f"📂 Using IMAGES_FOLDER → {IMAGES_FOLDER}")
 
-INPUT_DIR = BASE_DIR / "uploads"
-OUTPUT_DIR = BASE_DIR
-DATA_DIR = BASE_DIR
-
-INPUT_DIR.mkdir(parents=True, exist_ok=True)
-OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-DEBUG_DIR = OUTPUT_DIR / "_debug"
-DEBUG_DIR.mkdir(exist_ok=True)
-
-print(f"📂 SESSION_DIR: {SESSION_DIR or 'Not Set'}")
-print(f"📂 OUTPUT_DIR: {OUTPUT_DIR}")
-
-
-# =========================================================
-#  Dynamic Paths (Fixed for Render/GitHub)
-# =========================================================
-
-IMAGES_FOLDER = INPUT_DIR         
-OUTPUT_JSON_RAW = OUTPUT_DIR / "final_superqr_v6_raw.json"
-OUTPUT_JSON_CLEAN = OUTPUT_DIR / "final_superqr_v6_clean.json"
-DEBUG_DIR = OUTPUT_DIR / "_debug"
-
-
+# خروجی‌ها (داینامیک)
+OUTPUT_JSON_RAW = Path(os.getenv("QR_RAW_JSON", SESSION_DIR / "final_superqr_v6_raw.json"))
+OUTPUT_JSON_CLEAN = Path(os.getenv("QR_CLEAN_JSON", SESSION_DIR / "final_superqr_v6_clean.json"))
+DEBUG_DIR = SESSION_DIR / "_debug"
 os.makedirs(IMAGES_FOLDER, exist_ok=True)
 os.makedirs(DEBUG_DIR, exist_ok=True)
 
-print(f"📂 Using IMAGES_FOLDER → {IMAGES_FOLDER}")
-print(f"📂 Output JSONs will be saved in → {OUTPUT_DIR}")
-
-
-
-
-## dpi for pdf
+# DPI برای PDF
 PDF_IMG_DPI = int(os.getenv("PDF_IMG_DPI", "200"))
 
-## poppler path (for windows)
+# مسیر Poppler (برای ویندوز)
 POPPLER_PATH = os.getenv("POPPLER_PATH", r"C:\poppler\Library\bin").strip()
 if POPPLER_PATH and os.path.exists(POPPLER_PATH):
     os.environ["PATH"] += os.pathsep + POPPLER_PATH
 
-## debug mode
+# حالت دیباگ
 DEBUG_MODE = os.getenv("DEBUG_MODE", "0") == "1"
 print("🚀 SuperQR v6.1 (Clean URLs + vCard Support) ready\n")
-
 
 # ----------------------------------------------------------
 # QR fallbacks
@@ -87,33 +65,37 @@ except ImportError:
     HAS_PYZBAR = False
     print("⚠️ pyzbar not available")
 
-# pyzxing غیرفعال شد (مشکل‌ساز در Streamlit Cloud)
-HAS_ZXING = False
-zxing_reader = None
-print("⚠️ pyzxing disabled (not available in cloud)")
+try:
+    from pyzxing import BarCodeReader
+    zxing_reader = BarCodeReader()
+    HAS_ZXING = True
+    print("✅ pyzxing loaded")
+except ImportError:
+    HAS_ZXING = False
+    print("⚠️ pyzxing not available")
 
 # ----------------------------------------------------------
 def clean_url(url):
-    """clean url and remove extra parts"""
+    """تمیز کردن URL و حذف قسمت‌های اضافی"""
     if not url or not isinstance(url, str):
         return None
     
     url = url.strip()
     
-    # decode url if it contains encoded characters
+    # اگر URL شامل کاراکترهای encode شده است، decode کنیم
     try:
-        # keep only the main domain and path
+        # فقط domain و path اصلی را نگه می‌داریم
         parsed = urlparse(url)
         
-        # if path exists and is encoded, clean it
+        # اگر path دارد و encode شده، تمیز می‌کنیم
         if parsed.path and '%' in parsed.path:
-            # return only domain + /
+            # فقط domain + / را برمی‌گردانیم
             clean = f"{parsed.scheme}://{parsed.netloc}"
             if DEBUG_MODE:
                 print(f"      🧹 Cleaned: {url} → {clean}")
             return clean
         
-        # remove query string if it exists
+        # اگر query string دارد، حذف می‌کنیم
         if parsed.query:
             clean = f"{parsed.scheme}://{parsed.netloc}{parsed.path}"
             if DEBUG_MODE:
@@ -127,18 +109,18 @@ def clean_url(url):
         return url
 
 def extract_url_from_vcard(data):
-    """extract url from vcard"""
+    """استخراج URL از vCard"""
     if not data or not isinstance(data, str):
         return None
     
-    # check if it is a vcard
+    # بررسی اینکه آیا vCard است
     if not (data.upper().startswith("BEGIN:VCARD") or "VCARD" in data.upper()):
         return None
     
     if DEBUG_MODE:
         print(f"      📇 Detected vCard format")
     
-    # search for url in vcard
+    # جستجوی URL در vCard
     url_patterns = [
         r"URL[;:]([^\r\n]+)",
         r"URL;[^:]+:([^\r\n]+)",
@@ -158,9 +140,8 @@ def extract_url_from_vcard(data):
     
     return None
 
-
 def is_low_contrast(img, sharp_thresh=85, contrast_thresh=25):
-    """check for low image contrast"""
+    """بررسی کنتراست پایین تصویر"""
     g = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     sharpness = cv2.Laplacian(g, cv2.CV_64F).var()
     contrast = g.std()
@@ -168,9 +149,8 @@ def is_low_contrast(img, sharp_thresh=85, contrast_thresh=25):
         print(f"   📊 Sharpness: {sharpness:.1f}, Contrast: {contrast:.1f}")
     return sharpness < sharp_thresh or contrast < contrast_thresh
 
-
 def enhance_image_aggressive(img):
-    """advanced preprocessing to enhance QR readability"""
+    """پیش‌پردازش قوی برای بهبود خوانایی QR"""
     # 1. Denoise
     denoised = cv2.fastNlMeansDenoisingColored(img, None, 10, 10, 7, 21)
     
@@ -178,7 +158,7 @@ def enhance_image_aggressive(img):
     lab = cv2.cvtColor(denoised, cv2.COLOR_BGR2LAB)
     l, a, b = cv2.split(lab)
     
-    # 3. strong CLAHE to enhance contrast
+    # 3. CLAHE قوی برای افزایش کنتراست
     clahe = cv2.createCLAHE(clipLimit=5.0, tileGridSize=(8, 8))
     l = clahe.apply(l)
     
@@ -186,7 +166,7 @@ def enhance_image_aggressive(img):
     enhanced = cv2.merge([l, a, b])
     enhanced = cv2.cvtColor(enhanced, cv2.COLOR_LAB2BGR)
     
-    # 5. unsharp masking for increased sharpness
+    # 5. Unsharp masking برای وضوح بیشتر
     gaussian = cv2.GaussianBlur(enhanced, (0, 0), 3.0)
     enhanced = cv2.addWeighted(enhanced, 2.0, gaussian, -1.0, 0)
     
@@ -195,12 +175,11 @@ def enhance_image_aggressive(img):
     
     return enhanced
 
-
 # ----------------------------------------------------------
-# qr detection - advanced version
+# 🔍 QR Detection - نسخه پیشرفته
 # ----------------------------------------------------------
 def detect_qr_payloads_enhanced(img, img_name="image"):
-    """detect qr using multiple methods"""
+    """تشخیص QR با چندین روش مختلف"""
     detector = cv2.QRCodeDetector()
     payloads = []
     methods_tried = 0
@@ -209,7 +188,7 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
         nonlocal methods_tried
         methods_tried += 1
         try:
-            # try with detectAndDecode
+            # تلاش با detectAndDecode
             val, pts, _ = detector.detectAndDecode(frame)
             if val and val.strip():
                 if DEBUG_MODE:
@@ -217,7 +196,7 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
                 payloads.append(val.strip())
                 return True
             
-            # if decoding fails but detection succeeds, try again
+            # اگر نتوانست decode کند ولی detect کرد، تلاش مجدد
             if pts is not None and len(pts) > 0:
                 val, _ = detector.decode(frame, pts)
                 if val and val.strip():
@@ -233,7 +212,7 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
     if DEBUG_MODE:
         print(f"   🔍 Trying multiple detection methods...")
 
-    # 1. original image
+    # 1. تصویر اصلی
     try_decode(img, "Original")
     
     # 2. Grayscale
@@ -251,7 +230,7 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
     _, thresh_otsu = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
     try_decode(cv2.cvtColor(thresh_otsu, cv2.COLOR_GRAY2BGR), "Otsu Threshold")
     
-    # 5. invert image
+    # 5. معکوس تصویر
     try_decode(cv2.bitwise_not(img), "Inverted")
     
     # 6. CLAHE enhancement
@@ -262,7 +241,7 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
     enhanced = cv2.cvtColor(cv2.merge((l2, a, b)), cv2.COLOR_LAB2BGR)
     try_decode(enhanced, "CLAHE")
     
-    # 7. Sharpening 
+    # 7. Sharpening قوی
     kernel_sharp = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])
     sharp = cv2.filter2D(img, -1, kernel_sharp)
     try_decode(sharp, "Sharpened")
@@ -272,7 +251,7 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
     morph = cv2.morphologyEx(gray, cv2.MORPH_CLOSE, kernel)
     try_decode(cv2.cvtColor(morph, cv2.COLOR_GRAY2BGR), "Morphological")
     
-    # 9. Multi-scale 
+    # 9. Multi-scale (مقیاس‌های مختلف)
     for scale in [0.5, 0.75, 1.5, 2.0]:
         w = int(img.shape[1] * scale)
         h = int(img.shape[0] * scale)
@@ -280,7 +259,7 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
             resized = cv2.resize(img, (w, h), interpolation=cv2.INTER_CUBIC)
             try_decode(resized, f"Scale {scale}x")
     
-    # 10. Rotation 
+    # 10. Rotation (چرخش)
     rotation_map = {
         90: cv2.ROTATE_90_CLOCKWISE,
         180: cv2.ROTATE_180,
@@ -290,7 +269,7 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
         rotated = cv2.rotate(img, rotate_code)
         try_decode(rotated, f"Rotated {angle}°")
     
-    # 11. pyzbar
+    # 11. استفاده از pyzbar
     if HAS_PYZBAR:
         for method_img, method_name in [
             (gray, "Pyzbar-Gray"),
@@ -309,7 +288,7 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
                 if DEBUG_MODE:
                     print(f"      ✗ {method_name} failed: {e}")
     
-    # 12. zxing
+    # 12. استفاده از zxing
     if HAS_ZXING:
         try:
             temp_path = DEBUG_DIR / f"_temp_zxing_{img_name}.jpg"
@@ -336,35 +315,35 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
             if DEBUG_MODE:
                 print(f"      ✗ ZXing failed: {e}")
     
-    #  remove duplicates
+    # حذف تکراری‌ها
     payloads = list(dict.fromkeys(p for p in payloads if p and isinstance(p, str)))
     
     if DEBUG_MODE:
         print(f"   📈 Tried {methods_tried} methods, found {len(payloads)} unique payload(s)")
     
-    # process and extract url
+    # پردازش و استخراج URL
     out = []
     for p in payloads:
-        # check if it’s a vcard
+        # بررسی اینکه آیا vCard است
         vcard_url = extract_url_from_vcard(p)
         if vcard_url:
             out.append(vcard_url)
             continue
         
-        # search for direct url
+        # جستجوی URL مستقیم
         p = p.strip()
         urls = re.findall(r"(https?://[^\s\"'<>\[\]]+|www\.[^\s\"'<>\[\]]+)", p, re.IGNORECASE)
         
         if urls:
             for url in urls:
                 url = url.strip()
-                # remove extra characters from the end
+                # حذف کاراکترهای اضافی از انتها
                 url = re.sub(r'[,;.!?\)\]]+$', '', url)
                 
                 if not url.lower().startswith("http"):
                     url = "https://" + url.lower()
                 
-                # clean url
+                # تمیز کردن URL
                 cleaned = clean_url(url)
                 if cleaned:
                     out.append(cleaned)
@@ -375,15 +354,14 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
             if cleaned:
                 out.append(cleaned)
     
-    # remove duplicate urls
+    # حذف تکراری URL
     out = list(dict.fromkeys(out))
     
     return out if out else None
 
-
 # ----------------------------------------------------------
 def process_image_for_qr(image_path: Path) -> Union[List[str], None]:
-    """process image for qr detection"""
+    """پردازش تصویر برای تشخیص QR"""
     if DEBUG_MODE:
         print(f"\n   🖼️  Loading: {image_path.name}")
     
@@ -396,7 +374,7 @@ def process_image_for_qr(image_path: Path) -> Union[List[str], None]:
         print(f"   📐 Size: {img.shape[1]}x{img.shape[0]}")
         cv2.imwrite(str(DEBUG_DIR / f"{image_path.stem}_01_original.jpg"), img)
     
-    # check contrast
+    # بررسی کنتراست
     low = is_low_contrast(img)
     
     # Enhancement
@@ -405,7 +383,7 @@ def process_image_for_qr(image_path: Path) -> Union[List[str], None]:
     if DEBUG_MODE:
         cv2.imwrite(str(DEBUG_DIR / f"{image_path.stem}_02_enhanced.jpg"), enhanced)
     
-    # qr detection
+    # تشخیص QR
     result = detect_qr_payloads_enhanced(enhanced, image_path.stem)
     
     if result:
@@ -417,13 +395,11 @@ def process_image_for_qr(image_path: Path) -> Union[List[str], None]:
     
     return result
 
-
-
 # ----------------------------------------------------------
 def process_pdf_for_qr(pdf_path: Path) -> Dict[str, Any]:
-    """process pdf and convert to image"""
+    """پردازش PDF و تبدیل به تصویر"""
     print(f"\n📄 Processing PDF: {pdf_path.name}")
-    temp_dir = OUTPUT_DIR / "_pdf_pages"
+    temp_dir = SESSION_DIR / "_pdf_pages"
     os.makedirs(temp_dir, exist_ok=True)
     
     kwargs = {}
@@ -458,11 +434,9 @@ def process_pdf_for_qr(pdf_path: Path) -> Dict[str, Any]:
 
     return {"file_id": pdf_path.stem, "file_name": pdf_path.name, "result": results}
 
-
-
 # ----------------------------------------------------------
 def process_image_file(image_path: Path) -> Dict[str, Any]:
-    """process image file"""
+    """پردازش فایل تصویری"""
     qr_links = process_image_for_qr(image_path)
     return {
         "file_id": image_path.stem,
@@ -470,19 +444,17 @@ def process_image_file(image_path: Path) -> Dict[str, Any]:
         "result": [{"page": 1, "qr_link": qr_links[0] if qr_links else None}]
     }
 
-
 # ----------------------------------------------------------
 def save_json(path, data):
-    """save json with proper encoding"""
+    """ذخیره JSON با encoding مناسب"""
     Path(path).write_text(
         json.dumps(data, indent=4, ensure_ascii=False), 
         encoding="utf-8"
     )
 
-
 # ----------------------------------------------------------
 def extract_urls(entry):
-    """extract urls from results"""
+    """استخراج URLها از نتایج"""
     urls = []
     for item in entry.get("result", []):
         link = item.get("qr_link")
@@ -491,7 +463,7 @@ def extract_urls(entry):
     return list(dict.fromkeys(urls))
 
 def is_domain_alive(url, timeout=5):
-    """check if domain is live"""
+    """بررسی زنده بودن دامنه"""
     try:
         host = re.sub(r"^https?://(www\.)?", "", url).split("/")[0]
         socket.setdefaulttimeout(timeout)
@@ -500,10 +472,8 @@ def is_domain_alive(url, timeout=5):
     except Exception:
         return False
 
-
-
 def clean_qr_json(input_file, output_file):
-    """clean and validate urls"""
+    """پاکسازی و اعتبارسنجی URLها"""
     print("\n🧹 Cleaning and validating extracted QR URLs...")
     
     if not Path(input_file).exists():
@@ -555,10 +525,9 @@ def clean_qr_json(input_file, output_file):
     save_json(output_file, final_results)
     print(f"\n✅ Cleaned results saved → {output_file}")
 
-
 # ----------------------------------------------------------
 def main():
-    """main function"""
+    """تابع اصلی"""
     print("=" * 60)
     print("🚀 Starting SuperQR v6.1 Processing")
     print("=" * 60)
@@ -606,12 +575,12 @@ def main():
                 "result": []
             })
     
-    # save raw results
+    # ذخیره نتایج خام
     print("\n" + "=" * 60)
     save_json(OUTPUT_JSON_RAW, results)
     print(f"✅ Raw results saved → {OUTPUT_JSON_RAW}")
     
-    # clean and validate
+    # پاکسازی و اعتبارسنجی
     clean_qr_json(OUTPUT_JSON_RAW, OUTPUT_JSON_CLEAN)
     
     print("\n" + "=" * 60)
@@ -619,7 +588,7 @@ def main():
     print(f"📊 Final output → {OUTPUT_JSON_CLEAN}")
     print("=" * 60)
     
-    # summarize results
+    # خلاصه نتایج
     total_qr = sum(
         1 for entry in results 
         for item in entry.get("result", []) 
@@ -629,33 +598,6 @@ def main():
     
     if DEBUG_MODE:
         print(f"🐛 Debug images saved in: {DEBUG_DIR}")
-
-
-def run_qr_detection(session_dir_path):
-    """اجرای QR Detection"""
-    global SESSION_DIR, BASE_DIR, INPUT_DIR, OUTPUT_DIR, OUTPUT_JSON_CLEAN
-    
-    BASE_DIR = Path(session_dir_path)
-    INPUT_DIR = BASE_DIR / "uploads"
-    OUTPUT_DIR = BASE_DIR
-    OUTPUT_JSON_CLEAN = OUTPUT_DIR / "final_superqr_v6_clean.json"
-    DEBUG_DIR = OUTPUT_DIR / "_debug"
-    
-    INPUT_DIR.mkdir(parents=True, exist_ok=True)
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    DEBUG_DIR.mkdir(parents=True, exist_ok=True)
-    
-    print(f"📂 QR Session: {BASE_DIR}")
-    
-    main()
-    
-    if OUTPUT_JSON_CLEAN.exists():
-        print(f"✅ QR output created: {OUTPUT_JSON_CLEAN}")
-        return str(OUTPUT_JSON_CLEAN)
-    else:
-        raise FileNotFoundError(f"QR output not found: {OUTPUT_JSON_CLEAN}")
-
-
 
 # ----------------------------------------------------------
 if __name__ == "__main__":

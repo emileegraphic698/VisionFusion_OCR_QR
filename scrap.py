@@ -9,7 +9,12 @@ warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
 import pandas as pd
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+import config
 
+def run_qr_detection(session_dir_path=None):
+    BASE_DIR = config.BASE_DIR if not session_dir_path else Path(session_dir_path)
+    INPUT_DIR = BASE_DIR / "uploads"
+    OUTPUT_JSON_CLEAN = config.QR_CLEAN
 # =========================================================
 # 🔹 Gemini SDK Import (Fixed)
 # =========================================================
@@ -27,41 +32,17 @@ except ImportError:
         import sys
         sys.exit(1)
 
-import os
-from pathlib import Path
-
 # =========================================================
-# 🧩 مسیرهای داینامیک سشن برای Streamlit Cloud
+# 🧩 مسیرهای داینامیک سشن
 # =========================================================
-# ✅ مسیر ثابت
-SESSION_DIR_ENV = os.getenv("SESSION_DIR")
-if SESSION_DIR_ENV:
-    SESSION_DIR = Path(SESSION_DIR_ENV)
-else:
-    SESSION_DIR = Path.cwd() / "session_current"
-
-SESSION_DIR.mkdir(parents=True, exist_ok=True)
-
-SOURCE_FOLDER = SESSION_DIR / "uploads"
-RENAMED_DIR = SESSION_DIR / "renamed"
-OUT_JSON = SESSION_DIR / "gemini_scrap_output.json"
-QR_RAW_JSON = SESSION_DIR / "final_superqr_v6_raw.json"
-QR_CLEAN_JSON = SESSION_DIR / "final_superqr_v6_clean.json"
-MIX_OCR_QR_JSON = SESSION_DIR / "mix_ocr_qr.json"
-WEB_ANALYSIS_XLSX = SESSION_DIR / "web_analysis.xlsx"
-
-for folder in [SOURCE_FOLDER, RENAMED_DIR]:
-    folder.mkdir(parents=True, exist_ok=True)
-
-print(f"📂 SESSION_DIR: {SESSION_DIR}")
-print(f"📂 SOURCE_FOLDER: {SOURCE_FOLDER}")
-print(f"📂 RENAMED_DIR: {RENAMED_DIR}")
-print(f"📄 OUT_JSON: {OUT_JSON}")
-print(f"📄 QR_RAW_JSON: {QR_RAW_JSON}")
-print(f"📄 QR_CLEAN_JSON: {QR_CLEAN_JSON}")
-print(f"📄 MIX_OCR_QR_JSON: {MIX_OCR_QR_JSON}")
-print(f"📄 WEB_ANALYSIS_XLSX: {WEB_ANALYSIS_XLSX}")
-
+SESSION_DIR = Path(os.getenv("SESSION_DIR", Path.cwd()))
+SOURCE_FOLDER = Path(os.getenv("SOURCE_FOLDER", SESSION_DIR / "uploads"))
+RENAMED_DIR = Path(os.getenv("RENAMED_DIR", SESSION_DIR / "renamed"))
+OUT_JSON = Path(os.getenv("OUT_JSON", SESSION_DIR / "gemini_scrap_output.json"))
+QR_RAW_JSON = Path(os.getenv("QR_RAW_JSON", SESSION_DIR / "final_superqr_v6_raw.json"))
+QR_CLEAN_JSON = Path(os.getenv("QR_CLEAN_JSON", SESSION_DIR / "final_superqr_v6_clean.json"))
+MIX_OCR_QR_JSON = Path(os.getenv("MIX_OCR_QR_JSON", SESSION_DIR / "mix_ocr_qr.json"))
+WEB_ANALYSIS_XLSX = Path(os.getenv("WEB_ANALYSIS_XLSX", SESSION_DIR / "web_analysis.xlsx"))
 
 
 # 🔧 Configuration
@@ -517,31 +498,6 @@ def main():
     print(f"✅ Success: {success}/{len(results)}")
     print(f"❌ Failed: {failed}/{len(results)}")
     print("="*60 + "\n")
-
-
-def run_web_scraping(session_dir_path):
-    """اجرای Web Scraping"""
-    global SESSION_DIR, OUTPUT_EXCEL, OUTPUT_JSON
-    
-    SESSION_DIR = Path(session_dir_path)
-    SESSION_DIR.mkdir(parents=True, exist_ok=True)
-    
-    # تنظیم مسیرها
-    global SOURCE_FOLDER, MIX_OCR_QR_JSON, WEB_ANALYSIS_XLSX
-    SOURCE_FOLDER = SESSION_DIR / "uploads"
-    MIX_OCR_QR_JSON = SESSION_DIR / "mix_ocr_qr.json"
-    WEB_ANALYSIS_XLSX = SESSION_DIR / "web_analysis.xlsx"
-    
-    print(f"📂 Scraping Session: {SESSION_DIR}")
-    
-    main()
-    
-    if WEB_ANALYSIS_XLSX.exists():
-        print(f"✅ Scraping output created: {WEB_ANALYSIS_XLSX}")
-        return str(WEB_ANALYSIS_XLSX)
-    else:
-        raise FileNotFoundError(f"Scraping output not found: {WEB_ANALYSIS_XLSX}")
-
 
 if __name__ == "__main__":
     main()

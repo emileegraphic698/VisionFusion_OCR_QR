@@ -3,37 +3,17 @@ from __future__ import annotations
 from pathlib import Path
 import os, sys, json, time, io
 from typing import Any, Dict, List, Union
+import config
 from PIL import Image
 
-from pathlib import Path
-import os
 
-# =========================================================
-# 🔧 Dynamic Path Resolution (Works on Streamlit Cloud)
-# =========================================================
-# ✅ مسیر ثابت برای Streamlit Cloud
-SESSION_DIR = os.getenv("SESSION_DIR")
-
-if SESSION_DIR:
-    BASE_DIR = Path(SESSION_DIR)
-else:
-    # اگه SESSION_DIR نبود، از مسیر ثابت استفاده کن
-    BASE_DIR = Path.cwd() / "session_current"
-
-# ساخت پوشه‌ها
-INPUT_DIR = BASE_DIR / "uploads"
-OUTPUT_DIR = BASE_DIR
-DATA_DIR = BASE_DIR
-
-INPUT_DIR.mkdir(parents=True, exist_ok=True)
-OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-
-
-
-print(f"📂 SESSION_DIR: {SESSION_DIR or 'Not Set'}")
-print(f"📂 OUTPUT_DIR: {OUTPUT_DIR}")
-
-
+def run_ocr_extraction(session_dir_path=None):
+    """اجرای OCR با مسیر مرکزی"""
+    # استفاده از config
+    BASE_DIR = config.BASE_DIR if not session_dir_path else Path(session_dir_path)
+    INPUT_DIR = BASE_DIR / "uploads"
+    OUTPUT_DIR = BASE_DIR
+    OUT_JSON = config.OCR_OUTPUT
 # =========================================================
 # 🔹 Gemini SDK Import
 # =========================================================
@@ -46,19 +26,18 @@ except Exception as e:
     sys.exit(1)
 
 # =========================================================
-#  Dynamic Paths (Fixed for Render/GitHub)
+# 🧩 Dynamic Paths
 # =========================================================
-SOURCE_FOLDER = INPUT_DIR       
-OUT_JSON = OUTPUT_DIR / "gemini_output.json"  
+SESSION_DIR = Path(os.getenv("SESSION_DIR", Path.cwd()))
+SOURCE_FOLDER = Path(os.getenv("SOURCE_FOLDER", SESSION_DIR / "uploads"))
+OUT_JSON = Path(os.getenv("OUT_JSON", SESSION_DIR / "gemini_output.json"))
 
-
-
-#path to Poppler for converting PDF to images
+# ✅ مسیر Poppler برای PDF → Image
 POPPLER_PATH = os.getenv("POPPLER_PATH", r"C:\poppler\Library\bin")
 os.environ["PATH"] += os.pathsep + POPPLER_PATH
 
 # =========================================================
-# General Settings
+# ⚙️ تنظیمات عمومی
 # =========================================================
 MODEL_NAME = "gemini-2.5-flash"
 TEMPERATURE = 0.0
@@ -67,14 +46,13 @@ BATCH_SIZE_PDF = 1
 BATCH_SIZE_IMAGES = 3
 
 # =========================================================
-# Set API Key (only one key)
+# 🔑 تنظیم کلید API (فقط یک کلید)
 # =========================================================
 API_KEY = "AIzaSyCKoaSP6Wgj5FCJDGGXIBHy1rt61Cl2ZTs"
 CLIENT = _genai_new.Client(api_key=API_KEY)
 
-
 # =========================================================
-# Gemini Prompt
+# 🧩 Gemini Prompt
 # =========================================================
 JSON_INSTRUCTIONS = """
 You are an information extraction engine. Extract OCR text and structured fields from the scanned document.
@@ -83,7 +61,7 @@ If a field has no value, return null.
 """
 
 # =========================================================
-# Define JSON Output Structure
+# 🔹 تعریف ساختار خروجی JSON
 # =========================================================
 def build_newsdk_schema():
     P = _genai_types
@@ -114,11 +92,9 @@ def build_newsdk_schema():
         required=["ocr_text"]
     )
 
-
 # =========================================================
-# Helper Functions
+# 🧩 توابع کمکی
 # =========================================================
-
 def list_files(path: Union[str, Path]) -> List[Path]:
     exts = {".jpg", ".jpeg", ".png", ".pdf"}
     return sorted([f for f in Path(path).rglob("*") if f.suffix.lower() in exts])
@@ -139,9 +115,8 @@ def ensure_nulls(obj: Dict[str, Any]) -> Dict[str, Any]:
         obj["ocr_text"] = ""
     return obj
 
-
 # =========================================================
-# Single-Key Send Function
+# 🔁 تابع ارسال با یک کلید (بدون چرخش)
 # =========================================================
 def call_gemini_single_key(data: Image.Image, source_path: Path) -> Dict[str, Any]:
     schema = build_newsdk_schema()
@@ -175,9 +150,8 @@ def call_gemini_single_key(data: Image.Image, source_path: Path) -> Dict[str, An
     except Exception as e:
         raise RuntimeError(f"Gemini API Error: {e}")
 
-
 # =========================================================
-# Process PDF into Images and Send
+# 📄 پردازش PDF به تصاویر و ارسال
 # =========================================================
 def pdf_to_images_and_process(pdf_path: Path) -> List[Dict[str, Any]]:
     from pdf2image import convert_from_path
@@ -197,9 +171,8 @@ def pdf_to_images_and_process(pdf_path: Path) -> List[Dict[str, Any]]:
     print(f"✅ {len(results)} page(s) processed from {pdf_path.name}")
     return results
 
-
 # =========================================================
-# Main Program 
+# 🚀 اجرای اصلی برنامه
 # =========================================================
 def main():
     print(f"🔑 Using single API key.\n")
@@ -241,41 +214,6 @@ def main():
 
     OUT_JSON.write_text(json.dumps(all_out, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"\n✅ پردازش کامل شد. نتیجه: {OUT_JSON}")
-
-
-
-def run_ocr_extraction(session_dir_path):
-    """
-    تابع اصلی برای اجرای OCR
-    Args:
-        session_dir_path: مسیر session_current
-    Returns:
-        str: مسیر فایل خروجی JSON
-    """
-    global SESSION_DIR, BASE_DIR, INPUT_DIR, OUTPUT_DIR, OUT_JSON
-    
-    # ✅ تنظیم مسیرها
-    BASE_DIR = Path(session_dir_path)
-    INPUT_DIR = BASE_DIR / "uploads"
-    OUTPUT_DIR = BASE_DIR
-    OUT_JSON = OUTPUT_DIR / "gemini_output.json"
-    
-    INPUT_DIR.mkdir(parents=True, exist_ok=True)
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    
-    print(f"📂 OCR Session: {BASE_DIR}")
-    print(f"📂 Input: {INPUT_DIR}")
-    print(f"📂 Output: {OUT_JSON}")
-    
-    # اجرای پردازش
-    main()
-    
-    # بررسی خروجی
-    if OUT_JSON.exists():
-        print(f"✅ OCR output created: {OUT_JSON}")
-        return str(OUT_JSON)
-    else:
-        raise FileNotFoundError(f"OCR output not found: {OUT_JSON}")
 
 if __name__ == "__main__":
     main()

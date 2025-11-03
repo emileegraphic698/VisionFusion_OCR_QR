@@ -520,8 +520,15 @@ def decrease_quota(amount=1):
 # Quality Control Tracking Functions
 # =========================================================
 def get_qc_metadata(user_name, user_role):
-    """Create quality control metadata"""
-    now = datetime.datetime.now()
+    """Create quality control metadata with Iran timezone"""
+    try:
+        import pytz
+        tehran_tz = pytz.timezone('Asia/Tehran')
+        now = datetime.datetime.now(tehran_tz)
+    except:
+        # اگر pytz نصب نبود، از UTC + 3:30 استفاده کن
+        now = datetime.datetime.utcnow() + datetime.timedelta(hours=3, minutes=30)
+    
     return {
         "QC_Supervisor": user_name,
         "QC_Role": user_role,

@@ -27,8 +27,11 @@ except ImportError:
         import sys
         sys.exit(1)
 
+import os
+from pathlib import Path
+
 # =========================================================
-# 🧩 مسیرهای داینامیک سشن
+# 🧩 مسیرهای داینامیک سشن برای Streamlit Cloud
 # =========================================================
 SESSION_DIR = Path(os.getenv("SESSION_DIR", Path.cwd()))
 SOURCE_FOLDER = Path(os.getenv("SOURCE_FOLDER", SESSION_DIR / "uploads"))
@@ -38,6 +41,20 @@ QR_RAW_JSON = Path(os.getenv("QR_RAW_JSON", SESSION_DIR / "final_superqr_v6_raw.
 QR_CLEAN_JSON = Path(os.getenv("QR_CLEAN_JSON", SESSION_DIR / "final_superqr_v6_clean.json"))
 MIX_OCR_QR_JSON = Path(os.getenv("MIX_OCR_QR_JSON", SESSION_DIR / "mix_ocr_qr.json"))
 WEB_ANALYSIS_XLSX = Path(os.getenv("WEB_ANALYSIS_XLSX", SESSION_DIR / "web_analysis.xlsx"))
+
+# ساخت پوشه‌ها در صورت عدم وجود
+for folder in [SOURCE_FOLDER, RENAMED_DIR]:
+    folder.mkdir(parents=True, exist_ok=True)
+
+print(f"📂 SESSION_DIR: {SESSION_DIR}")
+print(f"📂 SOURCE_FOLDER: {SOURCE_FOLDER}")
+print(f"📂 RENAMED_DIR: {RENAMED_DIR}")
+print(f"📄 OUT_JSON: {OUT_JSON}")
+print(f"📄 QR_RAW_JSON: {QR_RAW_JSON}")
+print(f"📄 QR_CLEAN_JSON: {QR_CLEAN_JSON}")
+print(f"📄 MIX_OCR_QR_JSON: {MIX_OCR_QR_JSON}")
+print(f"📄 WEB_ANALYSIS_XLSX: {WEB_ANALYSIS_XLSX}")
+
 
 
 # 🔧 Configuration

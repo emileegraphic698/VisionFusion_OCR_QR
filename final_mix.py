@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
-"""
-🚀 Complete JSON + Excel Merger - Final Version
-ادغام هوشمند JSON و Excel با پاکسازی و بهینه‌سازی کامل
-"""
 
 from pathlib import Path
 import os, json, re, pandas as pd
 from collections import defaultdict
 import time
+import os
+from pathlib import Path
+import pandas as pd
 
 # =========================================================
-# 🧩 مسیرهای داینامیک
+# 🧩 مسیرهای داینامیک برای Streamlit Cloud
 # =========================================================
 SESSION_DIR = Path(os.getenv("SESSION_DIR", Path.cwd()))
 INPUT_JSON = Path(os.getenv("INPUT_JSON", SESSION_DIR / "mix_ocr_qr.json"))
@@ -18,6 +17,10 @@ INPUT_EXCEL = Path(os.getenv("INPUT_EXCEL", SESSION_DIR / "web_analysis.xlsx"))
 timestamp = pd.Timestamp.now().strftime("%Y%m%d_%H%M%S")
 OUTPUT_EXCEL = Path(os.getenv("OUTPUT_EXCEL", SESSION_DIR / f"merged_final_{timestamp}.xlsx"))
 
+# ساخت پوشه‌ها در صورت عدم وجود
+SESSION_DIR.mkdir(parents=True, exist_ok=True)
+
+# نمایش مسیرها
 print("\n" + "="*70)
 print("🚀 Complete JSON + Excel Merger (Optimized)")
 print("="*70)

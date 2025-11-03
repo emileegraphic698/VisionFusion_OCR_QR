@@ -230,11 +230,35 @@ def find_or_create_data_table(drive_service, sheets_service, folder_id=None):
 
 def append_excel_data_to_sheets(excel_path, folder_id=None):
     """Read Excel data and append to Google Sheets (variable row count)"""
+    
+    # 🔍 DEBUG: ورودی تابع
+    print("\n" + "🟢"*50)
+    print("🔍 DEBUG: ===== ENTERED append_excel_data_to_sheets =====")
+    print(f"🔍 DEBUG: excel_path = {excel_path}")
+    print(f"🔍 DEBUG: excel_path type = {type(excel_path)}")
     try:
+        print(f"🔍 DEBUG: excel_path.name = {excel_path.name}")
+        print(f"🔍 DEBUG: excel_path exists = {excel_path.exists()}")
+        print(f"🔍 DEBUG: excel_path size = {excel_path.stat().st_size} bytes")
+    except Exception as debug_e:
+        print(f"🔍 DEBUG: Error getting path info: {debug_e}")
+    print(f"🔍 DEBUG: folder_id = {folder_id}")
+    print("🟢"*50 + "\n")
+    
+    try:
+        print("🔍 DEBUG: Step 1 - Getting Google services...")
         drive_service, sheets_service = get_google_services()
+        
+        print(f"🔍 DEBUG: drive_service = {type(drive_service)}")
+        print(f"🔍 DEBUG: sheets_service = {type(sheets_service)}")
+        print(f"🔍 DEBUG: drive_service is None = {drive_service is None}")
+        print(f"🔍 DEBUG: sheets_service is None = {sheets_service is None}")
+        
         if not drive_service or not sheets_service:
+            print("❌ DEBUG: Google services failed - returning False")
             return False, "Google connection failed", None, 0
 
+        print(f"✅ DEBUG: Google services connected successfully!")
         print(f"\n☁️ Starting data save to Google Drive...")
 
         # ✅ Use existing Google Sheet instead of creating a new one
@@ -242,17 +266,29 @@ def append_excel_data_to_sheets(excel_path, folder_id=None):
         file_url = f"https://docs.google.com/spreadsheets/d/{file_id}/edit"
         exists = True
         print(f"   ✅ Using existing Google Sheet: {file_url}")
+        print(f"🔍 DEBUG: file_id = {file_id}")
 
         if not file_id:
+            print("❌ DEBUG: file_id is empty - returning False")
             return False, "Error creating table", None, 0
         
+        print(f"🔍 DEBUG: Step 2 - Reading Excel file...")
         print(f"📖 Reading Excel data: {excel_path.name}")
+        
         df = pd.read_excel(excel_path)
+        
+        print(f"🔍 DEBUG: Excel read successfully!")
+        print(f"🔍 DEBUG: df.shape = {df.shape}")
+        print(f"🔍 DEBUG: df.columns (first 10) = {list(df.columns)[:10]}")
+        print(f"🔍 DEBUG: df.empty = {df.empty}")
+        
         if df.empty:
+            print("❌ DEBUG: DataFrame is empty - returning False")
             return False, "Excel file is empty", None, 0
         
         print(f"   ✅ {len(df)} rows × {len(df.columns)} columns read")
         
+        print(f"🔍 DEBUG: Step 3 - Cleaning DataFrame...")
         # ✅ Clean DataFrame from NaN and None values
         df = df.replace({np.nan: "", None: ""})
         
@@ -260,21 +296,30 @@ def append_excel_data_to_sheets(excel_path, folder_id=None):
             if df[col].dtype == 'object':
                 df[col] = df[col].astype(str).replace('nan', '').replace('None', '').replace('NaT', '')
         
+        print(f"✅ DEBUG: DataFrame cleaned")
+        
         sheet_name = 'Sheet1'
+        print(f"🔍 DEBUG: Step 4 - Getting existing headers from sheet: {sheet_name}")
         
         result = sheets_service.spreadsheets().values().get(
             spreadsheetId=file_id, range=f'{sheet_name}!1:1'
         ).execute()
         
+        print(f"✅ DEBUG: Headers fetched from Google Sheets")
+        
         existing_headers = result.get('values', [[]])[0] if result.get('values') else []
         new_headers = df.columns.tolist()
         
         print(f"   📋 Existing columns: {len(existing_headers)} | New columns: {len(new_headers)}")
+        print(f"🔍 DEBUG: existing_headers (first 5) = {existing_headers[:5] if existing_headers else 'None'}")
+        print(f"🔍 DEBUG: new_headers (first 5) = {new_headers[:5]}")
         
         if not existing_headers:
+            print(f"🔍 DEBUG: Sheet is empty - adding headers + data")
             values = [new_headers] + df.values.tolist()
             print(f"   ℹ️ Empty table, adding {len(new_headers)} columns")
         else:
+            print(f"🔍 DEBUG: Sheet has data - merging columns")
             new_columns = [col for col in new_headers if col not in existing_headers]
             
             all_columns = existing_headers.copy()
@@ -283,10 +328,13 @@ def append_excel_data_to_sheets(excel_path, folder_id=None):
                     all_columns.append(col)
             
             print(f"   📊 Final order: {len(all_columns)} columns")
+            print(f"🔍 DEBUG: new_columns = {new_columns}")
             
             if new_columns:
                 print(f"   🆕 New columns: {new_columns}")
                 print(f"   🔄 Updating headers...")
+                print(f"🔍 DEBUG: Step 5 - Updating headers in Google Sheets...")
+                
                 sheets_service.spreadsheets().values().update(
                     spreadsheetId=file_id,
                     range=f'{sheet_name}!1:1',
@@ -294,10 +342,14 @@ def append_excel_data_to_sheets(excel_path, folder_id=None):
                     body={'values': [all_columns]}
                 ).execute()
                 
+                print(f"✅ DEBUG: Headers updated")
+                
                 result = sheets_service.spreadsheets().values().get(
                     spreadsheetId=file_id, range=f'{sheet_name}!A:A'
                 ).execute()
                 existing_rows_count = len(result.get('values', [])) - 1
+                
+                print(f"🔍 DEBUG: existing_rows_count = {existing_rows_count}")
                 
                 if existing_rows_count > 0:
                     print(f"   📝 Filling {existing_rows_count} old rows...")
@@ -305,6 +357,8 @@ def append_excel_data_to_sheets(excel_path, folder_id=None):
                     start_col_index = len(existing_headers)
                     start_col_letter = _col_index_to_letter(start_col_index)
                     end_col_letter = _col_index_to_letter(start_col_index + len(new_columns) - 1)
+                    
+                    print(f"🔍 DEBUG: Filling range: {start_col_letter}2:{end_col_letter}{existing_rows_count+1}")
                     
                     sheets_service.spreadsheets().values().update(
                         spreadsheetId=file_id,
@@ -314,21 +368,24 @@ def append_excel_data_to_sheets(excel_path, folder_id=None):
                     ).execute()
                     print(f"   ✅ Old rows updated")
             
-            
+            print(f"🔍 DEBUG: Step 6 - Reordering DataFrame columns...")
             
             missing_cols = [col for col in all_columns if col not in df.columns]
             if missing_cols:
+                print(f"🔍 DEBUG: Adding missing columns: {missing_cols}")
                 missing_data = {col: '' for col in missing_cols}
                 df = df.assign(**missing_data)
-                
             
             df = df[all_columns]
             print(f"   ✅ DataFrame sorted: {len(df)} rows × {len(all_columns)} columns")
             values = df.values.tolist()
 
+        print(f"🔍 DEBUG: Step 7 - Converting values to strings...")
         # ✅ Convert all NaN or None to string before sending to Sheets
         values = [[("" if (pd.isna(cell) or cell is None) else str(cell)) for cell in row] for row in values]
+        print(f"✅ DEBUG: Values converted. Total rows to add: {len(values)}")
         
+        print(f"🔍 DEBUG: Step 8 - Getting current row count...")
         result = sheets_service.spreadsheets().values().get(
             spreadsheetId=file_id, range=f'{sheet_name}!A:A'
         ).execute()
@@ -337,6 +394,7 @@ def append_excel_data_to_sheets(excel_path, folder_id=None):
         print(f"   📊 Current rows: {existing_rows}")
         print(f"   📤 Adding {len(values)} rows...")
         
+        print(f"🔍 DEBUG: Step 9 - Appending data to Google Sheets...")
         body = {'values': values}
         result = sheets_service.spreadsheets().values().append(
             spreadsheetId=file_id,
@@ -346,9 +404,15 @@ def append_excel_data_to_sheets(excel_path, folder_id=None):
             body=body
         ).execute()
         
+        print(f"✅ DEBUG: Data appended successfully!")
+        
         updated_rows = result.get('updates', {}).get('updatedRows', 0)
         total_rows = existing_rows + updated_rows
         
+        print(f"🔍 DEBUG: updated_rows = {updated_rows}")
+        print(f"🔍 DEBUG: total_rows = {total_rows}")
+        
+        print(f"🔍 DEBUG: Step 10 - Getting final stats...")
         result = sheets_service.spreadsheets().values().get(
             spreadsheetId=file_id, range=f'{sheet_name}!1:1'
         ).execute()
@@ -363,15 +427,28 @@ def append_excel_data_to_sheets(excel_path, folder_id=None):
         print(f"   🔗 {file_url}")
         
         message = f"✅ {updated_rows} new rows | Total: {total_rows} rows | {total_columns} columns"
+        
+        print(f"🔍 DEBUG: Returning SUCCESS!")
+        print(f"🔍 DEBUG: message = {message}")
+        print(f"🔍 DEBUG: file_url = {file_url}")
+        print(f"🔍 DEBUG: total_rows = {total_rows}")
+        print("🟢"*50 + "\n")
+        
         return True, message, file_url, total_rows
         
     except Exception as e:
+        print(f"\n❌ DEBUG: EXCEPTION OCCURRED!")
+        print(f"❌ DEBUG: Exception type: {type(e)}")
+        print(f"❌ DEBUG: Exception message: {e}")
         print(f"   ❌ Error: {e}")
         import traceback
+        print(f"❌ DEBUG: Full traceback:")
         traceback.print_exc()
+        print("🔴"*50 + "\n")
         return False, str(e), None, 0
 
 
+        
 def get_or_create_folder(folder_name="Exhibition_Data"):
     """Find or create folder in Drive"""
     try:

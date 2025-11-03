@@ -1237,28 +1237,6 @@ if uploaded_files:
                                 {msg_gs}
                             </div>
                             """, unsafe_allow_html=True)
-
-
-                st.info("💡 Only Excel data is saved, not the file itself!")
-                
-                sheets_status = st.empty()
-                sheets_status.info("📤 Uploading data...")
-                
-                try:
-                    folder_id = get_or_create_folder("Exhibition_Data")
-                    
-                    for output_file in output_files:
-                        success_gs, msg_gs, url_gs, total_rows = append_excel_data_to_sheets(
-                            excel_path=output_file,
-                            folder_id=folder_id
-                        )
-                        
-                        if success_gs:
-                            sheets_status.markdown(f"""
-                            <div class="status-box status-success">
-                                {msg_gs}
-                            </div>
-                            """, unsafe_allow_html=True)
                             
                             st.session_state['sheet_url'] = url_gs
                             st.session_state['sheet_id'] = url_gs.split('/d/')[1].split('/')[0] if '/d/' in url_gs else ''
@@ -1299,15 +1277,18 @@ if uploaded_files:
                                 st.success(f"✅ Sufficient space ({100-capacity:.1f}% remaining)")
                         else:
                             sheets_status.error(f"❌ Error: {msg_gs}")
+                            print(f"❌ DEBUG: Google Sheets upload failed: {msg_gs}")
                 
                 except Exception as e:
                     sheets_status.error(f"❌ Error: {e}")
                     st.warning("💡 Make sure Google Drive API and Sheets API are enabled")
+                    print(f"❌ DEBUG: Exception in Google Sheets block: {e}")
+                    import traceback
+                    traceback.print_exc()
                 # ========== END GOOGLE SHEETS ==========
 
-            st.markdown("---")
+                st.markdown("---")
 
-            if success and output_files:
                 st.markdown("""
                 <div class="status-box status-success">
                     <h2>🎉 Processing completed successfully!</h2>

@@ -932,38 +932,66 @@ if uploaded_files:
     from pathlib import Path
     import streamlit as st
     import datetime
+if uploaded_files:
+    pipeline_type = detect_pipeline_type(uploaded_files)
+    exhibition_name = extract_exhibition_name(uploaded_files)
+
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.markdown(f"""
+        <div class="metric-card">
+            <h3>🔍 نوع Pipeline</h3>
+            <h2>{'📊 Excel' if pipeline_type == 'excel' else '🖼 OCR/QR'}</h2>
+        </div>
+        """, unsafe_allow_html=True)
+    with col2:
+        st.markdown(f"""
+        <div class="metric-card">
+            <h3>📁 تعداد فایل</h3>
+            <h2>{len(uploaded_files)}</h2>
+        </div>
+        """, unsafe_allow_html=True)
+    with col3:
+        st.markdown(f"""
+        <div class="metric-card">
+            <h3>🏢 نمایشگاه</h3>
+            <h2>{exhibition_name[:15]}</h2>
+        </div>
+        """, unsafe_allow_html=True)
+
+    exhibition_name = st.text_input(
+        "📝 ویرایش نام نمایشگاه",
+        value=exhibition_name,
+        help="در ستون Exhibition ثبت می‌شود"
+    )
 
     # =========================================================
-     # مسیر ثابت برای session
+    # 📂 تنظیم مسیرها با config (بدون تکرار!)
     # =========================================================
-    session_dir = Path("session_current")
-    uploads_dir = session_dir / "uploads"
-    logs_dir = session_dir / "logs"
-
-    # ✅ تنظیم مسیر برای همه اسکریپت‌ها
-    os.environ["SESSION_DIR"] = str(session_dir.resolve())
-    os.environ["SOURCE_FOLDER"] = str(uploads_dir.resolve())
-    os.environ["OUTPUT_DIR"] = str(session_dir.resolve())
-
-    print(f"✅ SESSION_DIR set to: {os.environ['SESSION_DIR']}")
-
-# ساخت پوشه‌ها
     session_dir = config.BASE_DIR
     uploads_dir = config.UPLOADS_DIR
     logs_dir = config.LOGS_DIR
-# ذخیره فایل‌های آپلود شده
+
+    # تنظیم Environment Variables
+    os.environ["SESSION_DIR"] = str(session_dir.resolve())
+    os.environ["SOURCE_FOLDER"] = str(uploads_dir.resolve())
+    os.environ["OUTPUT_DIR"] = str(session_dir.resolve())
+    os.environ["EXHIBITION_NAME"] = exhibition_name
+
+    print(f"✅ SESSION_DIR set to: {os.environ['SESSION_DIR']}")
+
+    # ساخت پوشه‌ها
+    uploads_dir.mkdir(parents=True, exist_ok=True)
+    logs_dir.mkdir(parents=True, exist_ok=True)
+
+    # ذخیره فایل‌های آپلود شده
     for f in uploaded_files:
         dest = uploads_dir / f.name
         dest.write_bytes(f.getbuffer())
         if not dest.exists():
             st.error(f"❌ فایل ذخیره نشد: {dest}")
 
-# تعریف مسیرهای داینامیک ثابت برای pipeline
-    os.environ["SESSION_DIR"] = str(session_dir)
-    os.environ["SOURCE_FOLDER"] = str(uploads_dir)
-    os.environ["EXHIBITION_NAME"] = exhibition_name
-
-# اگر pipeline نوع Excel دارد
+    # تعریف مسیرهای داینامیک برای pipeline
     if pipeline_type == 'excel':
         excel_files = list(uploads_dir.glob("*.xlsx")) + list(uploads_dir.glob("*.xls"))
         if excel_files:
@@ -971,13 +999,14 @@ if uploaded_files:
         else:
             st.warning("⚠️ هیچ فایل Excel پیدا نشد!")
 
-# پردازش فایل‌ها به Batch
+    # پردازش فایل‌ها به Batch
     batches, batch_size = process_files_in_batches(uploads_dir, pipeline_type)
     total_batches = len(batches)
 
     if total_batches > 0:
         st.info(f"📦 تعداد Batch‌ها: {total_batches} | اندازه هر Batch: {batch_size}")
 
+    st.markdown("---")
 
 
     st.markdown("---")

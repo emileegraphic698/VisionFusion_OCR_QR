@@ -924,7 +924,7 @@ if uploaded_files:
     import datetime
 
     # =========================================================
-     🔹 مسیر ثابت برای session
+     # مسیر ثابت برای session
     # =========================================================
     session_dir = Path("session_current")
     uploads_dir = session_dir / "uploads"

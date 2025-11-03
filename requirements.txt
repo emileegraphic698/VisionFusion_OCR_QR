@@ -45,22 +45,3 @@ Pillow>=10.0.0
 
 
 
-pytz
-```
-
----
-
-### 🔧 **تغییر 3: بررسی Service Account**
-
-**مهم‌ترین قسمت! 👈**
-
-1. برو به Google Sheet:
-```
-   https://docs.google.com/spreadsheets/d/1OeQbiqvo6v58rcxaoSUidOk0IxSGmL8YCpLnyh27yuE/edit
-```
-
-2. بالا سمت راست روی **Share** کلیک کن
-
-3. یه ایمیل Service Account داری که شبیه اینه:
-```
-   streamlit-service@smart-exhibition-pipeline.iam.gserviceaccount.com

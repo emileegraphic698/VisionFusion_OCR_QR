@@ -1133,34 +1133,34 @@ if uploaded_files:
                     st.warning(f"⚠️ فایل خالی است: {output_file}")
             continue
 
-                st.info(f"📤 آپلود {output_file.name} ({output_file.stat().st_size / 1024:.1f} KB)...")
+            st.info(f"📤 آپلود {output_file.name} ({output_file.stat().st_size / 1024:.1f} KB)...")
 
 
 
-                try:
-                    folder_id = get_or_create_folder("Exhibition_Data")
+            try:
+                folder_id = get_or_create_folder("Exhibition_Data")
                     
-                    for output_file in output_files:
-                        success_gs, msg_gs, url_gs, total_rows = append_excel_data_to_sheets(
-                            excel_path=output_file,
-                            folder_id=folder_id
+                for output_file in output_files:
+                    success_gs, msg_gs, url_gs, total_rows = append_excel_data_to_sheets(
+                        excel_path=output_file,
+                        folder_id=folder_id
                         )
                         
-                        if success_gs:
-                            sheets_status.markdown(f"""
-                            <div class="status-box status-success">
-                                {msg_gs}
-                            </div>
-                            """, unsafe_allow_html=True)
+                    if success_gs:
+                        sheets_status.markdown(f"""
+                        <div class="status-box status-success">
+                            {msg_gs}
+                        </div>
+                        """, unsafe_allow_html=True)
                             
-                            st.session_state['sheet_url'] = url_gs
-                            st.session_state['sheet_id'] = url_gs.split('/d/')[1].split('/')[0] if '/d/' in url_gs else ''
+                        st.session_state['sheet_url'] = url_gs
+                        st.session_state['sheet_id'] = url_gs.split('/d/')[1].split('/')[0] if '/d/' in url_gs else ''
                             
-                            link_file = Path("google_sheet_link.txt")
-                            link_file.write_text(f"لینک جدول:\n{url_gs}", encoding='utf-8')
+                        link_file = Path("google_sheet_link.txt")
+                        link_file.write_text(f"لینک جدول:\n{url_gs}", encoding='utf-8')
                             
-                            total_cells = total_rows * 90
-                            capacity = (total_cells / 10_000_000) * 100
+                        total_cells = total_rows * 90
+                        capacity = (total_cells / 10_000_000) * 100
                             
                             col_a, col_b, col_c = st.columns(3)
                             with col_a:

@@ -40,7 +40,7 @@ try:
     # مسیرهای خروجی موقت
     step1_out = os.path.join(temp_dir, "gemini_output.json")
     step2_out = os.path.join(temp_dir, "final_superqr_v6_clean.json")
-    step3_out = os.path.join(temp_dir, "mix_ocr_qr.json"")
+    step3_out = os.path.join(temp_dir, "mix_ocr_qr.json")
     step4_out = os.path.join(temp_dir, "web_analysis.xlsx")
     step5_out = os.path.join(temp_dir, "final_mix.xlsx")
 

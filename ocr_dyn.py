@@ -5,6 +5,15 @@ import os, sys, json, time, io
 from typing import Any, Dict, List, Union
 from PIL import Image
 
+import os, tempfile, shutil
+import subprocess  # اگر هر اسکریپت جداست
+
+# ساخت پوشه موقت
+temp_dir = tempfile.mkdtemp(prefix="pipeline_")
+
+    # مسیرهای خروجی موقت
+step1_out = os.path.join(temp_dir, "gemini_output.json")
+
 # =========================================================
 # 🔹 Gemini SDK Import
 # =========================================================
@@ -208,7 +217,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-#import gemini_ocr_module
-#gemini_ocr_module.main()

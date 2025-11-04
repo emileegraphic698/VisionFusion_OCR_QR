@@ -27,7 +27,7 @@ import numpy as np
 import re
 import shutil
 
-from supabase import create_client, Client
+#from supabase import create_client, Client
 
 
 import os, tempfile, shutil

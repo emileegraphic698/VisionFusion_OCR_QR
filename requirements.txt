@@ -10,3 +10,4 @@ pyzbar
 Pillow
 requests
 beautifulsoup4
+supabase

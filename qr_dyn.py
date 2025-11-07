@@ -17,12 +17,11 @@ import warnings, ctypes, os
 warnings.filterwarnings("ignore")
 os.environ["ZBAR_LOG_LEVEL"] = "0"
 
-# =========================================================
-# 🧩 مسیرهای داینامیک سشن (Dynamic Paths)
-# =========================================================
+
+# Dynamic Paths
 SESSION_DIR = Path(os.getenv("SESSION_DIR", Path.cwd()))
 
-# ورودی‌ها: اگر uploads خالی بود، مسیر خود SESSION_DIR
+# inputs: if uploads are empty, use session_dir path
 IMAGES_FOLDER = SESSION_DIR / "uploads"
 if not IMAGES_FOLDER.exists() or not any(IMAGES_FOLDER.glob("*")):
     IMAGES_FOLDER = SESSION_DIR

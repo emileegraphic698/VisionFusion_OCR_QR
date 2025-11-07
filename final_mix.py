@@ -10,7 +10,7 @@ from collections import defaultdict
 import time
 
 # 🧩 مسیرهای داینامیک
-# =========================================================
+
 SESSION_DIR = Path(os.getenv("SESSION_DIR", Path.cwd()))
 INPUT_JSON = Path(os.getenv("INPUT_JSON", SESSION_DIR / "mix_ocr_qr.json"))
 INPUT_EXCEL = Path(os.getenv("INPUT_EXCEL", SESSION_DIR / "web_analysis.xlsx"))

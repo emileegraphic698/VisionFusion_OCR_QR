@@ -1196,7 +1196,7 @@ if uploaded_files:
                         with colB:
                             with open(output_file, "rb") as f:
                                 st.download_button(
-                                    label="⬇️ دانلود",
+                                    label="⬇️ download",
                                     data=f,
                                     file_name=output_file.name,
                                     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

@@ -1234,7 +1234,7 @@ if uploaded_files:
                             with col2:
                                 with open(json_file, "rb") as f:
                                     st.download_button(
-                                        label="⬇️ دانلود",
+                                        label="⬇️ download",
                                         data=f,
                                         file_name=json_file.name,
                                         mime="application/json",

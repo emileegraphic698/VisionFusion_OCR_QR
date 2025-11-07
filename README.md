@@ -268,4 +268,4 @@ For commercial or enterprise licensing, please contact:
 
 ---
 
-Would you like me to generate a **short GitHub-friendly top section** (with badges, logo, and quick demo GIF preview) that you can place at the start of this README for marketing presentation?
+

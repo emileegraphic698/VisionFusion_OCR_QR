@@ -1249,7 +1249,7 @@ if uploaded_files:
                     <p>some data was not processed. please check the logs.</p>
                 </div>
                 """, unsafe_allow_html=True)
-                st.info("💡 نکته: اگر شرکتی URL نداشته باشد، نمی‌توان اطلاعات آن را از وب دریافت کرد.")
+                st.info("💡 note: if a company doesn’t have a url, its information cannot be retrieved from the web.")
                 if debug_mode:
                     with st.expander("🔍 لیست فایل‌های Session"):
                         for f in session_dir.rglob("*"):

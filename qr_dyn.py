@@ -42,7 +42,7 @@ POPPLER_PATH = os.getenv("POPPLER_PATH", r"C:\poppler\Library\bin").strip()
 if POPPLER_PATH and os.path.exists(POPPLER_PATH):
     os.environ["PATH"] += os.pathsep + POPPLER_PATH
 
-# حالت دیباگ
+# debug
 DEBUG_MODE = os.getenv("DEBUG_MODE", "0") == "1"
 print("🚀 SuperQR v6.1 (Clean URLs + vCard Support) ready\n")
 

@@ -373,7 +373,7 @@ def process_image_for_qr(image_path: Path) -> Union[List[str], None]:
     if DEBUG_MODE:
         cv2.imwrite(str(DEBUG_DIR / f"{image_path.stem}_02_enhanced.jpg"), enhanced)
     
-    # تشخیص QR
+    # detection QR
     result = detect_qr_payloads_enhanced(enhanced, image_path.stem)
     
     if result:

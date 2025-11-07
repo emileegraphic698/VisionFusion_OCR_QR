@@ -1350,7 +1350,7 @@ st.markdown("""
         👤 Quality Control Tracking: name, role, date, time
     </p>
     <p style="margin: 0.5rem 0;">
-        ☁️ Google Sheets: ذخیره خودکار داده‌ها در Drive
+        ☁️ Google Sheets: auto-save data to Drive
     </p>
     <p style="margin: 1rem 0 0 0; opacity: 0.8; font-size: 0.9rem;">
         Made with ❤️ using Streamlit & Gemini AI

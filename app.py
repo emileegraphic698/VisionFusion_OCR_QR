@@ -1344,10 +1344,10 @@ st.markdown("""
         📌 Exhibition + Source Tracking | 🤖 Smart Position Detection
     </p>
     <p style="margin: 0.5rem 0;">
-        📦 Batch Processing: تصاویر(5) | PDF(4) | Excel(1)
+        📦 Batch Processing: Image(5) | PDF(4) | Excel(1)
     </p>
     <p style="margin: 0.5rem 0;">
-        👤 Quality Control Tracking: نام، نقش، تاریخ، ساعت
+        👤 Quality Control Tracking: name, role, date, time
     </p>
     <p style="margin: 0.5rem 0;">
         ☁️ Google Sheets: ذخیره خودکار داده‌ها در Drive

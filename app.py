@@ -886,7 +886,7 @@ if uploaded_files:
     with col2:
         st.markdown(f"""
         <div class="metric-card">
-            <h3>📁 تعداد فایل</h3>
+            <h3>📁 number of files</h3>
             <h2>{len(uploaded_files)}</h2>
         </div>
         """, unsafe_allow_html=True)

@@ -1207,7 +1207,7 @@ if uploaded_files:
                             for c in df_prev.columns:
                                 if df_prev[c].dtype == 'object':
                                     df_prev[c] = df_prev[c].astype(str).replace('nan', '')
-                            with st.expander(f"👁 پیش‌نمایش {output_file.name}"):
+                            with st.expander(f"👁 preview{output_file.name}"):
                                 st.markdown(f"""
                                 <div class="status-box status-info" style="margin-top:0;">
                                     <p style="margin:0;">📊 <strong>{len(df_prev)}</strong> ردیف × 

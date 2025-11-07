@@ -279,13 +279,13 @@ def clean_and_optimize_dataframe(df):
             df = df.drop(columns=[old])
             print(f"   ✂️ {old} → {new}")
     
-    # remove multi-value خالی
+    # remove  empty multi-value 
     multi = [c for c in df.columns if '[' in c and ']' in c]
     for col in multi:
         if df[col].isna().sum() / len(df) > 0.9:
             df = df.drop(columns=[col])
     
-    # ادغام company_names
+    # merge company_names
     if 'company_names' in df.columns:
         if 'CompanyNameEN' not in df.columns:
             df['CompanyNameEN'] = ""
@@ -305,7 +305,7 @@ def clean_and_optimize_dataframe(df):
         df = df.drop(columns=['company_names'])
         print(f"   ✂️ company_names → CompanyName fields")
     
-    # ادغام addresses
+    # merge addresses
     if 'addresses' in df.columns:
         if 'AddressEN' not in df.columns:
             df['AddressEN'] = ""
@@ -325,7 +325,7 @@ def clean_and_optimize_dataframe(df):
         df = df.drop(columns=['addresses'])
         print(f"   ✂️ addresses → Address fields")
     
-    # ادغام notes
+    # merge notes
     if 'notes' in df.columns and 'Description' in df.columns:
         df['Description'] = df['Description'].fillna(df['notes'])
         df = df.drop(columns=['notes'])

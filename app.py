@@ -1272,7 +1272,7 @@ else:
     st.markdown("""
     <div class="status-box status-info">
         <h3>👋 welcome!</h3>
-        <p>لطفاً ابتدا اطلاعات ناظر کیفیت را وارد کنید، سپس فایل‌های خود را آپلود کنید</p>
+        <p>please enter the quality supervisor information first, then upload your files</p>
     </div>
     """, unsafe_allow_html=True)
 

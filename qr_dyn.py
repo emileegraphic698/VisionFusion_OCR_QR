@@ -351,7 +351,7 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
 
 # ----------------------------------------------------------
 def process_image_for_qr(image_path: Path) -> Union[List[str], None]:
-    """پردازش تصویر برای تشخیص QR"""
+    """image processing for detection QR"""
     if DEBUG_MODE:
         print(f"\n   🖼️  Loading: {image_path.name}")
     

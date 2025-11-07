@@ -33,7 +33,7 @@ SESSION_DIR = Path(os.getenv("SESSION_DIR", Path.cwd()))
 SOURCE_FOLDER = Path(os.getenv("SOURCE_FOLDER", SESSION_DIR / "uploads"))
 RENAMED_DIR = Path(os.getenv("RENAMED_DIR", SESSION_DIR / "renamed"))
 
-# ورودی: جستجوی خودکار فایل Excel
+# input: automatically search for excel file
 INPUT_EXCEL_ENV = os.getenv("INPUT_EXCEL")
 if INPUT_EXCEL_ENV:
     INPUT_EXCEL = Path(INPUT_EXCEL_ENV)
@@ -60,11 +60,10 @@ OUTPUT_EXCEL = Path(os.getenv(
 TEMP_EXCEL = Path(os.getenv("TEMP_EXCEL", SESSION_DIR / "temp_output.xlsx"))
 OUTPUT_JSON = Path(os.getenv("OUTPUT_JSON", SESSION_DIR / "scraped_data.json"))
 
-# =========================================================
-# ⚙️ تنظیمات
-# =========================================================
-# API Key - فقط یک کلید
-GOOGLE_API_KEY = "AIzaSyBzVNw34fbQRcxCSZDouR35hoZNxqsW6pc"
+
+#  setting 
+# API Key 
+GOOGLE_API_KEY = "AIzaSyBz******5hoZNxqsW6pc"
 
 MODEL_NAME = "gemini-2.0-flash-exp"
 THREAD_COUNT = 5
@@ -119,9 +118,8 @@ print(f"📥 Input: {INPUT_EXCEL}")
 print(f"📤 Output: {OUTPUT_EXCEL}")
 print(f"{'='*70}\n")
 
-# =========================================================
-# 🧠 توابع کمکی
-# =========================================================
+
+# helper function
 def normalize_url(url):
     """نرمال‌سازی URL"""
     if not url or pd.isna(url) or str(url).lower() in ['nan', 'none', '']:

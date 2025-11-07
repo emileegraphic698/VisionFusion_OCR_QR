@@ -1075,10 +1075,10 @@ if uploaded_files:
                 # ========================== GOOGLE SHEETS UPLOAD ========================
                 st.markdown("---")
                 st.markdown("## ☁️ save data to google drive")
-                st.info("💡 فقط داده‌های داخل Excel ذخیره می‌شود، نه خود فایل!")
+                st.info("💡 only the data inside the excel file will be saved, not the file itself!")
                 
                 sheets_status = st.empty()
-                sheets_status.info("📤 در حال آپلود داده‌ها...")
+                sheets_status.info("📤 uploading data...")
                 
                 try:
                     folder_id = get_or_create_folder("Exhibition_Data")

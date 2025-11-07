@@ -1107,11 +1107,11 @@ if uploaded_files:
                             
                             col_a, col_b, col_c = st.columns(3)
                             with col_a:
-                                st.metric("📊 کل ردیف‌ها", f"{total_rows:,}")
+                                st.metric("📊 total rows", f"{total_rows:,}")
                             with col_b:
-                                st.metric("📦 کل سلول‌ها", f"{total_cells:,}")
+                                st.metric("📦 total cells", f"{total_cells:,}")
                             with col_c:
-                                st.metric("⚡️ ظرفیت", f"{capacity:.1f}%")
+                                st.metric("⚡️ capacity", f"{capacity:.1f}%")
                             
                             st.markdown(f"""
                             <div class="file-display" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">

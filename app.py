@@ -827,19 +827,19 @@ st.sidebar.markdown("---")
 st.sidebar.markdown("### 📦 Batch Processing")
 st.sidebar.info("📸 Image: 5 \n📄 PDF: 4 \n📊 Excel: 1 ")
 
-# =========================================================
-# 📂 آپلود فایل‌ها
-# =========================================================
-st.markdown("## 📂 آپلود فایل‌ها")
+
+
+# upload files
+st.markdown("## upload files")
 uploaded_files = st.file_uploader(
-    "فایل‌های خود را بکشید یا کلیک کنید",
+    "drag or click to upload your files",
     type=['xlsx', 'xls', 'pdf', 'jpg', 'jpeg', 'png'],
     accept_multiple_files=True,
     help="Excel → Excel Mode | Image/PDF → OCR/QR Pipeline"
 )
 
 # =========================================================
-# ✨ Quality Control Section
+# Quality Control Section
 # =========================================================
 st.markdown("## 👤 اطلاعات ناظر کیفیت")
 st.markdown("*این اطلاعات به عنوان متادیتای کنترل کیفیت در خروجی ثبت می‌شود*")

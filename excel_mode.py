@@ -222,7 +222,7 @@ def clean_text(html):
     return re.sub(r"\s+", " ", text).strip()
 
 def crawl_site(root):
-    """کرال کامل سایت"""
+    """full site crawl"""
     print(f"   🕷️ Crawling: {root}")
     seen = set()
     q = [(root, 0)]
@@ -264,9 +264,8 @@ def crawl_site(root):
     print(f"      ✅ Total: {len(combined)} chars from {len(texts)} pages")
     return (combined, "")
 
-# =========================================================
-# 🤖 Gemini Extraction & Translation
-# =========================================================
+
+#  Gemini Extraction & Translation
 PROMPT_EXTRACT = """
 You are a bilingual (Persian-English) company information extractor.
 Extract the following JSON fields from the provided website text.
@@ -290,7 +289,7 @@ Fields JSON:
 """
 
 def gemini_json(prompt, schema):
-    """درخواست به Gemini با خروجی JSON"""
+    """request to gemini with json output"""
     schema_obj = types.Schema(type=types.Type.OBJECT, properties=schema, required=[])
     
     for i in range(MAX_RETRIES_GEMINI):

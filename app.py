@@ -753,12 +753,12 @@ if 'sheet_url' in st.session_state:
     st.sidebar.markdown(f"""
     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
                 padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
-        <h4 style="color: white; margin: 0 0 0.5rem 0;">📊 جدول داده‌ها</h4>
+        <h4 style="color: white; margin: 0 0 0.5rem 0;">📊 data table</h4>
         <a href="{st.session_state['sheet_url']}" target="_blank" 
            style="color: white; background: rgba(255,255,255,0.2); 
                   padding: 0.5rem 1rem; border-radius: 8px; 
                   text-decoration: none; display: block; text-align: center;">
-            🔗 باز کردن جدول
+            🔗 open table
         </a>
     </div>
     """, unsafe_allow_html=True)
@@ -771,15 +771,15 @@ elif Path("google_sheet_link.txt").exists():
             st.sidebar.markdown(f"""
             <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
                         padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
-                <h4 style="color: white; margin: 0 0 0.5rem 0;">📊 جدول داده‌ها</h4>
+                <h4 style="color: white; margin: 0 0 0.5rem 0;">📊 data table</h4>
                 <a href="{saved_url}" target="_blank" 
                    style="color: white; background: rgba(255,255,255,0.2); 
                           padding: 0.5rem 1rem; border-radius: 8px; 
                           text-decoration: none; display: block; text-align: center;">
-                    🔗 باز کردن جدول
+                    🔗  open table
                 </a>
                 <p style="color: rgba(255,255,255,0.8); font-size: 0.85rem; margin: 0.5rem 0 0 0;">
-                    لینک ذخیره شده
+                    saved link
                 </p>
             </div>
             """, unsafe_allow_html=True)

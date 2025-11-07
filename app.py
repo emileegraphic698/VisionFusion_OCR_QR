@@ -375,23 +375,22 @@ def get_or_create_folder(folder_name="Exhibition_Data"):
         files = results.get('files', [])
         
         if files:
-            print(f"   ✅ پوشه موجود: {files[0]['name']}")
+            print(f"   ✅ existing folder: {files[0]['name']}")
             return files[0]['id']
         
         folder = drive_service.files().create(
             body={'name': folder_name, 'mimeType': 'application/vnd.google-apps.folder'},
             fields='id'
         ).execute()
-        print(f"   ✅ پوشه جدید: {folder_name}")
+        print(f"   ✅ existing folder: {folder_name}")
         return folder.get('id')
         
     except Exception as e:
-        print(f"   ❌ خطا: {e}")
+        print(f"   ❌ error: {e}")
         return None
 
-# =========================================================
-# 📅 Quota Management
-# =========================================================
+
+# Quota Management
 DAILY_LIMIT = 240
 QUOTA_FILE = Path("quota.json")
 
@@ -426,9 +425,8 @@ def decrease_quota(amount=1):
     save_quota(quota)
     return quota
 
-# =========================================================
-# ✨ Quality Control Tracking Functions
-# =========================================================
+
+# quality control tracking functions
 def get_qc_metadata(user_name, user_role):
     """ساخت متادیتای کنترل کیفیت"""
     now = datetime.datetime.now()

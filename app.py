@@ -470,9 +470,8 @@ def save_qc_log(session_dir, qc_metadata, exhibition_name, pipeline_type, total_
         print(f"   ❌ Error saving QC log: {e}")
         return False
 
-# =========================================================
-# 🧠 توابع هوشمند مشترک
-# =========================================================
+
+# share smart functions
 def detect_source_type(file_name):
     if not file_name or pd.isna(file_name):
         return "Unknown"

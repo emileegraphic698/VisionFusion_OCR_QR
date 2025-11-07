@@ -746,11 +746,9 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# =========================================================
-# 📊 Sidebar
-# =========================================================
 
-# ========== لینک سریع به Google Sheets ==========
+# Sidebar
+# ========== link to Google Sheets ==========
 if 'sheet_url' in st.session_state:
     st.sidebar.markdown(f"""
     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 

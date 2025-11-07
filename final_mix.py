@@ -151,9 +151,8 @@ def load_json_records(json_path):
         print(f"   ❌ Error: {e}")
         return []
 
-# =========================================================
-# 📥 بارگذاری Excel
-# =========================================================
+
+#  upload Excel
 def load_excel_records(excel_path):
     print("\n📥 Loading Excel...")
     if not excel_path.exists():

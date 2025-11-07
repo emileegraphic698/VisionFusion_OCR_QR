@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 🚀 Excel Web Scraper - Professional Edition
-وب‌اسکرپ حرفه‌ای از اکسل + تحلیل هوشمند Gemini + ترجمه
+
 """
 
 from pathlib import Path
@@ -16,9 +16,8 @@ import pandas as pd
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-# =========================================================
-# 🔹 Gemini SDK Import
-# =========================================================
+
+#  Gemini SDK Import
 try:
     import google.genai as genai
     from google.genai import types

@@ -1259,7 +1259,7 @@ if uploaded_files:
         except Exception as e:
             st.markdown("""
             <div class="status-box status-error">
-                <h2>❌ خطای غیرمنتظره</h2>
+                <h2>❌ unexpected error</h2>
             </div>
             """, unsafe_allow_html=True)
             st.error(f"خطا: {str(e)}")

@@ -409,7 +409,7 @@ def clean_duplicate_columns(df):
     return cleaned_df
 
 def smart_merge(original_df, scraped_data):
-    """ادغام هوشمند داده‌ها"""
+    """smart data merging"""
     print("\n🔗 Smart merging data...")
     
     scraped_df = pd.DataFrame(scraped_data)
@@ -458,9 +458,8 @@ def smart_merge(original_df, scraped_data):
     print(f"   ✅ Merged: {len(result_df)} rows × {len(result_df.columns)} columns")
     return result_df
 
-# =========================================================
-# 🔄 Worker Thread
-# =========================================================
+
+# Worker Thread
 def worker(q, results):
     while True:
         try:
@@ -520,9 +519,9 @@ def worker(q, results):
         q.task_done()
         time.sleep(random.uniform(*SLEEP_BETWEEN))
 
-# =========================================================
-# 🚀 Main
-# =========================================================
+
+#  Main
+
 def main():
     print("📥 Loading Excel file...")
     if not INPUT_EXCEL.exists():

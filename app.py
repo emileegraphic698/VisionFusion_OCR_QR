@@ -927,7 +927,7 @@ if uploaded_files:
     total_batches = len(batches)
     
     if total_batches > 0:
-        st.info(f"📦 تعداد Batch‌ها: {total_batches} | اندازه هر Batch: {batch_size}")
+        st.info(f"📦  Batch‌ number: {total_batches} | Batch size: {batch_size}")
 
     st.markdown("---")
 

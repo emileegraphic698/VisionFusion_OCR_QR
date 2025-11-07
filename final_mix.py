@@ -9,8 +9,7 @@ import os, json, re, pandas as pd
 from collections import defaultdict
 import time
 
-# 🧩 مسیرهای داینامیک
-
+# dynamic paths
 SESSION_DIR = Path(os.getenv("SESSION_DIR", Path.cwd()))
 INPUT_JSON = Path(os.getenv("INPUT_JSON", SESSION_DIR / "mix_ocr_qr.json"))
 INPUT_EXCEL = Path(os.getenv("INPUT_EXCEL", SESSION_DIR / "web_analysis.xlsx"))
@@ -26,9 +25,8 @@ print(f"📥 Excel: {INPUT_EXCEL}")
 print(f"📤 Output: {OUTPUT_EXCEL}")
 print("="*70 + "\n")
 
-# =========================================================
-# 🧠 توابع کمکی
-# =========================================================
+
+#  helper functions
 def is_persian(text):
     if not text or pd.isna(text):
         return False

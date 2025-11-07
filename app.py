@@ -581,9 +581,8 @@ def add_exhibition_and_source(excel_path, exhibition_name):
         st.error(f"error adding metadata: {e}")
         return False
 
-# =========================================================
-# 🔍 تشخیص نوع Pipeline و نام نمایشگاه
-# =========================================================
+
+# detect pipeline type and exhibition name
 def detect_pipeline_type(files):
     extensions = [f.name.split('.')[-1].lower() for f in files]
     if any(ext in ['xlsx', 'xls'] for ext in extensions):

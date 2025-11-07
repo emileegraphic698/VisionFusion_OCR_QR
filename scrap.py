@@ -224,7 +224,7 @@ def fetch(url: str) -> tuple[str, str]:
                 if i == MAX_RETRIES_HTTP - 1:
                     return ("", f"HTTP_{r.status_code}")
         except requests.exceptions.SSLError as e:
-            #
+            #ssl error occurred, retry without verify
             if verify_ssl and i == 0:
                 print(f"  🔄 SSL Error, retrying without verification: {url}")
                 try:
@@ -315,9 +315,9 @@ def crawl_site(root: str, max_depth=MAX_DEPTH, max_pages=MAX_PAGES_PER_SITE) -> 
     print(f"  ✅ Total extracted: {len(combined)} chars from {len(texts)} pages")
     return (combined, "")
 
-# =============================================================
-# 🔹 Gemini + Translation
-# =============================================================
+
+#  Gemini + Translation
+
 def gemini_json(prompt: str, schema: dict):
     schema = types.Schema(type=types.Type.OBJECT, properties=schema, required=[])
     for i in range(MAX_RETRIES_GEMINI):
@@ -349,7 +349,7 @@ def extract_with_gemini(text: str):
 def translate_fields(data: dict):
     to_translate = {en: data.get(en) for en, _ in TRANSLATABLE_FIELDS if data.get(en)}
     if not to_translate:
-        # ✅ حتی اگر محتوایی برای ترجمه نبود، ستون‌های خالی FA رو اضافه کن
+        
         for en, fa_col in TRANSLATABLE_FIELDS:
             data[fa_col] = ""
         return data
@@ -358,15 +358,14 @@ def translate_fields(data: dict):
     schema = {k: types.Schema(type=types.Type.STRING, nullable=True) for k in to_translate.keys()}
     tr = gemini_json(prompt, schema)
     
-    # ✅ برای همه فیلدهای قابل ترجمه، چه پر باشند چه خالی، ستون FA رو اضافه کن
+    
     for en, fa_col in TRANSLATABLE_FIELDS:
         data[fa_col] = tr.get(en, "")
     
     return data
 
-# =============================================================
-# 🔹 Worker & Main (FIXED)
-# =============================================================
+
+#  Worker & Main 
 def worker(q: Queue, results: list):
     while True:
         try:

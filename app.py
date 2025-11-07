@@ -862,10 +862,10 @@ if qc_user_name and qc_user_role:
     st.markdown(f"""
     <div class="qc-card">
         <h4>✅ quality control information preview</h4>
-        <p><strong>👤 ناظر:</strong> {qc_preview['QC_Supervisor']}</p>
-        <p><strong>💼 نقش:</strong> {qc_preview['QC_Role']}</p>
-        <p><strong>📅 تاریخ:</strong> {qc_preview['QC_Date']}</p>
-        <p><strong>🕐 ساعت:</strong> {qc_preview['QC_Time']}</p>
+        <p><strong>👤 supervisor:</strong> {qc_preview['QC_Supervisor']}</p>
+        <p><strong>💼 position:</strong> {qc_preview['QC_Role']}</p>
+        <p><strong>📅 date:</strong> {qc_preview['QC_Date']}</p>
+        <p><strong>🕐 time:</strong> {qc_preview['QC_Time']}</p>
     </div>
     """, unsafe_allow_html=True)
 

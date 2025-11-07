@@ -1307,7 +1307,7 @@ else:
         """, unsafe_allow_html=True)
 
     st.markdown("---")
-    st.markdown("### ✨ ویژگی‌های کلیدی")
+    st.markdown("### ✨ key features")
     features = [
         ("🎯", "تشخیص خودکار", "Excel یا OCR/QR به صورت هوشمند"),
         ("🏢", "Exhibition Field", "نام نمایشگاه قابل ویرایش"),

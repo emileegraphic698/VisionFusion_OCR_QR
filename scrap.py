@@ -57,9 +57,9 @@ IRANIAN_TLDS = ['.ir', '.ac.ir', '.co.ir', '.org.ir', '.gov.ir', '.id.ir', '.net
 client = genai.Client(api_key=GOOGLE_API_KEY)
 lock = threading.Lock()
 
-# =========================================================
+
 # 🔧 مسیرهای ورودی و خروجی داینامیک
-# =========================================================
+
 RAW_INPUT = Path(os.getenv("RAW_INPUT", MIX_OCR_QR_JSON))
 CLEAN_URLS = Path(os.getenv("CLEAN_URLS", SESSION_DIR / "urls_clean.json"))
 OUTPUT_JSON = Path(os.getenv("OUTPUT_JSON", OUT_JSON))

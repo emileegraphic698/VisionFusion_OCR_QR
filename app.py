@@ -1246,7 +1246,7 @@ if uploaded_files:
                 st.markdown("""
                 <div class="status-box status-warning">
                     <h2>⚠️ processing not completed</h2>
-                    <p>بعضی داده‌ها پردازش نشدند. لاگ‌ها را بررسی کنید.</p>
+                    <p>some data was not processed. please check the logs.</p>
                 </div>
                 """, unsafe_allow_html=True)
                 st.info("💡 نکته: اگر شرکتی URL نداشته باشد، نمی‌توان اطلاعات آن را از وب دریافت کرد.")

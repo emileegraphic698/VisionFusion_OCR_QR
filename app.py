@@ -133,9 +133,8 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# =========================================================
-# 🔐 کلیدهای API
-# =========================================================
+
+# API keys
 API_KEYS = {
     "excel": "AIzaSyBzVNw34fbQRcxCSZDouR35hoZNxqsW6pc",
     "ocr": "AIzaSyCKoaSP6Wgj5FCJDGGXIBHy1rt61Cl2ZTs",
@@ -146,9 +145,8 @@ for key_name, key_value in API_KEYS.items():
     os.environ["GOOGLE_API_KEY"] = key_value
     os.environ["GEMINI_API_KEY"] = key_value
 
-# =========================================================
-# ☁️ GOOGLE SHEETS INTEGRATION
-# =========================================================
+
+# GOOGLE SHEETS INTEGRATION
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 

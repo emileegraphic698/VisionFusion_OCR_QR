@@ -962,7 +962,7 @@ if uploaded_files:
         try:
             if pipeline_type == 'excel':
                 st.markdown("""
-                <div class="status-box status-info">📊 Excel Mode فعال شد</div>
+                <div class="status-box status-info">📊 Excel Mode activated</div>
                 """, unsafe_allow_html=True)
 
                 excel_input = os.environ.get("INPUT_EXCEL")

@@ -5,9 +5,8 @@ import os, sys, json, time, io
 from typing import Any, Dict, List, Union
 from PIL import Image
 
-# =========================================================
-# 🔹 Gemini SDK Import
-# =========================================================
+
+# Gemini SDK Import
 try:
     import google.genai as _genai_new
     from google.genai import types as _genai_types
@@ -16,9 +15,8 @@ except Exception as e:
     print("❌ Gemini SDK failed to load:", e)
     sys.exit(1)
 
-# =========================================================
-# 🧩 Dynamic Paths
-# =========================================================
+
+# Dynamic Paths
 SESSION_DIR = Path(os.getenv("SESSION_DIR", Path.cwd()))
 SOURCE_FOLDER = Path(os.getenv("SOURCE_FOLDER", SESSION_DIR / "uploads"))
 OUT_JSON = Path(os.getenv("OUT_JSON", SESSION_DIR / "gemini_output.json"))

@@ -1118,11 +1118,11 @@ if uploaded_files:
                                 <h4>🔗 permanent table link</h4>
                                 <p style="background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 8px; margin: 0.5rem 0;">
                                     <a href="{url_gs}" target="_blank" style="color: white; font-weight: bold; font-size: 1.1rem;">
-                                        📊 باز کردن در Google Drive
+                                        📊 open in Google Drive
                                     </a>
                                 </p>
                                 <p style="font-size: 0.9rem; margin: 0.5rem 0 0 0; opacity: 0.9;">
-                                    💡 این لینک همیشه ثابت است! Bookmark کنید!
+                                    💡 this link is always fixed! Bookmark do it!
                                 </p>
                             </div>
                             """, unsafe_allow_html=True)
@@ -1130,11 +1130,11 @@ if uploaded_files:
                             st.code(url_gs, language=None)
                             
                             if capacity > 80:
-                                st.warning(f"⚠️ ظرفیت بالا ({capacity:.1f}%)!")
+                                st.warning(f"⚠️ high capacity({capacity:.1f}%)!")
                             else:
-                                st.success(f"✅ فضای کافی ({100-capacity:.1f}% باقی)")
+                                st.success(f"✅ enough space({100-capacity:.1f}% remaining)")
                         else:
-                            sheets_status.error(f"❌ خطا: {msg_gs}")
+                            sheets_status.error(f"❌ error: {msg_gs}")
                 
                 except Exception as e:
                     sheets_status.error(f"❌ خطا: {e}")

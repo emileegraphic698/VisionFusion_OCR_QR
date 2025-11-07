@@ -1251,7 +1251,7 @@ if uploaded_files:
                 """, unsafe_allow_html=True)
                 st.info("💡 note: if a company doesn’t have a url, its information cannot be retrieved from the web.")
                 if debug_mode:
-                    with st.expander("🔍 لیست فایل‌های Session"):
+                    with st.expander("🔍 session file list"):
                         for f in session_dir.rglob("*"):
                             if f.is_file():
                                 st.write(f"📄 {f.relative_to(session_dir)}")

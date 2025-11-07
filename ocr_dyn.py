@@ -35,7 +35,7 @@ BATCH_SIZE_IMAGES = 3
 
 
 # api key setup (single key only)
-API_KEY = "AIzaSyCKoaSP6Wgj5FCJDGGXIBHy1rt61Cl2ZTs"
+API_KEY = "AIzaSyCK*****BHy1rt61Cl2ZTs"
 CLIENT = _genai_new.Client(api_key=API_KEY)
 
 
@@ -164,7 +164,7 @@ def main():
 
     files = list_files(SOURCE_FOLDER)
     if not files:
-        print("❌ هیچ فایلی برای پردازش وجود ندارد.")
+        print("❌ no files found for processing.")
         sys.exit(0)
 
     all_out = []
@@ -194,7 +194,7 @@ def main():
         time.sleep(1)
 
     OUT_JSON.write_text(json.dumps(all_out, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"\n✅ پردازش کامل شد. نتیجه: {OUT_JSON}")
+    print(f"\n✅ processing complete result: {OUT_JSON}")
 
 if __name__ == "__main__":
     main()

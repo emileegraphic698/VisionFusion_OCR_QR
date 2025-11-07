@@ -942,7 +942,7 @@ if uploaded_files:
         
         if quota['remaining'] <= 0:
             st.markdown("""
-            <div class="status-box status-error">❌ سهمیه API تمام شد! فردا دوباره امتحان کنید.</div>
+            <div class="status-box status-error">❌ API quota exceeded! please try again tomorrow.</div>
             """, unsafe_allow_html=True)
             st.stop()
 

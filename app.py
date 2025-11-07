@@ -1316,9 +1316,9 @@ else:
         ("🔋", "Quota Management", "smart management API (240/day)"),
         ("⚡️", "Fast Mode", "fast processing with optimized log"),
         ("🔒", "Rate Limit", "4 seconds (safe - 15 rpm)"),
-        ("📦", "Batch Processing", "تصاویر(5) | PDF(4) | Excel(1)"),
-        ("👤", "Quality Control", "ثبت نام و نقش ناظر کیفیت"),
-        ("☁️", "Google Sheets", "ذخیره خودکار در Drive")
+        ("📦", "Batch Processing", "Image(5) | PDF(4) | Excel(1)"),
+        ("👤", "Quality Control", "record quality supervisor name and role"),
+        ("☁️", "Google Sheets", " save in Drive")
     ]
     cols = st.columns(3)
     for idx, (icon, title, desc) in enumerate(features):

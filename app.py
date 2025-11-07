@@ -1072,9 +1072,9 @@ if uploaded_files:
                     add_exhibition_and_source(output_file, exhibition_name)
                     add_qc_metadata_to_excel(output_file, qc_metadata)
                 
-                # ========== GOOGLE SHEETS UPLOAD ==========
+                # ========================== GOOGLE SHEETS UPLOAD ========================
                 st.markdown("---")
-                st.markdown("## ☁️ ذخیره داده‌ها در Google Drive")
+                st.markdown("## ☁️ save data to google drive")
                 st.info("💡 فقط داده‌های داخل Excel ذخیره می‌شود، نه خود فایل!")
                 
                 sheets_status = st.empty()

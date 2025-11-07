@@ -1015,7 +1015,7 @@ if uploaded_files:
 
             else:
                 st.markdown("""
-                <div class="status-box status-info">🖼 OCR/QR Pipeline فعال شد</div>
+                <div class="status-box status-info">🖼 OCR/QR Pipeline activated</div>
                 """, unsafe_allow_html=True)
 
                 if total_batches > 0:

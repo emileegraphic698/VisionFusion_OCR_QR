@@ -167,7 +167,7 @@ def get_google_services():
         sheets_service = build('sheets', 'v4', credentials=creds)
         return drive_service, sheets_service
     except Exception as e:
-        st.error(f"❌ خطا در اتصال به Google: {e}")
+        st.error(f"❌ connection error to Google: {e}")
         return None, None
 
 def _col_index_to_letter(col_index):

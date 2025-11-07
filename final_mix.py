@@ -182,9 +182,8 @@ def load_excel_records(excel_path):
         print(f"   ❌ Error: {e}")
         return []
 
-# =========================================================
-# 🔄 ادغام دو رکورد
-# =========================================================
+
+# merge two records
 def merge_two_records(r1, r2):
     merged = {}
     for key in set(r1.keys()) | set(r2.keys()):
@@ -207,9 +206,8 @@ def merge_two_records(r1, r2):
             merged[f"{key}[{counter}]"] = v2
     return merged
 
-# =========================================================
-# 🔗 ادغام هوشمند
-# =========================================================
+
+#  smart merge 
 def smart_merge_records(json_records, excel_records):
     print("\n🔗 Merging intelligently...")
     groups = defaultdict(list)
@@ -254,9 +252,8 @@ def smart_merge_records(json_records, excel_records):
     print(f"   ✅ Created {len(merged_records)} final records")
     return merged_records
 
-# =========================================================
-# 🧹 پاکسازی DataFrame
-# =========================================================
+
+# clean DataFrame
 def clean_and_optimize_dataframe(df):
     print("\n🧹 Optimizing DataFrame...")
     

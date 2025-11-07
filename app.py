@@ -1338,7 +1338,7 @@ st.markdown("""
             border-radius: 15px; color: white; margin-top: 2rem;">
     <h4>🚀 Smart Exhibition Pipeline + Google Sheets</h4>
     <p style="margin: 0.5rem 0;">
-        ⚡️ Rate Limiting: 4s (ایمن) | 🔒 API Limit: 15 RPM, 240/روز
+        ⚡️ Rate Limiting: 4s (safe) | 🔒 API Limit: 15 RPM, 240/day
     </p>
     <p style="margin: 0.5rem 0;">
         📌 Exhibition + Source Tracking | 🤖 Smart Position Detection

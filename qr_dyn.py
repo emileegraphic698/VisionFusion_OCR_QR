@@ -34,10 +34,10 @@ DEBUG_DIR = SESSION_DIR / "_debug"
 os.makedirs(IMAGES_FOLDER, exist_ok=True)
 os.makedirs(DEBUG_DIR, exist_ok=True)
 
-# DPI برای PDF
+# DPI for PDF
 PDF_IMG_DPI = int(os.getenv("PDF_IMG_DPI", "200"))
 
-# مسیر Poppler (برای ویندوز)
+# Poppler path (for windows)
 POPPLER_PATH = os.getenv("POPPLER_PATH", r"C:\poppler\Library\bin").strip()
 if POPPLER_PATH and os.path.exists(POPPLER_PATH):
     os.environ["PATH"] += os.pathsep + POPPLER_PATH

@@ -949,7 +949,7 @@ if uploaded_files:
         qc_metadata = get_qc_metadata(qc_user_name, qc_user_role)
         save_qc_log(session_dir, qc_metadata, exhibition_name, pipeline_type, len(uploaded_files))
         
-        st.markdown("## 🔄 پردازش در حال انجام...")
+        st.markdown("## 🔄processing in progress...")
         progress_bar = st.progress(0)
         status_text = st.empty()
         log_area = st.empty()

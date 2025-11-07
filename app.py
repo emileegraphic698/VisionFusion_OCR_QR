@@ -171,7 +171,7 @@ def get_google_services():
         return None, None
 
 def _col_index_to_letter(col_index):
-    """تبدیل index به حرف Excel (0->A, 25->Z, 26->AA)"""
+    """convert index to excel column letter"""
     result = ""
     while col_index >= 0:
         result = chr(col_index % 26 + 65) + result
@@ -179,7 +179,7 @@ def _col_index_to_letter(col_index):
     return result
 
 def find_or_create_data_table(drive_service, sheets_service, folder_id=None):
-    """پیدا کردن یا ساخت جدول در Drive"""
+    """find or create table in drive"""
     try:
         table_name = "Exhibition_Data_Table"
         query = f"name='{table_name}' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false"
@@ -195,7 +195,7 @@ def find_or_create_data_table(drive_service, sheets_service, folder_id=None):
         if files:
             file_id = files[0]['id']
             file_url = files[0].get('webViewLink', f"https://docs.google.com/spreadsheets/d/{file_id}/edit")
-            print(f"   ✅ جدول موجود: {file_id}")
+            print(f"   ✅ existing table: {file_id}")
             return file_id, file_url, True
         
         print(f"   📝 ساخت جدول جدید...")

@@ -25,33 +25,29 @@ OUT_JSON = Path(os.getenv("OUT_JSON", SESSION_DIR / "gemini_output.json"))
 POPPLER_PATH = os.getenv("POPPLER_PATH", r"C:\poppler\Library\bin")
 os.environ["PATH"] += os.pathsep + POPPLER_PATH
 
-# =========================================================
-# ⚙️ تنظیمات عمومی
-# =========================================================
+
+# general settings
 MODEL_NAME = "gemini-2.5-flash"
 TEMPERATURE = 0.0
 PDF_IMG_DPI = 150
 BATCH_SIZE_PDF = 1
 BATCH_SIZE_IMAGES = 3
 
-# =========================================================
-# 🔑 تنظیم کلید API (فقط یک کلید)
-# =========================================================
+
+# api key setup (single key only)
 API_KEY = "AIzaSyCKoaSP6Wgj5FCJDGGXIBHy1rt61Cl2ZTs"
 CLIENT = _genai_new.Client(api_key=API_KEY)
 
-# =========================================================
-# 🧩 Gemini Prompt
-# =========================================================
+
+# Gemini Prompt
 JSON_INSTRUCTIONS = """
 You are an information extraction engine. Extract OCR text and structured fields from the scanned document.
 Return ONLY valid JSON matching the schema. Keep original Persian text exactly as-is.
 If a field has no value, return null.
 """
 
-# =========================================================
-# 🔹 تعریف ساختار خروجی JSON
-# =========================================================
+
+#define json output structure
 def build_newsdk_schema():
     P = _genai_types
     return P.Schema(
@@ -81,9 +77,8 @@ def build_newsdk_schema():
         required=["ocr_text"]
     )
 
-# =========================================================
-# 🧩 توابع کمکی
-# =========================================================
+
+# helper functions
 def list_files(path: Union[str, Path]) -> List[Path]:
     exts = {".jpg", ".jpeg", ".png", ".pdf"}
     return sorted([f for f in Path(path).rglob("*") if f.suffix.lower() in exts])
@@ -104,9 +99,8 @@ def ensure_nulls(obj: Dict[str, Any]) -> Dict[str, Any]:
         obj["ocr_text"] = ""
     return obj
 
-# =========================================================
-# 🔁 تابع ارسال با یک کلید (بدون چرخش)
-# =========================================================
+
+#send function with single key
 def call_gemini_single_key(data: Image.Image, source_path: Path) -> Dict[str, Any]:
     schema = build_newsdk_schema()
     cfg = _genai_types.GenerateContentConfig(
@@ -139,9 +133,8 @@ def call_gemini_single_key(data: Image.Image, source_path: Path) -> Dict[str, An
     except Exception as e:
         raise RuntimeError(f"Gemini API Error: {e}")
 
-# =========================================================
-# 📄 پردازش PDF به تصاویر و ارسال
-# =========================================================
+
+# process pdf to images and send
 def pdf_to_images_and_process(pdf_path: Path) -> List[Dict[str, Any]]:
     from pdf2image import convert_from_path
     print(f"📑 Converting PDF: {pdf_path.name}")
@@ -160,9 +153,8 @@ def pdf_to_images_and_process(pdf_path: Path) -> List[Dict[str, Any]]:
     print(f"✅ {len(results)} page(s) processed from {pdf_path.name}")
     return results
 
-# =========================================================
-# 🚀 اجرای اصلی برنامه
-# =========================================================
+
+# run main program
 def main():
     print(f"🔑 Using single API key.\n")
     

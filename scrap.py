@@ -51,7 +51,7 @@ MAX_RETRIES_HTTP = 3
 MAX_RETRIES_GEMINI = 3
 CHECK_DOMAIN_EXISTENCE = True
 
-# ✅ لیست دامنه‌های ایرانی که SSL ممکنه مشکل داشته باشند
+# ssl might have issues
 IRANIAN_TLDS = ['.ir', '.ac.ir', '.co.ir', '.org.ir', '.gov.ir', '.id.ir', '.net.ir']
 
 client = genai.Client(api_key=GOOGLE_API_KEY)

@@ -463,7 +463,7 @@ def is_domain_alive(url, timeout=5):
         return False
 
 def clean_qr_json(input_file, output_file):
-    """پاکسازی و اعتبارسنجی URLها"""
+    """clean and validate urls"""
     print("\n🧹 Cleaning and validating extracted QR URLs...")
     
     if not Path(input_file).exists():
@@ -517,7 +517,7 @@ def clean_qr_json(input_file, output_file):
 
 # ----------------------------------------------------------
 def main():
-    """تابع اصلی"""
+    """main function"""
     print("=" * 60)
     print("🚀 Starting SuperQR v6.1 Processing")
     print("=" * 60)

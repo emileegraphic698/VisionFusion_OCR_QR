@@ -121,7 +121,7 @@ print(f"{'='*70}\n")
 
 # helper function
 def normalize_url(url):
-    """نرمال‌سازی URL"""
+    """normalize url"""
     if not url or pd.isna(url) or str(url).lower() in ['nan', 'none', '']:
         return None
     url = str(url).strip()
@@ -134,7 +134,7 @@ def normalize_url(url):
     return None
 
 def normalize_root(url):
-    """استخراج root domain"""
+    """extract root domain"""
     u = normalize_url(url)
     if not u:
         return None
@@ -142,7 +142,7 @@ def normalize_root(url):
     return f"{p.scheme}://{p.netloc}".lower()
 
 def is_iranian_domain(url):
-    """تشخیص دامنه ایرانی"""
+    """"extract domain""""
     try:
         netloc = urlparse(normalize_root(url)).netloc.lower()
         return any(netloc.endswith(tld) for tld in IRANIAN_TLDS)
@@ -150,7 +150,7 @@ def is_iranian_domain(url):
         return False
 
 def domain_exists(url):
-    """بررسی وجود دامنه"""
+    """check domain existence"""
     try:
         host = urlparse(normalize_root(url)).netloc
         socket.gethostbyname(host)

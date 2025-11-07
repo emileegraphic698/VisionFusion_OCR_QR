@@ -367,9 +367,8 @@ def create_final_dataframe(records):
     
     return df[ordered + remaining]
 
-# =========================================================
-# 💾 ذخیره
-# =========================================================
+
+#  save
 def save_excel(df, path):
     if df.empty:
         print("\n⚠️ No data!")
@@ -386,9 +385,9 @@ def save_excel(df, path):
         print(f"   ❌ Error: {e}")
         return False
 
-# =========================================================
-# 🚀 اجرا
-# =========================================================
+
+# running
+
 def main():
     start = time.time()
     

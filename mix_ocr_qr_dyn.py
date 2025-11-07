@@ -72,8 +72,8 @@ def merge_ocr_qr(ocr_data, qr_data):
 
     return merged
 
-# =========================================================
-# 🚀 اجرای اصلی
+
+# run main
 def main():
     print("\n🚀 Starting OCR + QR merge process...\n")
 

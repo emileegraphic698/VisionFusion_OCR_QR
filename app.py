@@ -1003,10 +1003,10 @@ if uploaded_files:
 
                 if total_rows > 0:
                     quota = decrease_quota(total_rows)
-                    quota_display.success(f"✅ سهمیه باقیمانده: {quota['remaining']}/{DAILY_LIMIT} (استفاده شده: {total_rows})")
+                    quota_display.success(f"✅ remaining quota: {quota['remaining']}/{DAILY_LIMIT} (استفاده شده: {total_rows})")
                 else:
                     quota = decrease_quota(1)
-                    quota_display.success(f"✅ سهمیه باقیمانده: {quota['remaining']}/{DAILY_LIMIT}")
+                    quota_display.success(f"✅ remaining quota: {quota['remaining']}/{DAILY_LIMIT}")
 
                 output_files = list(session_dir.glob("output_enriched_*.xlsx"))
                 if not output_files:

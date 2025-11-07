@@ -1309,7 +1309,7 @@ else:
     st.markdown("---")
     st.markdown("### ✨ key features")
     features = [
-        ("🎯", "تشخیص خودکار", "Excel یا OCR/QR به صورت هوشمند"),
+        ("🎯", "automatic detection", "smart excel or ocr/qr processing"),
         ("🏢", "Exhibition Field", "نام نمایشگاه قابل ویرایش"),
         ("📊", "Source Tracking", "تشخیص منبع (Image/PDF/Excel)"),
         ("🤖", "Smart Position", "50+ دپارتمان فارسی/انگلیسی"),

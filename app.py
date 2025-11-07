@@ -720,7 +720,7 @@ def run_script(script_name, session_dir, log_area, status_text, script_display_n
             return True
         else:
             status_text.markdown(f"""
-            <div class="status-box status-warning">⚠️ {script_display_name} با مشکل مواجه شد (exit code: {process.returncode})</div>
+            <div class="status-box status-warning">⚠️ {script_display_name} encountered an error(exit code: {process.returncode})</div>
             """, unsafe_allow_html=True)
             try:
                 with open(log_file, 'r', encoding='utf-8') as f:
@@ -733,7 +733,7 @@ def run_script(script_name, session_dir, log_area, status_text, script_display_n
 
     except Exception as e:
         status_text.markdown(f"""
-        <div class="status-box status-error">❌ خطای اجرا: {str(e)}</div>
+        <div class="status-box status-error">❌ running error: {str(e)}</div>
         """, unsafe_allow_html=True)
         return False
 

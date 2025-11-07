@@ -852,8 +852,8 @@ with col_qc1:
     )
 with col_qc2:
     qc_user_role = st.text_input(
-        "💼 سمت/نقش",
-        placeholder="مثال: کارشناس کنترل کیفیت",
+        "💼 role / position",
+        placeholder="example: quality control specialist",
         help="سمت یا نقش شما در سازمان"
     )
 

@@ -517,13 +517,13 @@ def smart_position_from_department(department):
     for key, position in department_position_map.items():
         if key in department:
             return position
-    if any(word in department for word in ['مدیر', 'manager', 'رئیس', 'chief']):
-        return f"مدیر {department.title()}"
-    elif any(word in department for word in ['معاون', 'deputy']):
-        return f"معاون {department.title()}"
-    elif any(word in department for word in ['کارشناس', 'expert']):
-        return f"کارشناس {department.title()}"
-    return f"مسئول {department.title()}"
+    if any(word in department for word in [ 'manager', 'chief']):
+        return f"manager {department.title()}"
+    elif any(word in department for word in [ 'deputy']):
+        return f"deputy {department.title()}"
+    elif any(word in department for word in [ 'expert']):
+        return f"expert {department.title()}"
+    return f"officer {department.title()}"
 
 def add_exhibition_and_source(excel_path, exhibition_name):
     """نسخه‌ی جامع + اعلان UI"""

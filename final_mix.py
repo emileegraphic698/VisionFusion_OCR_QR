@@ -263,7 +263,7 @@ def clean_and_optimize_dataframe(df):
         df = df.drop(columns=empty)
         print(f"   🗑️ Removed {len(empty)} empty columns")
     
-    # ادغام تکراری‌ها
+    # merge duplicates
     merges = [
         ('urls', 'Website'),
         ('phones', 'Phone1'),
@@ -279,7 +279,7 @@ def clean_and_optimize_dataframe(df):
             df = df.drop(columns=[old])
             print(f"   ✂️ {old} → {new}")
     
-    # حذف multi-value خالی
+    # remove multi-value خالی
     multi = [c for c in df.columns if '[' in c and ']' in c]
     for col in multi:
         if df[col].isna().sum() / len(df) > 0.9:

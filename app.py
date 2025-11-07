@@ -785,7 +785,7 @@ elif Path("google_sheet_link.txt").exists():
             """, unsafe_allow_html=True)
     except:
         pass
-# ========== پایان لینک سریع ==========
+# ========== quick link end ==========
 
 quota = load_quota()
 st.sidebar.markdown(f"""

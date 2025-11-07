@@ -1190,7 +1190,7 @@ if uploaded_files:
                             st.markdown(f"""
                             <div class="file-display">
                                 <h4>📄 {output_file.name}</h4>
-                                <p>حجم: {output_file.stat().st_size / 1024:.1f} KB</p>
+                                <p>size: {output_file.stat().st_size / 1024:.1f} KB</p>
                             </div>
                             """, unsafe_allow_html=True)
                         with colB:

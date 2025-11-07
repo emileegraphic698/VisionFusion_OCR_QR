@@ -1067,7 +1067,7 @@ if uploaded_files:
             elapsed = time.time() - start_time
 
             if success and output_files:
-                st.info("📝 در حال اضافه کردن Exhibition، Source و QC Metadata...")
+                st.info("📝 adding... Exhibition، Source , QC Metadata...")
                 for output_file in output_files:
                     add_exhibition_and_source(output_file, exhibition_name)
                     add_qc_metadata_to_excel(output_file, qc_metadata)

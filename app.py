@@ -807,19 +807,19 @@ else:
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("### ⚙️ setting")
-rate_limit = st.sidebar.slider("⏱️ فاصله بین درخواست‌ها (ثانیه)", 0, 10, 4)
+rate_limit = st.sidebar.slider("⏱️ request interval (seconds)", 0, 10, 4)
 if rate_limit < 4:
-    st.sidebar.markdown('<span class="badge badge-error">⚠️ خطر Block</span>', unsafe_allow_html=True)
+    st.sidebar.markdown('<span class="badge badge-error">⚠️ error Block</span>', unsafe_allow_html=True)
 elif rate_limit == 4:
-    st.sidebar.markdown('<span class="badge badge-success">✅ ایمن (15 RPM)</span>', unsafe_allow_html=True)
+    st.sidebar.markdown('<span class="badge badge-success">✅ safe (15 RPM)</span>', unsafe_allow_html=True)
 else:
-    st.sidebar.markdown('<span class="badge badge-success">🔒 خیلی ایمن</span>', unsafe_allow_html=True)
+    st.sidebar.markdown('<span class="badge badge-success">🔒 very secure</span>', unsafe_allow_html=True)
 
 debug_mode = st.sidebar.checkbox("🐛 Debug Mode")
 fast_mode = st.sidebar.checkbox("⚡️ Fast Mode", value=True)
 
 st.sidebar.markdown("---")
-st.sidebar.markdown("### 🔑 وضعیت کلیدها")
+st.sidebar.markdown("### 🔑 key status")
 for key_name, key_value in API_KEYS.items():
     st.sidebar.text(f"{key_name.upper()}: {key_value[:20]}...")
 

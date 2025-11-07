@@ -10,9 +10,8 @@ import pandas as pd
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-# =========================================================
-# 🔹 Gemini SDK Import (Fixed)
-# =========================================================
+
+#  Gemini SDK Import 
 try:
     import google.genai as genai
     from google.genai import types
@@ -27,9 +26,8 @@ except ImportError:
         import sys
         sys.exit(1)
 
-# =========================================================
+
 # 🧩 مسیرهای داینامیک سشن
-# =========================================================
 SESSION_DIR = Path(os.getenv("SESSION_DIR", Path.cwd()))
 SOURCE_FOLDER = Path(os.getenv("SOURCE_FOLDER", SESSION_DIR / "uploads"))
 RENAMED_DIR = Path(os.getenv("RENAMED_DIR", SESSION_DIR / "renamed"))

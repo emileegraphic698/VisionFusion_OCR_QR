@@ -1100,7 +1100,7 @@ if uploaded_files:
                             st.session_state['sheet_id'] = url_gs.split('/d/')[1].split('/')[0] if '/d/' in url_gs else ''
                             
                             link_file = Path("google_sheet_link.txt")
-                            link_file.write_text(f"لینک جدول:\n{url_gs}", encoding='utf-8')
+                            link_file.write_text(f"table link:\n{url_gs}", encoding='utf-8')
                             
                             total_cells = total_rows * 90
                             capacity = (total_cells / 10_000_000) * 100

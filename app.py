@@ -989,7 +989,7 @@ if uploaded_files:
                 current_quota = load_quota()
                 quota_display.info(f"🔋 remaining quota: {current_quota['remaining']}/{DAILY_LIMIT}")
 
-                st.info(f"📦 پردازش {total_rows} ردیف به صورت Batch (اندازه: 1)")
+                st.info(f"📦 process rows {total_rows} in Batch (size: 1)")
                 
                 success = run_script(
                     "excel_mode.py",

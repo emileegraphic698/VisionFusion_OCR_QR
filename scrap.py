@@ -58,15 +58,14 @@ client = genai.Client(api_key=GOOGLE_API_KEY)
 lock = threading.Lock()
 
 
-# 🔧 مسیرهای ورودی و خروجی داینامیک
-
+#  dynamic input and output paths
 RAW_INPUT = Path(os.getenv("RAW_INPUT", MIX_OCR_QR_JSON))
 CLEAN_URLS = Path(os.getenv("CLEAN_URLS", SESSION_DIR / "urls_clean.json"))
 OUTPUT_JSON = Path(os.getenv("OUTPUT_JSON", OUT_JSON))
 OUTPUT_EXCEL = Path(os.getenv("OUTPUT_EXCEL", WEB_ANALYSIS_XLSX))
 TEMP_EXCEL = Path(os.getenv("TEMP_EXCEL", SESSION_DIR / "web_analysis.tmp.xlsx"))
 
-# ---------------------------------------------
+
 # Fields & Prompts
 FIELDS = [
     "CompanyNameEN", "CompanyNameFA", "Logo", "Industry", "Certifications",
@@ -121,9 +120,8 @@ HEADERS = {
     "Connection": "keep-alive",
 }
 
-# =============================================================
-# 🔹 Utility Functions
-# =============================================================
+
+#  Utility Functions
 def normalize_root(url: str) -> str:
     u = url.strip()
     if not re.match(r"^https?://", u, re.I):
@@ -148,9 +146,8 @@ def domain_exists(url: str) -> bool:
         print(f"❌ Domain check failed for {url}: {e}")
         return False
 
-# =============================================================
-# 🔹 Extract URLs (from OCR + QR + Excel)
-# =============================================================
+
+# Extract URLs (from OCR + QR + Excel)
 def extract_urls_from_mix(input_path: str, output_path: str):
     print("🌐 Extracting all URLs from mix_cor_qr.json (OCR + QR + Excel)...")
     try:
@@ -198,15 +195,14 @@ def extract_urls_from_mix(input_path: str, output_path: str):
     print(f"✅ Found {len(roots)} clean root URLs → {output_path}")
     return roots
 
-# =============================================================
-# 🔹 Web Crawling & Cleaning (FIXED)
-# =============================================================
+
+#  Web Crawling & Cleaning (FIXED)
 def fetch(url: str) -> tuple[str, str]:
     """
     Returns: (html_content, error_message)
     Smart SSL handling: Iranian domains = no verify, others = verify
     """
-    # ✅ تشخیص هوشمند SSL
+    # SSL
     verify_ssl = not is_iranian_domain(url)
     ssl_status = "🔒 SSL ON" if verify_ssl else "🔓 SSL OFF (Iranian)"
     
@@ -217,7 +213,7 @@ def fetch(url: str) -> tuple[str, str]:
                 url, 
                 headers=HEADERS, 
                 timeout=REQUEST_TIMEOUT, 
-                verify=verify_ssl,  # ✅ داینامیک
+                verify=verify_ssl, 
                 allow_redirects=True
             )
             if r.status_code == 200:

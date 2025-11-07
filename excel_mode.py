@@ -380,7 +380,7 @@ def clean_duplicate_columns(df):
                 except:
                     continue
             
-            # ادغام با جداکننده
+            # merge with separator
             if values:
                 if base in ['Phone1', 'Phone2', 'Email', 'OtherEmails', 'WhatsApp', 'Telegram']:
                     merged = ", ".join(values)
@@ -397,7 +397,7 @@ def clean_duplicate_columns(df):
                 except:
                     pass
         
-        # حذف ستون‌های تکراری
+        # remove duplicate columns
         for col in cols[1:]:
             if col in cleaned_df.columns:
                 try:

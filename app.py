@@ -825,7 +825,7 @@ for key_name, key_value in API_KEYS.items():
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("### 📦 Batch Processing")
-st.sidebar.info("📸 تصاویر: 5 تا\n📄 PDF: 4 تا\n📊 Excel: 1 تا")
+st.sidebar.info("📸 Image: 5 \n📄 PDF: 4 \n📊 Excel: 1 ")
 
 # =========================================================
 # 📂 آپلود فایل‌ها

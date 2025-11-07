@@ -1299,7 +1299,7 @@ else:
             <ul style="line-height: 2;">
                 <li>Image (JPG, PNG) or PDF</li>
                 <li>extract OCR + detect QR</li>
-                <li>وب‌اسکرپینگ از URLها</li>
+                <li>web scraping from urls</li>
                 <li>خروجی: Excel یکپارچه</li>
                 <li>📦 Batch: تصاویر(5) | PDF(4)</li>
             </ul>

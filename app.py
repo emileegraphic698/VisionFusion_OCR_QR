@@ -362,7 +362,7 @@ def append_excel_data_to_sheets(excel_path, folder_id=None):
 
 
 def get_or_create_folder(folder_name="Exhibition_Data"):
-    """پیدا/ساخت پوشه در Drive"""
+    """find or create folder in drive"""
     try:
         drive_service, _ = get_google_services()
         if not drive_service:

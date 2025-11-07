@@ -1216,10 +1216,10 @@ if uploaded_files:
                                 """, unsafe_allow_html=True)
                                 cols_display = ", ".join(df_prev.columns.tolist()[:20])
                                 if len(df_prev.columns) > 20: cols_display += "..."
-                                st.info(f"🔤 ستون‌ها: {cols_display}")
+                                st.info(f"🔤 columns: {cols_display}")
                                 st.dataframe(df_prev.head(10), width='stretch')
                         except Exception as e:
-                            st.warning(f"⚠️ خطا در نمایش پیش‌نمایش: {e}")
+                            st.warning(f"⚠️ error displaying preview: {e}")
 
                 json_files = [f for f in session_dir.glob("*.json") if f.name != "quota.json"]
                 if json_files:

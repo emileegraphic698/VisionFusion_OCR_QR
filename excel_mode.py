@@ -521,7 +521,6 @@ def worker(q, results):
 
 
 #  Main
-
 def main():
     print("📥 Loading Excel file...")
     if not INPUT_EXCEL.exists():

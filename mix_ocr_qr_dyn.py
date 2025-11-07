@@ -13,8 +13,8 @@ OCR_FILE = Path(os.getenv("OCR_FILE", SESSION_DIR / "gemini_output.json"))
 QR_FILE = Path(os.getenv("QR_FILE", SESSION_DIR / "final_superqr_v6_clean.json"))
 OUTPUT_FILE = Path(os.getenv("OUTPUT_FILE", SESSION_DIR / "mix_ocr_qr.json"))
 
-# =========================================================
-# 📦 توابع کمکی
+
+# helper functions
 def read_json(path: Path):
     """خواندن امن فایل JSON"""
     try:

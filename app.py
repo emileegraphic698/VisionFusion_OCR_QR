@@ -982,7 +982,7 @@ if uploaded_files:
                         if not st.checkbox("continue with insufficient quota?"):
                             st.stop()
                 except Exception as e:
-                    st.warning(f"نتوانستم تعداد ردیف‌ها را بخوانم: {e}")
+                    st.warning(f"could not read row count: {e}")
                     total_rows = 0
 
                 progress_bar.progress(10)

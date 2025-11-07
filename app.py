@@ -1115,7 +1115,7 @@ if uploaded_files:
                             
                             st.markdown(f"""
                             <div class="file-display" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-                                <h4>🔗 لینک دائمی جدول</h4>
+                                <h4>🔗 permanent table link</h4>
                                 <p style="background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 8px; margin: 0.5rem 0;">
                                     <a href="{url_gs}" target="_blank" style="color: white; font-weight: bold; font-size: 1.1rem;">
                                         📊 باز کردن در Google Drive

@@ -578,7 +578,7 @@ def add_exhibition_and_source(excel_path, exhibition_name):
         return True
     except Exception as e:
         print(f"   ❌ Error adding metadata: {e}")
-        st.error(f"خطا در اضافه کردن متادیتا: {e}")
+        st.error(f"error adding metadata: {e}")
         return False
 
 # =========================================================

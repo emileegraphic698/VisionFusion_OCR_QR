@@ -1019,7 +1019,7 @@ if uploaded_files:
                 """, unsafe_allow_html=True)
 
                 if total_batches > 0:
-                    st.info(f"📦 پردازش {total_batches} Batch | هر Batch حدود {batch_size} فایل")
+                    st.info(f"📦 processing {total_batches} batches | each batch about {batch_size} files")
 
                 stages = [
                     ("📘 OCR Extraction", "ocr_dyn.py", 20),
@@ -1032,10 +1032,10 @@ if uploaded_files:
                 all_success = True
                 for stage_name, script, progress_val in stages:
                     current_quota = load_quota()
-                    quota_display.info(f"🔋 سهمیه باقیمانده: {current_quota['remaining']}/{DAILY_LIMIT}")
+                    quota_display.info(f"🔋 remaining quota: {current_quota['remaining']}/{DAILY_LIMIT}")
 
                     if total_batches > 0:
-                        st.markdown(f"**{stage_name}** - پردازش {total_batches} Batch...")
+                        st.markdown(f"**{stage_name}** -processing{total_batches} Batch...")
 
                     stage_success = run_script(
                         script, session_dir, log_area, status_text,
@@ -1044,7 +1044,7 @@ if uploaded_files:
                     if not stage_success:
                         all_success = False
                         st.markdown(f"""
-                        <div class="status-box status-warning">⚠️ {stage_name} با مشکل مواجه شد، ادامه می‌دهیم...</div>
+                        <div class="status-box status-warning">⚠️ {stage_name} encountered an issue, continuing anyway...</div>
                         """, unsafe_allow_html=True)
 
                     progress_bar.progress(progress_val)
@@ -1052,10 +1052,10 @@ if uploaded_files:
                     
                     quota_decrease_amount = max(1, total_batches)
                     quota = decrease_quota(quota_decrease_amount)
-                    quota_display.success(f"✅ سهمیه باقیمانده: {quota['remaining']}/{DAILY_LIMIT}")
+                    quota_display.success(f"✅ remaining quota: {quota['remaining']}/{DAILY_LIMIT}")
                     
                     if quota['remaining'] <= 0:
-                        st.markdown('<div class="status-box status-error">❌ سهمیه API تمام شد!</div>', unsafe_allow_html=True)
+                        st.markdown('<div class="status-box status-error">❌ API quota exhausted!</div>', unsafe_allow_html=True)
                         break
 
                 success = all_success

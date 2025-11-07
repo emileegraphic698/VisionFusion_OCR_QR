@@ -320,7 +320,7 @@ def extract_with_gemini(text):
     return {f: (data.get(f) or "") for f in FIELDS}
 
 def translate_fields(data):
-    """ترجمه فیلدهای انگلیسی به فارسی"""
+    """translate english fields """
     to_translate = {en: data.get(en) for en, _ in TRANSLATABLE_FIELDS if data.get(en)}
     
     
@@ -344,12 +344,12 @@ def translate_fields(data):
 
 #  Smart Merge 
 def clean_duplicate_columns(df):
-    """حذف و ادغام ستون‌های تکراری"""
+    """remove and merge duplicate columns"""
     print("\n🧹 Cleaning duplicate columns...")
     
-    # گروه‌بندی ستون‌ها بر اساس نام اصلی
+    # group columns by main name
     base_cols = {}
-    pattern = re.compile(r'\[\d+\]$')  # الگوی [2], [3], ...
+    pattern = re.compile(r'\[\d+\]$') 
     
     for col in df.columns:
         # استخراج نام اصلی

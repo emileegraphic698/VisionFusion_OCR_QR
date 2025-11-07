@@ -1286,8 +1286,8 @@ else:
                 <li>excel file with url/website</li>
                 <li>smart web scraping</li>
                 <li>extract full company information</li>
-                <li>خروجی: Excel غنی‌شده</li>
-                <li>📦 Batch: 1 ردیف</li>
+                <li>output: enriched excel</li>
+                <li>📦 Batch: 1 row</li>
             </ul>
         </div>
         """, unsafe_allow_html=True)

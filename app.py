@@ -217,7 +217,7 @@ def find_or_create_data_table(drive_service, sheets_service, folder_id=None):
         return file_id, file_url, False
         
     except Exception as e:
-        print(f"   ❌ خطا: {e}")
+        print(f"   ❌ error: {e}")
         return None, None, False
 
 def append_excel_data_to_sheets(excel_path, folder_id=None):

@@ -790,23 +790,23 @@ elif Path("google_sheet_link.txt").exists():
 quota = load_quota()
 st.sidebar.markdown(f"""
 <div class="quota-card">
-    <h3>📊 API Quota امروز</h3>
+    <h3>📊 API Quota today</h3>
     <div class="quota-number">{quota['remaining']}</div>
-    <p>از {DAILY_LIMIT} درخواست</p>
+    <p>از {DAILY_LIMIT} request</p>
 </div>
 """, unsafe_allow_html=True)
 progress_value = quota['used'] / DAILY_LIMIT if DAILY_LIMIT > 0 else 0
 st.sidebar.progress(progress_value)
 
 if quota['remaining'] <= 0:
-    st.sidebar.markdown('<span class="badge badge-error">❌ سهمیه تمام شد</span>', unsafe_allow_html=True)
+    st.sidebar.markdown('<span class="badge badge-error">❌ quota exceeded</span>', unsafe_allow_html=True)
 elif quota['remaining'] < 20:
-    st.sidebar.markdown('<span class="badge badge-warning">⚠️ کم شده</span>', unsafe_allow_html=True)
+    st.sidebar.markdown('<span class="badge badge-warning">⚠️ reduced</span>', unsafe_allow_html=True)
 else:
-    st.sidebar.markdown('<span class="badge badge-success">✅ سهمیه خوب</span>', unsafe_allow_html=True)
+    st.sidebar.markdown('<span class="badge badge-success">✅ good quota</span>', unsafe_allow_html=True)
 
 st.sidebar.markdown("---")
-st.sidebar.markdown("### ⚙️ تنظیمات")
+st.sidebar.markdown("### ⚙️ setting")
 rate_limit = st.sidebar.slider("⏱️ فاصله بین درخواست‌ها (ثانیه)", 0, 10, 4)
 if rate_limit < 4:
     st.sidebar.markdown('<span class="badge badge-error">⚠️ خطر Block</span>', unsafe_allow_html=True)

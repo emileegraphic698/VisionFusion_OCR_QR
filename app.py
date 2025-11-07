@@ -1146,7 +1146,7 @@ if uploaded_files:
             if success and output_files:
                 st.markdown("""
                 <div class="status-box status-success">
-                    <h2>🎉 پردازش با موفقیت کامل شد!</h2>
+                    <h2>🎉 processing completed successfully!</h2>
                 </div>
                 """, unsafe_allow_html=True)
 

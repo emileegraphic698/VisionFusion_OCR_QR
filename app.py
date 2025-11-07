@@ -893,13 +893,13 @@ if uploaded_files:
     with col3:
         st.markdown(f"""
         <div class="metric-card">
-            <h3>🏢 نمایشگاه</h3>
+            <h3>🏢 exhibition</h3>
             <h2>{exhibition_name[:15]}</h2>
         </div>
         """, unsafe_allow_html=True)
 
     exhibition_name = st.text_input(
-        "📝 ویرایش نام نمایشگاه",
+        "📝 edit exhibition name",
         value=exhibition_name,
         help="در ستون Exhibition ثبت می‌شود"
     )

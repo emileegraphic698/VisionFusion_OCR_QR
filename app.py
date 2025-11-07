@@ -1210,8 +1210,8 @@ if uploaded_files:
                             with st.expander(f"👁 preview{output_file.name}"):
                                 st.markdown(f"""
                                 <div class="status-box status-info" style="margin-top:0;">
-                                    <p style="margin:0;">📊 <strong>{len(df_prev)}</strong> ردیف × 
-                                       <strong>{len(df_prev.columns)}</strong> ستون</p>
+                                    <p style="margin:0;">📊 <strong>{len(df_prev)}</strong> row × 
+                                       <strong>{len(df_prev.columns)}</strong> column</p>
                                 </div>
                                 """, unsafe_allow_html=True)
                                 cols_display = ", ".join(df_prev.columns.tolist()[:20])

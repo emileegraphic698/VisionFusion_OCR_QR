@@ -1223,12 +1223,12 @@ if uploaded_files:
 
                 json_files = [f for f in session_dir.glob("*.json") if f.name != "quota.json"]
                 if json_files:
-                    with st.expander("📄 فایل‌های JSON و لاگ‌ها (اختیاری)"):
+                    with st.expander("📄 json files and logs (optional)"):
                         for json_file in json_files:
                             col1, col2 = st.columns([3, 1])
                             with col1:
                                 if json_file.name == "qc_log.json":
-                                    st.write(f"**👤 {json_file.name}** (لاگ کنترل کیفیت)")
+                                    st.write(f"**👤 {json_file.name}** (quality control log)")
                                 else:
                                     st.write(f"**{json_file.name}**")
                             with col2:

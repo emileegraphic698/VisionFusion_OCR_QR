@@ -602,11 +602,10 @@ def extract_exhibition_name(files):
         return " ".join(cleaned_parts[:3])
     return "Unknown_Exhibition"
 
-# =========================================================
-# ✨ Batch Processing Logic
-# =========================================================
+
+# Batch Processing Logic
 def get_batch_size(file_type):
-    """تعیین اندازه Batch بر اساس نوع فایل"""
+    """set batch size based on file type"""
     file_type = file_type.lower()
     if file_type in ['jpg', 'jpeg', 'png', 'bmp', 'webp', 'gif']:
         return 5
@@ -618,7 +617,7 @@ def get_batch_size(file_type):
         return 1
 
 def create_batches(files_list, batch_size):
-    """تقسیم لیست فایل‌ها به Batch‌های کوچک‌تر"""
+    """split file list into smaller batches"""
     batches = []
     for i in range(0, len(files_list), batch_size):
         batches.append(files_list[i:i + batch_size])

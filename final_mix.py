@@ -333,16 +333,15 @@ def clean_and_optimize_dataframe(df):
     print(f"   ✅ Final: {len(df.columns)} columns")
     return df
 
-# =========================================================
-# 📊 ترتیب‌بندی نهایی
-# =========================================================
+
+#  final sorting
 def create_final_dataframe(records):
     if not records:
         return pd.DataFrame()
     
     df = pd.DataFrame(records)
     
-    # حذف متادیتا
+    # remove metadata
     remove = ['ocr_text', 'AddressFA_translated', 'CompanyNameFA_translated',
               'file_id', 'file_name', 'page', 'DataSource']
     for col in remove:

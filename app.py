@@ -1153,7 +1153,7 @@ if uploaded_files:
                 st.markdown(f"""
                 <div class="qc-card">
                     <h4>👤 quality supervisor information</h4>
-                    <p><strong>ناظر:</strong> {qc_metadata['QC_Supervisor']} | <strong>نقش:</strong> {qc_metadata['QC_Role']}</p>
+                    <p><strong>supervisor:</strong> {qc_metadata['QC_Supervisor']} | <strong>position:</strong> {qc_metadata['QC_Role']}</p>
                     <p><strong>تاریخ و ساعت:</strong> {qc_metadata['QC_Timestamp']}</p>
                 </div>
                 """, unsafe_allow_html=True)

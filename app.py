@@ -968,7 +968,7 @@ if uploaded_files:
                 excel_input = os.environ.get("INPUT_EXCEL")
                 if not excel_input or not Path(excel_input).exists():
                     st.markdown("""
-                    <div class="status-box status-error">❌ فایل Excel پیدا نشد!</div>
+                    <div class="status-box status-error">❌  Excel file not found</div>
                     """, unsafe_allow_html=True)
                     st.stop()
 

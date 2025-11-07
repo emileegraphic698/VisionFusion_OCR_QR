@@ -80,7 +80,7 @@ def clean_url(url):
         
         # if path exists and is encoded, clean it
         if parsed.path and '%' in parsed.path:
-            # فقط domain + / را برمی‌گردانیم
+            # return only domain 
             clean = f"{parsed.scheme}://{parsed.netloc}"
             if DEBUG_MODE:
                 print(f"      🧹 Cleaned: {url} → {clean}")

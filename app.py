@@ -931,7 +931,7 @@ if uploaded_files:
 
     st.markdown("---")
 
-    if st.button("🚀 شروع پردازش", type="primary"):
+    if st.button("🚀 start processing", type="primary"):
         if not qc_user_name or not qc_user_role:
             st.markdown("""
             <div class="status-box status-warning">

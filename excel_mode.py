@@ -352,7 +352,7 @@ def clean_duplicate_columns(df):
     pattern = re.compile(r'\[\d+\]$') 
     
     for col in df.columns:
-        # استخراج نام اصلی
+        # extract main name
         base = pattern.sub('', str(col))
         if base not in base_cols:
             base_cols[base] = []
@@ -360,14 +360,14 @@ def clean_duplicate_columns(df):
     
     cleaned_df = df.copy()
     
-    # برای هر گروه ستون
+    # for each column group
     for base, cols in base_cols.items():
         if len(cols) <= 1:
             continue
         
         print(f"   🔄 Merging {len(cols)} versions of '{base}'")
         
-        # ادغام تمام نسخه‌ها
+        # merge all versions
         for idx in df.index:
             values = []
             for col in cols:

@@ -1300,8 +1300,8 @@ else:
                 <li>Image (JPG, PNG) or PDF</li>
                 <li>extract OCR + detect QR</li>
                 <li>web scraping from urls</li>
-                <li>خروجی: Excel یکپارچه</li>
-                <li>📦 Batch: تصاویر(5) | PDF(4)</li>
+                <li>output: unified excel</li>
+                <li>📦 Batch: Image(5) | PDF(4)</li>
             </ul>
         </div>
         """, unsafe_allow_html=True)

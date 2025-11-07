@@ -259,7 +259,7 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
         rotated = cv2.rotate(img, rotate_code)
         try_decode(rotated, f"Rotated {angle}°")
     
-    # 11. استفاده از pyzbar
+    # 11. pyzbar
     if HAS_PYZBAR:
         for method_img, method_name in [
             (gray, "Pyzbar-Gray"),
@@ -278,7 +278,7 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
                 if DEBUG_MODE:
                     print(f"      ✗ {method_name} failed: {e}")
     
-    # 12. استفاده از zxing
+    # 12. zxing
     if HAS_ZXING:
         try:
             temp_path = DEBUG_DIR / f"_temp_zxing_{img_name}.jpg"
@@ -305,7 +305,7 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
             if DEBUG_MODE:
                 print(f"      ✗ ZXing failed: {e}")
     
-    # حذف تکراری‌ها
+    # remove duplicates
     payloads = list(dict.fromkeys(p for p in payloads if p and isinstance(p, str)))
     
     if DEBUG_MODE:

@@ -668,13 +668,13 @@ def run_script(script_name, session_dir, log_area, status_text, script_display_n
         script_path = Path.cwd() / script_name
         if not script_path.exists():
             status_text.markdown(f"""
-            <div class="status-box status-error">❌ فایل {script_name} یافت نشد!</div>
+            <div class="status-box status-error">❌ file {script_name} not found! </div>
             """, unsafe_allow_html=True)
             return False
 
     status_text.markdown(f"""
     <div class="status-box status-info">
-        <div class="loading-spinner"></div> در حال اجرای {script_display_name}...
+        <div class="loading-spinner"></div> running {script_display_name}...
     </div>
     """, unsafe_allow_html=True)
 
@@ -715,7 +715,7 @@ def run_script(script_name, session_dir, log_area, status_text, script_display_n
 
         if process.returncode == 0:
             status_text.markdown(f"""
-            <div class="status-box status-success">✅ {script_display_name} موفقیت‌آمیز بود!</div>
+            <div class="status-box status-success">✅ {script_display_name} successful!</div>
             """, unsafe_allow_html=True)
             return True
         else:

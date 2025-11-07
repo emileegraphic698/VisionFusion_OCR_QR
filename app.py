@@ -935,7 +935,7 @@ if uploaded_files:
         if not qc_user_name or not qc_user_role:
             st.markdown("""
             <div class="status-box status-warning">
-                ⚠️ لطفاً اطلاعات ناظر کیفیت (نام و نقش) را وارد کنید!
+                ⚠️ please enter the quality supervisor information (name and role)!
             </div>
             """, unsafe_allow_html=True)
             st.stop()

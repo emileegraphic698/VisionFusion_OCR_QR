@@ -978,7 +978,7 @@ if uploaded_files:
                     st.info(f"📊 number of companies: {total_rows}")
                     current_quota = load_quota()
                     if current_quota['remaining'] < total_rows:
-                        st.warning(f"⚠️ Quota کافی نیست! نیاز: {total_rows}, موجود: {current_quota['remaining']}")
+                        st.warning(f"⚠️insufficient quota! required: {total_rows}, موجود: {current_quota['remaining']}")
                         if not st.checkbox("ادامه با Quota ناکافی؟"):
                             st.stop()
                 except Exception as e:

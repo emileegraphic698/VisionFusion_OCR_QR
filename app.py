@@ -1137,9 +1137,9 @@ if uploaded_files:
                             sheets_status.error(f"❌ error: {msg_gs}")
                 
                 except Exception as e:
-                    sheets_status.error(f"❌ خطا: {e}")
-                    st.warning("💡 مطمئن شوید Google Drive API و Sheets API فعال است")
-                # ========== END GOOGLE SHEETS ==========
+                    sheets_status.error(f"❌ error: {e}")
+                    st.warning("💡 make sure google drive api and sheets api are enabled")
+                # ==================== END GOOGLE SHEETS =====================
 
             st.markdown("---")
 

@@ -1284,7 +1284,7 @@ else:
             <h3>📊 Excel Mode</h3>
             <ul style="line-height: 2;">
                 <li>excel file with url/website</li>
-                <li>وب‌اسکرپینگ هوشمند</li>
+                <li>smart web scraping</li>
                 <li>استخراج اطلاعات کامل شرکت</li>
                 <li>خروجی: Excel غنی‌شده</li>
                 <li>📦 Batch: 1 ردیف</li>

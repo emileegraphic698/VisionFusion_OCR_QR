@@ -1283,7 +1283,7 @@ else:
                     padding: 2rem; border-radius: 15px; color: white; height: 100%;">
             <h3>📊 Excel Mode</h3>
             <ul style="line-height: 2;">
-                <li>فایل Excel با URL/Website</li>
+                <li>excel file with url/website</li>
                 <li>وب‌اسکرپینگ هوشمند</li>
                 <li>استخراج اطلاعات کامل شرکت</li>
                 <li>خروجی: Excel غنی‌شده</li>

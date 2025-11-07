@@ -29,9 +29,8 @@ import shutil
 
 from supabase import create_client, Client
 
-# =========================================================
-# ⚙️ تنظیمات صفحه
-# =========================================================
+
+# settings
 st.set_page_config(
     page_title="Smart Exhibition Pipeline",
     page_icon="🎯",
@@ -39,9 +38,9 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# =========================================================
-# 📌 Permanent Google Sheets Link (Always Visible)
-# =========================================================
+
+
+# Permanent Google Sheets Link 
 FIXED_SHEET_URL = "https://docs.google.com/spreadsheets/d/1OeQbiqvo6v58rcxaoSUidOk0IxSGmL8YCpLnyh27yuE/edit"
 
 st.markdown(f"""
@@ -49,7 +48,7 @@ st.markdown(f"""
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     padding: 1.2rem; border-radius: 15px; text-align: center; color: white;
     box-shadow: 0 6px 20px rgba(102,126,234,0.4); margin-bottom: 1.5rem;">
-    <h3 style="margin: 0;">📊 Central Data Sheet</h3>
+    <h3 style="margin: 0;"> Central Data Sheet</h3>
     <a href="{FIXED_SHEET_URL}" target="_blank"
        style="color: white; background: rgba(255,255,255,0.2);
               padding: 0.6rem 1.2rem; border-radius: 10px;

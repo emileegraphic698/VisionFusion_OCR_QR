@@ -846,9 +846,9 @@ st.markdown("*this information is recorded as quality control metadata in the ou
 col_qc1, col_qc2 = st.columns(2)
 with col_qc1:
     qc_user_name = st.text_input(
-        "🧑‍💼 نام و نام خانوادگی",
-        placeholder="مثال: علی احمدی",
-        help="نام کامل ناظر کیفیت داده‌ها"
+        "🧑‍💼 full name",
+        placeholder="example: Tara Gearo",
+        help="full name of data quality supervisor"
     )
 with col_qc2:
     qc_user_role = st.text_input(

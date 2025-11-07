@@ -879,7 +879,7 @@ if uploaded_files:
     with col1:
         st.markdown(f"""
         <div class="metric-card">
-            <h3>🔍 نوع Pipeline</h3>
+            <h3>🔍 type Pipeline</h3>
             <h2>{'📊 Excel' if pipeline_type == 'excel' else '🖼 OCR/QR'}</h2>
         </div>
         """, unsafe_allow_html=True)

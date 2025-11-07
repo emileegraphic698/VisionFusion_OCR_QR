@@ -526,7 +526,7 @@ def smart_position_from_department(department):
     return f"officer {department.title()}"
 
 def add_exhibition_and_source(excel_path, exhibition_name):
-    """نسخه‌ی جامع + اعلان UI"""
+    """UI"""
     try:
         print(f"\n📝 Adding Exhibition & Source metadata...")
         df = pd.read_excel(excel_path)
@@ -552,7 +552,7 @@ def add_exhibition_and_source(excel_path, exhibition_name):
                         filled_count += 1
                         print(f"   ✓ Row {idx + 1}: {department} → {smart_position}")
             if filled_count > 0:
-                st.info(f"🤖 پر شد {filled_count} سمت از روی دپارتمان")
+                st.info(f"🤖 filled {filled_count} role based on department")
 
         columns_to_remove = ['CompanyNameFA_translated']
         removed = 0

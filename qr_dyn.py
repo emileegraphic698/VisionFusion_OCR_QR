@@ -320,20 +320,20 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
             out.append(vcard_url)
             continue
         
-        # جستجوی URL مستقیم
+        # direct url search
         p = p.strip()
         urls = re.findall(r"(https?://[^\s\"'<>\[\]]+|www\.[^\s\"'<>\[\]]+)", p, re.IGNORECASE)
         
         if urls:
             for url in urls:
                 url = url.strip()
-                # حذف کاراکترهای اضافی از انتها
+                # remove trailing extra characters
                 url = re.sub(r'[,;.!?\)\]]+$', '', url)
                 
                 if not url.lower().startswith("http"):
                     url = "https://" + url.lower()
                 
-                # تمیز کردن URL
+                # clean URL
                 cleaned = clean_url(url)
                 if cleaned:
                     out.append(cleaned)

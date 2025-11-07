@@ -1182,7 +1182,7 @@ if uploaded_files:
                     </div>
                     """, unsafe_allow_html=True)
 
-                st.markdown("## 📥 دانلود فایل‌های نهایی")
+                st.markdown("## 📥 download final files")
                 for output_file in output_files:
                     with st.container():
                         colA, colB = st.columns([3, 1])

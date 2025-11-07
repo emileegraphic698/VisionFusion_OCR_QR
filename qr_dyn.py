@@ -311,10 +311,10 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
     if DEBUG_MODE:
         print(f"   📈 Tried {methods_tried} methods, found {len(payloads)} unique payload(s)")
     
-    # پردازش و استخراج URL
+    # URL
     out = []
     for p in payloads:
-        # بررسی اینکه آیا vCard است
+        #  vCard 
         vcard_url = extract_url_from_vcard(p)
         if vcard_url:
             out.append(vcard_url)

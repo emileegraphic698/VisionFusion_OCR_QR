@@ -979,7 +979,7 @@ if uploaded_files:
                     current_quota = load_quota()
                     if current_quota['remaining'] < total_rows:
                         st.warning(f"⚠️insufficient quota! required: {total_rows}, موجود: {current_quota['remaining']}")
-                        if not st.checkbox("ادامه با Quota ناکافی؟"):
+                        if not st.checkbox("continue with insufficient quota?"):
                             st.stop()
                 except Exception as e:
                     st.warning(f"نتوانستم تعداد ردیف‌ها را بخوانم: {e}")

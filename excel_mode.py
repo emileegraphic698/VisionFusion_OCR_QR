@@ -159,14 +159,13 @@ def domain_exists(url):
         return False
 
 def are_values_same(v1, v2):
-    """بررسی یکسان بودن دو مقدار"""
+    """check if two values are equal"""
     if not v1 or not v2:
         return False
     return str(v1).strip().lower() == str(v2).strip().lower()
 
-# =========================================================
-# 🌐 Web Scraping با SSL هوشمند
-# =========================================================
+
+#  Web Scraping with smart SSL 
 def fetch(url):
     """دریافت محتوای صفحه با مدیریت هوشمند SSL"""
     verify_ssl = not is_iranian_domain(url)

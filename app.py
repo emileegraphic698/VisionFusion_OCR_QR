@@ -1310,8 +1310,8 @@ else:
     st.markdown("### ✨ key features")
     features = [
         ("🎯", "automatic detection", "smart excel or ocr/qr processing"),
-        ("🏢", "Exhibition Field", "نام نمایشگاه قابل ویرایش"),
-        ("📊", "Source Tracking", "تشخیص منبع (Image/PDF/Excel)"),
+        ("🏢", "Exhibition Field", "editable exhibition name"),
+        ("📊", "Source Tracking", "source detection(Image/PDF/Excel)"),
         ("🤖", "Smart Position", "50+ دپارتمان فارسی/انگلیسی"),
         ("🔋", "Quota Management", "مدیریت هوشمند API (240/روز)"),
         ("⚡️", "Fast Mode", "پردازش سریع با لاگ بهینه"),

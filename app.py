@@ -1245,7 +1245,7 @@ if uploaded_files:
             else:
                 st.markdown("""
                 <div class="status-box status-warning">
-                    <h2>⚠️ پردازش کامل نشد</h2>
+                    <h2>⚠️ processing not completed</h2>
                     <p>بعضی داده‌ها پردازش نشدند. لاگ‌ها را بررسی کنید.</p>
                 </div>
                 """, unsafe_allow_html=True)

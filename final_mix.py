@@ -58,9 +58,9 @@ def normalize_company_name(name):
     if not name or pd.isna(name):
         return ""
     n = str(name).strip().lower()
-    stopwords = ["شرکت", "company", "co.", "co", "ltd", "inc", "corp",
-                 "سهامی", "خاص", "عام", "private", "public", "holding",
-                 "international", "بین المللی", "گروه", "group"]
+    stopwords = [ "company", "co.", "co", "ltd", "inc", "corp",
+                 "private", "public", "holding",
+                 "international", "group"]
     for word in stopwords:
         n = n.replace(word, " ")
     n = re.sub(r"[^\w\s]", " ", n)

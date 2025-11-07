@@ -1297,8 +1297,8 @@ else:
                     padding: 2rem; border-radius: 15px; color: white; height: 100%;">
             <h3>🖼 OCR/QR Mode</h3>
             <ul style="line-height: 2;">
-                <li>تصاویر (JPG, PNG) یا PDF</li>
-                <li>استخراج OCR + تشخیص QR</li>
+                <li>Image (JPG, PNG) or PDF</li>
+                <li>extract OCR + detect QR</li>
                 <li>وب‌اسکرپینگ از URLها</li>
                 <li>خروجی: Excel یکپارچه</li>
                 <li>📦 Batch: تصاویر(5) | PDF(4)</li>

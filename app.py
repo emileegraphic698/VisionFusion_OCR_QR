@@ -854,7 +854,7 @@ with col_qc2:
     qc_user_role = st.text_input(
         "💼 role / position",
         placeholder="example: quality control specialist",
-        help="سمت یا نقش شما در سازمان"
+        help="your role or position in the organization"
     )
 
 if qc_user_name and qc_user_role:

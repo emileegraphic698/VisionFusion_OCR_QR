@@ -1314,8 +1314,8 @@ else:
         ("📊", "Source Tracking", "source detection(Image/PDF/Excel)"),
         ("🤖", "Smart Position", "50+ department (persian/english)"),
         ("🔋", "Quota Management", "smart management API (240/day)"),
-        ("⚡️", "Fast Mode", "پردازش سریع با لاگ بهینه"),
-        ("🔒", "Rate Limit", "4 ثانیه (ایمن - 15 RPM)"),
+        ("⚡️", "Fast Mode", "fast processing with optimized log"),
+        ("🔒", "Rate Limit", "4 seconds (safe - 15 rpm)"),
         ("📦", "Batch Processing", "تصاویر(5) | PDF(4) | Excel(1)"),
         ("👤", "Quality Control", "ثبت نام و نقش ناظر کیفیت"),
         ("☁️", "Google Sheets", "ذخیره خودکار در Drive")

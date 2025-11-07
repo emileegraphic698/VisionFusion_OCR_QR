@@ -231,7 +231,7 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
     enhanced = cv2.cvtColor(cv2.merge((l2, a, b)), cv2.COLOR_LAB2BGR)
     try_decode(enhanced, "CLAHE")
     
-    # 7. Sharpening قوی
+    # 7. Sharpening
     kernel_sharp = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])
     sharp = cv2.filter2D(img, -1, kernel_sharp)
     try_decode(sharp, "Sharpened")
@@ -241,7 +241,7 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
     morph = cv2.morphologyEx(gray, cv2.MORPH_CLOSE, kernel)
     try_decode(cv2.cvtColor(morph, cv2.COLOR_GRAY2BGR), "Morphological")
     
-    # 9. Multi-scale (مقیاس‌های مختلف)
+    # 9. Multi-scale 
     for scale in [0.5, 0.75, 1.5, 2.0]:
         w = int(img.shape[1] * scale)
         h = int(img.shape[0] * scale)
@@ -249,7 +249,7 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
             resized = cv2.resize(img, (w, h), interpolation=cv2.INTER_CUBIC)
             try_decode(resized, f"Scale {scale}x")
     
-    # 10. Rotation (چرخش)
+    # 10. Rotation 
     rotation_map = {
         90: cv2.ROTATE_90_CLOCKWISE,
         180: cv2.ROTATE_180,

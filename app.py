@@ -901,7 +901,7 @@ if uploaded_files:
     exhibition_name = st.text_input(
         "📝 edit exhibition name",
         value=exhibition_name,
-        help="در ستون Exhibition ثبت می‌شود"
+        help="recorded in the exhibition column"
     )
 
     session_timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')

@@ -737,13 +737,12 @@ def run_script(script_name, session_dir, log_area, status_text, script_display_n
         """, unsafe_allow_html=True)
         return False
 
-# =========================================================
-# 🎯 Header
-# =========================================================
+
+# Header
 st.markdown("""
 <div class="main-header">
     <h1>🎯 Smart Exhibition Pipeline</h1>
-    <p>تشخیص هوشمند • پردازش خودکار • خروجی یکپارچه • Batch Processing • Quality Control • Google Sheets</p>
+    <p>smart detection • automated processing • unified output• Batch Processing • Quality Control • Google Sheets</p>
 </div>
 """, unsafe_allow_html=True)
 

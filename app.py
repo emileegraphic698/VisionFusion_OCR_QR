@@ -1271,7 +1271,7 @@ if uploaded_files:
 else:
     st.markdown("""
     <div class="status-box status-info">
-        <h3>👋 خوش آمدید!</h3>
+        <h3>👋 welcome!</h3>
         <p>لطفاً ابتدا اطلاعات ناظر کیفیت را وارد کنید، سپس فایل‌های خود را آپلود کنید</p>
     </div>
     """, unsafe_allow_html=True)

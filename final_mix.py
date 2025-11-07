@@ -94,9 +94,8 @@ def extract_key_identifier(record):
     
     return ("unique", str(id(record)))
 
-# =========================================================
-# 📥 بارگذاری JSON
-# =========================================================
+
+#  upload JSON
 def load_json_records(json_path):
     print("\n📥 Loading JSON...")
     if not json_path.exists():

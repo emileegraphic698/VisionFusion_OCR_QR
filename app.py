@@ -1154,7 +1154,7 @@ if uploaded_files:
                 <div class="qc-card">
                     <h4>👤 quality supervisor information</h4>
                     <p><strong>supervisor:</strong> {qc_metadata['QC_Supervisor']} | <strong>position:</strong> {qc_metadata['QC_Role']}</p>
-                    <p><strong>تاریخ و ساعت:</strong> {qc_metadata['QC_Timestamp']}</p>
+                    <p><strong>date and time:</strong> {qc_metadata['QC_Timestamp']}</p>
                 </div>
                 """, unsafe_allow_html=True)
 
@@ -1162,7 +1162,7 @@ if uploaded_files:
                 with col1:
                     st.markdown(f"""
                     <div class="metric-card">
-                        <h3>⏱️ زمان اجرا</h3>
+                        <h3>⏱️ execution time</h3>
                         <h2>{elapsed:.1f}s</h2>
                     </div>
                     """, unsafe_allow_html=True)
@@ -1170,14 +1170,14 @@ if uploaded_files:
                     quota_now = load_quota()
                     st.markdown(f"""
                     <div class="metric-card">
-                        <h3>🔋 سهمیه باقیمانده</h3>
+                        <h3>🔋 remaining quota</h3>
                         <h2>{quota_now['remaining']}</h2>
                     </div>
                     """, unsafe_allow_html=True)
                 with col3:
                     st.markdown(f"""
                     <div class="metric-card">
-                        <h3>📊 فایل خروجی</h3>
+                        <h3>📊 output file</h3>
                         <h2>{len(output_files)}</h2>
                     </div>
                     """, unsafe_allow_html=True)

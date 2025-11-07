@@ -861,7 +861,7 @@ if qc_user_name and qc_user_role:
     qc_preview = get_qc_metadata(qc_user_name, qc_user_role)
     st.markdown(f"""
     <div class="qc-card">
-        <h4>✅ پیش‌نمایش اطلاعات کنترل کیفیت</h4>
+        <h4>✅ quality control information preview</h4>
         <p><strong>👤 ناظر:</strong> {qc_preview['QC_Supervisor']}</p>
         <p><strong>💼 نقش:</strong> {qc_preview['QC_Role']}</p>
         <p><strong>📅 تاریخ:</strong> {qc_preview['QC_Date']}</p>

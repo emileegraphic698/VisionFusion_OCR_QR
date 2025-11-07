@@ -157,7 +157,7 @@ def enhance_image_aggressive(img):
     enhanced = cv2.merge([l, a, b])
     enhanced = cv2.cvtColor(enhanced, cv2.COLOR_LAB2BGR)
     
-    # 5. Unsharp masking برای وضوح بیشتر
+    # 5. Unsharp masking 
     gaussian = cv2.GaussianBlur(enhanced, (0, 0), 3.0)
     enhanced = cv2.addWeighted(enhanced, 2.0, gaussian, -1.0, 0)
     
@@ -166,9 +166,8 @@ def enhance_image_aggressive(img):
     
     return enhanced
 
-# ----------------------------------------------------------
-# 🔍 QR Detection - نسخه پیشرفته
-# ----------------------------------------------------------
+
+# QR Detection 
 def detect_qr_payloads_enhanced(img, img_name="image"):
     """تشخیص QR با چندین روش مختلف"""
     detector = cv2.QRCodeDetector()

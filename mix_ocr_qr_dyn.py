@@ -27,7 +27,7 @@ def read_json(path: Path):
         return []
 
 def merge_single_image(item, qr_result):
-    """ادغام داده‌های تصویر"""
+    """merge image data"""
     qr_links = [p.get("qr_link") for p in qr_result if p.get("qr_link")]
     if isinstance(item.get("result"), dict):
         item["result"]["qr_links"] = qr_links if qr_links else None
@@ -36,7 +36,7 @@ def merge_single_image(item, qr_result):
     return item
 
 def merge_pdf_pages(item, qr_result):
-    """ادغام داده‌های PDF چندصفحه‌ای"""
+    """merge multi-page pdf data"""
     if not isinstance(item.get("result"), list):
         return item
 
@@ -47,7 +47,7 @@ def merge_pdf_pages(item, qr_result):
     return item
 
 def merge_ocr_qr(ocr_data, qr_data):
-    """ادغام کامل داده‌های OCR و QR"""
+    """fully merge ocr and qr data"""
     qr_lookup = {item["file_name"]: item.get("result", []) for item in qr_data}
     merged = []
 
@@ -55,7 +55,7 @@ def merge_ocr_qr(ocr_data, qr_data):
         file_name = item.get("file_name")
         qr_result = qr_lookup.get(file_name, [])
 
-        # 🖼 حالت تصویر
+        #  حالت تصویر
         if file_name.lower().endswith((".jpg", ".jpeg", ".png", ".webp", ".bmp")):
             item = merge_single_image(item, qr_result)
 

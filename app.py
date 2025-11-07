@@ -658,9 +658,8 @@ def process_files_in_batches(uploads_dir, pipeline_type):
     
     return [], 1
 
-# =========================================================
-# 🔄 اجرای اسکریپت با Fast Mode + Log File
-# =========================================================
+
+# Fast Mode + Log File
 def run_script(script_name, session_dir, log_area, status_text, script_display_name="", fast_mode=True):
     script_path = Path(script_name)
     if not script_display_name:

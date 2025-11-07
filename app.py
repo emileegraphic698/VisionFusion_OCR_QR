@@ -975,7 +975,7 @@ if uploaded_files:
                 try:
                     df_input = pd.read_excel(excel_input)
                     total_rows = len(df_input)
-                    st.info(f"📊 تعداد شرکت‌ها: {total_rows}")
+                    st.info(f"📊 number of companies: {total_rows}")
                     current_quota = load_quota()
                     if current_quota['remaining'] < total_rows:
                         st.warning(f"⚠️ Quota کافی نیست! نیاز: {total_rows}, موجود: {current_quota['remaining']}")

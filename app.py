@@ -838,11 +838,10 @@ uploaded_files = st.file_uploader(
     help="Excel → Excel Mode | Image/PDF → OCR/QR Pipeline"
 )
 
-# =========================================================
+
 # Quality Control Section
-# =========================================================
-st.markdown("## 👤 اطلاعات ناظر کیفیت")
-st.markdown("*این اطلاعات به عنوان متادیتای کنترل کیفیت در خروجی ثبت می‌شود*")
+st.markdown("## 👤 quality supervisor information")
+st.markdown("*this information is recorded as quality control metadata in the output*")
 
 col_qc1, col_qc2 = st.columns(2)
 with col_qc1:

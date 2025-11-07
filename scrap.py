@@ -463,7 +463,7 @@ def main():
             ordered_cols.append(en_field)
             ordered_cols.append(fa_field)
     
-    # اطمینان از وجود همه ستون‌ها
+    # ensure all columns exist
     for col in ordered_cols:
         if col not in df.columns:
             df[col] = ""

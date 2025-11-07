@@ -27,9 +27,8 @@ except Exception as e:
     import sys
     sys.exit(1)
 
-# =========================================================
-# 🧩 مسیرهای داینامیک
-# =========================================================
+
+# dynamic paths
 SESSION_DIR = Path(os.getenv("SESSION_DIR", Path.cwd()))
 SOURCE_FOLDER = Path(os.getenv("SOURCE_FOLDER", SESSION_DIR / "uploads"))
 RENAMED_DIR = Path(os.getenv("RENAMED_DIR", SESSION_DIR / "renamed"))

@@ -1265,7 +1265,7 @@ if uploaded_files:
             st.error(f"خطا: {str(e)}")
             if debug_mode:
                 import traceback
-                with st.expander("📋 جزئیات خطا"):
+                with st.expander("📋 error details"):
                     st.code(traceback.format_exc())
 
 else:

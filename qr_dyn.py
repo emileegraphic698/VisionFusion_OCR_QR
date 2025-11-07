@@ -178,7 +178,7 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
         nonlocal methods_tried
         methods_tried += 1
         try:
-            # تلاش با detectAndDecode
+            # detectAndDecode
             val, pts, _ = detector.detectAndDecode(frame)
             if val and val.strip():
                 if DEBUG_MODE:
@@ -186,7 +186,7 @@ def detect_qr_payloads_enhanced(img, img_name="image"):
                 payloads.append(val.strip())
                 return True
             
-            # اگر نتوانست decode کند ولی detect کرد، تلاش مجدد
+            #if detection succeeded but decoding failed, retry
             if pts is not None and len(pts) > 0:
                 val, _ = detector.decode(frame, pts)
                 if val and val.strip():

